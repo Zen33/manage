@@ -107,3 +107,10 @@ MisApp.directive('customtable', function($compile) {
 		}
 	}
 });
+
+MisApp.directive('profile', function($state) {
+	return {
+		templateUrl: 'assets/templates/profile.html',
+		restrict: 'E'
+	}
+});
