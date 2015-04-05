@@ -1,4 +1,4 @@
-<!-- <div class="wrapper"> -->
+<div class="profile">
     <div class="userBox">
         <div class="header">
         </div>
@@ -6,10 +6,20 @@
         <div class="middle">
             <div class="middleText">
             <p>黄书宁</p>
+            <span>特长</span> 
+            <br />
+            详细介绍
             </div>
         </div>
         <div class="footer">
-            
+            <carousel interval="myInterval">
+                <slide ng-repeat="slide in slides" active="slide.active">
+                    <img ng-src="{{slide.image}}">
+                    <div class="carousel-caption">
+                        <p>{{slide.text}}</p>
+                    </div>
+                </slide>
+            </carousel>
         </div>
     </div>
-<!-- </div> -->
+</div>

@@ -32,8 +32,10 @@
         <!-- <link type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet"> -->
     </head>
 	<body ng-app="misapp">
-        <div class="ui-view authentication">
-            <comfirm></comfirm>
-      </div>
+        <div ui-view="authentication">
+            <div class="ui-view">
+                <comfirm></comfirm>
+            </div>
+        </div>
 	</body>
 </html>

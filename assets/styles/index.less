@@ -3,11 +3,26 @@
 @import "comfirm";
 @import "profile";
 @import "nav";
+@import "customtable";
 
 html, body {
 	min-height: 100%;
 	// background: @pinkgray;
 	color: #666;
 	font: 16px/26px "Raleway", sans-serif;
+}
+
+.main {
+	margin: 15px;
+	position: relative;
+	.profile {
+		position: absolute;
+		left: 0;
+		top: 90px;
+	}
+	.section {
+		margin-bottom: 10px;
+		margin-left: 260px;
+	}
 }
 
