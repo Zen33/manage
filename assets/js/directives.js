@@ -114,3 +114,10 @@ MisApp.directive('profile', function($state) {
 		restrict: 'E'
 	}
 });
+
+MisApp.directive('nav', function($state) {
+	return {
+		templateUrl: 'assets/templates/nav.html',
+		restrict: 'E'
+	}
+});
