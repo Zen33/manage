@@ -15,7 +15,7 @@ MisApp.directive('comfirm', function($state) {
 			  	// success(function(data, status, headers, config) {
 				    // this callback will be called asynchronously
 				    // when the response is available
-				    $state.go('main');
+				    $state.go('main', {active: 'home'});
 			  	// }).
 			  	// error(function(data, status, headers, config) {
 				    // called asynchronously if an error occurs
@@ -133,6 +133,17 @@ MisApp.directive('profile', function($state) {
 MisApp.directive('nav', function($state) {
 	return {
 		templateUrl: 'assets/templates/nav.html',
-		restrict: 'E'
+		restrict: 'E',
+		link: function(scope, elm, attrs) {
+			scope.$watch(attrs.active, function(value) {
+				if (value) {
+					scope.active = value;
+				}
+		    });
+			scope.switchTab = function(nextTab) {
+				$state.go('main', {active: nextTab}); //second parameter is for $stateParams
+				scope.active = nextTab
+			};
+		}
 	}
 });

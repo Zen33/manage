@@ -9,9 +9,10 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 		templateUrl: "index.html"
     })
     .state('main', {
-		url: "/main",
+		url: "/:active",
 		templateUrl: "assets/templates/main.html",
-		controller: function($scope, $http) {
+		controller: function($scope, $http, $stateParams) {
+			$scope.active = $stateParams.active;
 	      	$scope.tableData = {
 	      		data: [{
 					id: "1",
