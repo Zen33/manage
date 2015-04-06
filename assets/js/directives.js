@@ -123,11 +123,6 @@ MisApp.directive('profile', function($state) {
 		},
 		link: function(scope, elem, attrs) {
 			scope.userinfo = scope.$parent.userinfo;
-			elem.bind('click', function() {
-		    	if (scope.showModal) {
-		    		scope.showModal = false;
-		    	}
-		    });
 		},
 		controller: function($scope) {
 			$scope.myInterval = 5000;
@@ -180,7 +175,6 @@ MisApp.directive('modal', function($state) {
 			scope.$watch(attrs.visible, function(value){
 				value ? $(element).modal('show') : $(element).modal('hide');
 			});
-
 			$(element).on('shown.bs.modal', function(){
 				scope.$apply(function(){
 					scope.$parent[attrs.visible] = true;
@@ -204,7 +198,10 @@ MisApp.directive('profilemodal', function($state) {
 			userinfo: '='
 		},
 		link: function(scope, elem, attrs) {
-			scope.userinfo = scope.$parent.userinfo;
+			scope.userinfo = Object.create(scope.$parent.userinfo);
+			scope.save = function() {
+				$(elem).parent().parent().parent().parent().modal('hide')
+			};
 		}
 	}
 });

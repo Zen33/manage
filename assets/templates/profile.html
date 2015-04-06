@@ -3,8 +3,8 @@
         <div class="header">
         </div>
         <span class="userPic" ng-click="editProfile()" ng-style="{'background-image':'url({{userinfo.user_avator}})'}"></span>
-        <modal title="Login form" visible="showModal">
-            <profilemodal />
+        <modal title="Edit Profile" visible="showModal">
+            <profilemodal userinfo="userinfo"/>
         </modal>
         <div class="middle">
             <div class="middleText">
