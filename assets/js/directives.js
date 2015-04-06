@@ -118,10 +118,11 @@ MisApp.directive('profile', function($state) {
 	return {
 		templateUrl: 'assets/templates/profile.html',
 		restrict: 'E',
+		scope: {
+			userinfo: '='
+		},
 		link: function(scope, elem, attrs) {
-			scope.$watch(attrs.userinfo, function(value) {
-				scope.userinfo = value;
-			})
+			scope.userinfo = scope.$parent.userinfo;
 			elem.bind('click', function() {
 		    	if (scope.showModal) {
 		    		scope.showModal = false;
@@ -144,7 +145,6 @@ MisApp.directive('profile', function($state) {
 				$scope.addSlide();
 			}
 			$scope.editProfile = function() {
-				console.log("editProfile")
 				$scope.showModal = true;
 			}
 		}
@@ -155,12 +155,11 @@ MisApp.directive('nav', function($state) {
 	return {
 		templateUrl: 'assets/templates/nav.html',
 		restrict: 'E',
+		scope: {
+			active: '='
+		},
 		link: function(scope, elem, attrs) {
-			scope.$watch(attrs.active, function(value) {
-				if (value) {
-					scope.active = value;
-				}
-		    });
+			scope.active = scope.$parent.active;
 			scope.switchTab = function(nextTab) {
 				$state.go('main', {active: nextTab}); //second parameter is for $stateParams
 				scope.active = nextTab
@@ -173,28 +172,39 @@ MisApp.directive('modal', function($state) {
 	return {
 		templateUrl: 'assets/templates/modal.html',
 		restrict: 'E',
+		transclude: true,
+		replace:true,
 		scope:true,
-      link: function postLink(scope, element, attrs) {
-        scope.title = attrs.title;
+		link: function(scope, element, attrs) {
+			scope.title = attrs.title;
+			scope.$watch(attrs.visible, function(value){
+				value ? $(element).modal('show') : $(element).modal('hide');
+			});
 
-        scope.$watch(attrs.visible, function(value){
-          if(value == true)
-            $(element).modal('show');
-          else
-            $(element).modal('hide');
-        });
+			$(element).on('shown.bs.modal', function(){
+				scope.$apply(function(){
+					scope.$parent[attrs.visible] = true;
+				});
+			});
 
-        $(element).on('shown.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = true;
-          });
-        });
+			$(element).on('hidden.bs.modal', function(){
+				scope.$apply(function(){
+					scope.$parent[attrs.visible] = false;
+				});
+			});
+		}
+	}
+});
 
-        $(element).on('hidden.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = false;
-          });
-        });
-      }
+MisApp.directive('profilemodal', function($state) {
+	return {
+		templateUrl: 'assets/templates/profilemodal.html',
+		restrict: 'E',
+		scope: {
+			userinfo: '='
+		},
+		link: function(scope, elem, attrs) {
+			scope.userinfo = scope.$parent.userinfo;
+		}
 	}
 });
