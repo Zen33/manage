@@ -15,7 +15,13 @@ MisApp.directive('comfirm', function($state) {
 			  	// success(function(data, status, headers, config) {
 				    // this callback will be called asynchronously
 				    // when the response is available
-				    $state.go('main', {active: 'home'});
+				    var data = {
+				    	user_name: "黄舒宁",
+				    	user_avator: "http://s1.hubimg.com/u/3832584_f260.jpg",
+				    	user_specialty: "特短",
+				    	user_desc: "详细介绍什么的，谁会写啊"
+				    }
+				    $state.go('main', {active: 'home', userinfo: data});
 			  	// }).
 			  	// error(function(data, status, headers, config) {
 				    // called asynchronously if an error occurs
@@ -112,8 +118,19 @@ MisApp.directive('profile', function($state) {
 	return {
 		templateUrl: 'assets/templates/profile.html',
 		restrict: 'E',
+		link: function(scope, elem, attrs) {
+			scope.$watch(attrs.userinfo, function(value) {
+				scope.userinfo = value;
+			})
+			elem.bind('click', function() {
+		    	if (scope.showModal) {
+		    		scope.showModal = false;
+		    	}
+		    });
+		},
 		controller: function($scope) {
 			$scope.myInterval = 5000;
+			$scope.showModal = false;
 			var slides = $scope.slides = [];
 			$scope.addSlide = function() {
 				var newWidth = 600 + slides.length + 1;
@@ -126,6 +143,10 @@ MisApp.directive('profile', function($state) {
 			for (var i=0; i<4; i++) {
 				$scope.addSlide();
 			}
+			$scope.editProfile = function() {
+				console.log("editProfile")
+				$scope.showModal = true;
+			}
 		}
 	}
 });
@@ -134,7 +155,7 @@ MisApp.directive('nav', function($state) {
 	return {
 		templateUrl: 'assets/templates/nav.html',
 		restrict: 'E',
-		link: function(scope, elm, attrs) {
+		link: function(scope, elem, attrs) {
 			scope.$watch(attrs.active, function(value) {
 				if (value) {
 					scope.active = value;
@@ -145,5 +166,35 @@ MisApp.directive('nav', function($state) {
 				scope.active = nextTab
 			};
 		}
+	}
+});
+
+MisApp.directive('modal', function($state) {
+	return {
+		templateUrl: 'assets/templates/modal.html',
+		restrict: 'E',
+		scope:true,
+      link: function postLink(scope, element, attrs) {
+        scope.title = attrs.title;
+
+        scope.$watch(attrs.visible, function(value){
+          if(value == true)
+            $(element).modal('show');
+          else
+            $(element).modal('hide');
+        });
+
+        $(element).on('shown.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = true;
+          });
+        });
+
+        $(element).on('hidden.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = false;
+          });
+        });
+      }
 	}
 });

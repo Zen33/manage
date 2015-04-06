@@ -1,0 +1,1 @@
+var MisApp = angular.module('misapp');

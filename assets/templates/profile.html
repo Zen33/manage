@@ -2,13 +2,13 @@
     <div class="userBox">
         <div class="header">
         </div>
-        <span class="userPic"></span>
+        <span class="userPic" ng-click="editProfile()" ng-style="{'background-image':'url({{userinfo.user_avator}})'}"></span>
         <div class="middle">
             <div class="middleText">
-            <p>黄书宁</p>
-            <span>特长</span> 
+            <p>{{userinfo.user_name}}</p>
+            <span>{{userinfo.user_specialty}}</span> 
             <br />
-            详细介绍
+            {{userinfo.user_desc}}
             </div>
         </div>
         <div class="footer">
@@ -23,3 +23,5 @@
         </div>
     </div>
 </div>
+
+<modal visible="showModal">
