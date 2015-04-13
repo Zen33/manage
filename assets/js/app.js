@@ -10,11 +10,14 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     })
     .state('main', {
 		url: "/:params",
-		params: {active: null, userinfo: null},
+		params: {active: null, userinfo: null, tableVisible: true},
 		templateUrl: "assets/templates/main.html",
 		controller: function($scope, $http, $stateParams) {
 			$scope.active = $stateParams.active;
 			$scope.userinfo = $stateParams.userinfo;
+			$scope.tableVisible = $stateParams.tableVisible;
+			$scope.chatboxVisible = !$stateParams.tableVisible;
+			
 	      	$scope.tableData = {
 	      		data: [{
 					id: "1",

@@ -4,6 +4,7 @@
 		<nav active="active"/>
 	</div>
 	<div class="section">
-		<customtable custom-data="tableData"></customtable>
+		<customtable custom-data="tableData" ng-show="tableVisible"></customtable>
+		<chatbox ng-show="chatboxVisible" messages="messages"></chatbox>
 	</div>
 </div>

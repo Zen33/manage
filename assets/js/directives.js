@@ -17,11 +17,11 @@ MisApp.directive('comfirm', function($state) {
 				    // when the response is available
 				    var data = {
 				    	user_name: "黄舒宁",
-				    	user_avator: "http://s1.hubimg.com/u/3832584_f260.jpg",
+				    	user_avator: "assets/imgs/muscle.jpeg",
 				    	user_specialty: "特短",
 				    	user_desc: "详细介绍什么的，谁会写啊"
 				    }
-				    $state.go('main', {active: 'home', userinfo: data});
+				    $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
 			  	// }).
 			  	// error(function(data, status, headers, config) {
 				    // called asynchronously if an error occurs
@@ -156,7 +156,7 @@ MisApp.directive('nav', function($state) {
 		link: function(scope, elem, attrs) {
 			scope.active = scope.$parent.active;
 			scope.switchTab = function(nextTab) {
-				$state.go('main', {active: nextTab}); //second parameter is for $stateParams
+				$state.go('main', {active: nextTab, tableVisible: nextTab === "messages" ? false : true}); //second parameter is for $stateParams
 				scope.active = nextTab
 			};
 		}
@@ -202,6 +202,49 @@ MisApp.directive('profilemodal', function($state) {
 			scope.save = function() {
 				$(elem).parent().parent().parent().parent().modal('hide')
 			};
+		}
+	}
+});
+
+MisApp.directive('chatbox', function($state, $q) {
+	return {
+		templateUrl: 'assets/templates/chatbox.html',
+		restrict: 'E',
+		controller: function($scope, $http) {
+			$scope.to = "all_users";
+			$scope.message = "";
+			
+			$scope.loadMessages = function() {
+				var params = {
+
+				} // params you send to server to get messages list
+				return $q(
+					
+					// $http.get('url').
+					// 	success(function(data, status, headers, config) {
+					// 		$scope.messages = data;
+					// 	}).
+					// 	error(function(data, status, headers, config) {
+					// 		// show users error info
+					// 	})
+				);
+			}
+			$scope.send = function() {
+				var params = {
+					content: $scope.message,
+					timestamp: "",
+					to: "",
+					from: ""
+				} // params you gonna send to server and create a new message
+				$http.post('/someUrl', params).
+					success(function(data, status, headers, config) {
+						// return;
+						// append new message into messages list
+					}).
+					error(function(data, status, headers, config) {
+						// show error info to users
+  					});
+			}
 		}
 	}
 });
