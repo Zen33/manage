@@ -206,28 +206,24 @@ MisApp.directive('profilemodal', function($state) {
 	}
 });
 
-MisApp.directive('chatbox', function($state, $q) {
+MisApp.directive('chatbox', function($state, $q, MessageService) {
 	return {
 		templateUrl: 'assets/templates/chatbox.html',
 		restrict: 'E',
 		controller: function($scope, $http) {
 			$scope.to = "all_users";
 			$scope.message = "";
+			$scope.messages = [];
 			
 			$scope.loadMessages = function() {
 				var params = {
-
-				} // params you send to server to get messages list
-				return $q(
-					
-					// $http.get('url').
-					// 	success(function(data, status, headers, config) {
-					// 		$scope.messages = data;
-					// 	}).
-					// 	error(function(data, status, headers, config) {
-					// 		// show users error info
-					// 	})
-				);
+					// params you send to server to get messages list
+				} 
+				MessageService.getMessages(params).then(function(messages) {
+					$scope.messages = messages;
+				}, function(error) {
+					// went wrong, show user info
+				})
 			}
 			$scope.send = function() {
 				var params = {
