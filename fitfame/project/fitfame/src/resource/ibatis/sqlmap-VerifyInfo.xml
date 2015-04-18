@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="VerifyInfo">
+  <typeAlias alias="VerifyInfo" type="fitfame.po.VerifyInfo"/>
+  
+  <select id="getVerifyInfo" resultClass="VerifyInfo">
+    select * from verify_info where phone = #value#
+  </select>
+  
+  <insert id="insertVerifyInfo" parameterClass="VerifyInfo">
+    insert into verify_info values (#phone#, #verifyCount#, #checkNumber#, #pwCount#, #randomPw#)
+  </insert>
+  
+  <delete id="deleteAddressInfo">
+    delete from verify_info where phone = #value# 
+  </delete>
+  
+	
+  <update id="updateVerifyAll" parameterClass="java.util.Map" >
+	update verify_info set verifyCount = #verifyCount#, pwCount = #pwCount#
+   </update>
+   
+  <update id="updateVerifyInfo" parameterClass="VerifyInfo">
+	update verify_info
+	<dynamic prepend="SET ">
+		<isNotEmpty property="checkNumber" prepend=","><![CDATA[ checkNumber=#checkNumber# ]]></isNotEmpty>
+		<isNotEqual property="verifyCount" compareValue="-1" prepend=","><![CDATA[ verifyCount=#verifyCount# ]]></isNotEqual>
+		<isNotEmpty property="randomPw" prepend=","><![CDATA[ randomPw=#randomPw# ]]></isNotEmpty>
+		<isNotEqual property="pwCount" compareValue="-1" prepend=","><![CDATA[ pwCount=#pwCount# ]]></isNotEqual>
+    </dynamic>
+	<dynamic prepend="WHERE">
+		 phone = #phone#
+	</dynamic>
+	</update>
+	
+</sqlMap>

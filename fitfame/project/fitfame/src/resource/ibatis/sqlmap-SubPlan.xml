@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SubPlan">
+	<typeAlias alias="SubPlan" type="fitfame.po.SubPlan" />
+
+	<select id="getSubPlanList" resultClass="SubPlan">
+		select A.id, A.cid, A.name, A.intro, A.icon, B.duration, A.share, A.inuse, B.rank from sub_plan as A, relation_plan_and_splan as B
+		where B.pid = #value# and B.spid = A.id order by B.rank asc
+	</select>
+
+	<select id="getOwnSubPlanList" resultClass="SubPlan">
+		select * from sub_plan
+		where cid = #value# and inuse=0
+	</select>
+	
+	<select id="getShareSubPlanList" resultClass="SubPlan">
+		select * from sub_plan
+		where share = 0 and inuse=0
+	</select>
+	
+	<insert id="insertSubPlan" parameterClass="SubPlan">
+		insert into sub_plan values (null, #cid#, #name#, #intro#, #icon#,
+		#duration#, #share#, #inuse#, #rank#)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<update id="updateSubPlan" parameterClass="SubPlan">
+		update sub_plan
+		<dynamic prepend="SET ">
+			<isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
+			<isNotEmpty property="icon" prepend=","><![CDATA[ icon=#icon# ]]></isNotEmpty>
+			<isNotEqual property="duration" compareValue="-1" prepend=","><![CDATA[ duration=#duration# ]]></isNotEqual>
+			<isNotEqual property="share" compareValue="-1" prepend=","><![CDATA[ share=#share# ]]></isNotEqual>
+			<isNotEqual property="inuse" compareValue="-1" prepend=","><![CDATA[ inuse=#inuse# ]]></isNotEqual>
+			<isNotEqual property="rank" compareValue="-1" prepend=","><![CDATA[ rank=#rank# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id#
+		</dynamic>
+	</update>
+</sqlMap>

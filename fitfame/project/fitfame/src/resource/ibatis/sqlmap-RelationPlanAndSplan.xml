@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RelationPlanAndSplan">
+	<typeAlias alias="RelationPlanAndSplan" type="fitfame.po.RelationPlanAndSplan" />
+
+	<select id="getTopRankSplan" resultClass="Integer">
+		select rank from relation_plan_and_splan where pid = #value# order by rank desc limit 1
+	</select>
+		
+	<select id="getRelationPlanAndSplan" parameterClass="RelationPlanAndSplan"
+	    resultClass="RelationPlanAndSplan">
+		select * from relation_plan_and_splan where pid = #pid# and rank = #rank#
+	</select>
+	
+	<insert id="insertRelationPlanAndSplan" parameterClass="RelationPlanAndSplan">
+		insert into relation_plan_and_splan values (null, #pid#, #spid#, #rank#, 
+		#duration#)
+	</insert>
+
+	<delete id="deleteRelationPlanAndSplan">
+		delete from relation_plan_and_splan where id = #value#
+	</delete>
+
+	<update id="updateRelationPlanAndSplan" parameterClass="RelationPlanAndSplan">
+		update relation_plan_and_splan
+		<dynamic prepend="SET ">
+			<isNotEqual property="rank" compareValue="-1" prepend=","><![CDATA[ rank=#rank# ]]></isNotEqual>
+			<isNotEqual property="duration" compareValue="-1" prepend=","><![CDATA[ duration=#duration# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id#
+		</dynamic>
+	</update>
+</sqlMap>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+	default-autowire="byName">
+	
+	<bean id="sock" class="fitfame.common.cache.client.SockIOPool" factory-method="getInstance" 
+		init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>${mc.poolname}</value>
+		</constructor-arg>
+		<property name="servers" value="${mc.servers}"/>
+		<property name="initConn" value="${mc.initconn}" />
+		<property name="minConn" value="${mc.minconn}" />
+		<property name="maxConn" value="${mc.maxconn}" />
+		<property name="maintSleep" value="${mc.maintsleep}" />
+		<property name="nagle" value="${mc.nagle}" />
+		<property name="socketTO" value="${mc.sockettimeout}" />
+		<property name="hashingAlg" value="${mc.hashingAlg}"/>
+	</bean>
+
+	
+	<bean id="memCachedClient" class="fitfame.common.cache.client.MemCachedClient">
+		<constructor-arg index="0" value="${mc.poolname}" />
+		<property name="compressEnable" value="${mc.client.compress}" />
+		<property name="compressThreshold" value="${mc.client.compressthreshold}" />
+	</bean>
+	
+	<bean id="memcachedCache" class="fitfame.common.cache.MemcachedCacheImpl"> 
+		<property name="memCachedClient" ref="memCachedClient" />
+		<property name="cacheName" value="${mc.poolname}" />
+	</bean>
+<!--  
+	<bean id="sock" class="net.p5w.common.cache.client.SockIOPool" factory-method="getInstance" 
+		init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>${mc.poolname}</value>
+		</constructor-arg>
+		<property name="servers" value="${mc.servers}"/>
+		<property name="initConn" value="${mc.initconn}" />
+		<property name="minConn" value="${mc.minconn}" />
+		<property name="maxConn" value="${mc.maxconn}" />
+		<property name="maintSleep" value="${mc.maintsleep}" />
+		<property name="nagle" value="${mc.nagle}" />
+		<property name="socketTO" value="${mc.sockettimeout}" />
+		<property name="hashingAlg" value="${mc.hashingAlg}"/>
+	</bean>
+
+	
+	<bean id="memCachedClient" class="net.p5w.common.cache.client.MemCachedClient">
+		<constructor-arg index="0" value="${mc.poolname}" />
+		<property name="compressEnable" value="${mc.client.compress}" />
+		<property name="compressThreshold" value="${mc.client.compressthreshold}" />
+	</bean>
+	
+	<bean id="memcachedCache" class="net.p5w.common.cache.MemcachedCacheImpl"> 
+		<property name="memCachedClient" ref="memCachedClient" />
+		<property name="cacheName" value="${mc.poolname}" />
+	</bean>
+		-->
+</beans>

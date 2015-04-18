@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CourseCalendar">
+	<typeAlias alias="CourseCalendar" type="fitfame.po.CourseCalendar" />
+
+	<select id="getCourseCalendar" resultClass="CourseCalendar">
+		select * from
+		course_calendar where id = #value#
+	</select>
+	
+	<select id="getNextCourseCalendar" parameterClass="java.util.Map" resultClass="CourseCalendar">
+	<![CDATA[ 
+		select * from
+		course_calendar where cid = #cid# and cdate>#cdate# order by cdate asc limit 1
+			 ]]>
+	</select>
+	
+	<select id="getPreviousCourseCalendar"  parameterClass="java.util.Map" resultClass="CourseCalendar">
+	<![CDATA[ 
+		select * from
+		course_calendar where cid = #cid# and cdate<#cdate# order by cdate desc limit 1
+			 ]]>
+	</select>
+	
+	<select id="getMonthCourseCalendar" resultClass="CourseCalendar" parameterClass="java.util.Map">
+	<![CDATA[ 
+		select * from course_calendar
+		where cid = #cid# and cdate > #cdate# and cdate-320000 < #cdate#
+		 ]]> 
+	</select>
+
+	<select id="getUndoCourseCalendar" resultClass="CourseCalendar" parameterClass="java.util.Map">
+	<![CDATA[ 
+		select A.id, A.cid, A.sid, A.stype, A.cdate, A.minutes, A.published, A.maxlimit, A.sign from course_calendar as A, course_member as B
+		where B.cid = A.id and B.uid = #uid# and A.cdate+100 > #cdate# order by A.cdate asc limit #FromItemNo#, #ToItemNo#
+		 ]]> 
+	</select>
+	
+	<select id="getUndoCourseCalendar_count" resultClass="CourseCalendar" parameterClass="java.util.Map">
+	<![CDATA[ 
+		select count(*) from course_calendar as A, course_member as B
+		where B.cid = A.id and B.uid = #uid# and A.cdate+100 > #cdate#
+		 ]]> 
+	</select>
+	
+	<select id="getDoneCourseCalendar" resultClass="CourseCalendar" parameterClass="java.util.Map">
+	<![CDATA[ 
+		select A.id, A.cid, A.sid, A.stype, A.cdate, A.minutes, A.published, A.maxlimit, A.sign from course_calendar as A, course_member as B
+		where B.cid = A.id and B.uid = #uid# and A.cdate+100 < #cdate# order by A.cdate desc limit #FromItemNo#, #ToItemNo#
+		 ]]> 
+	</select>
+	
+	<select id="getDoneCourseCalendar_count" resultClass="CourseCalendar" parameterClass="java.util.Map">
+	<![CDATA[ 
+		select count(*) from course_calendar as A, course_member as B
+		where B.cid = A.id and B.uid = #uid# and A.cdate+100 < #cdate#
+		 ]]> 
+	</select>
+	
+	<insert id="insertCourseCalendar" parameterClass="CourseCalendar">
+		insert into course_calendar values (null, #cid#, #sid#, #stype#, #cdate#,
+		#minutes#, #published#, #maxlimit#, #sign#)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<delete id="deleteCourseCalendar">
+		delete from course_calendar where id = #value#
+	</delete>
+
+	<update id="updateCourseCalendar" parameterClass="CourseCalendar">
+		update course_calendar
+		<dynamic prepend="SET ">
+			<isNotEqual property="published" compareValue="-1" prepend=","><![CDATA[ published=#published# ]]></isNotEqual>
+			<isNotEqual property="maxlimit" compareValue="-1" prepend=","><![CDATA[ maxlimit=#maxlimit# ]]></isNotEqual>
+			<isNotEqual property="sign" compareValue="-1" prepend=","><![CDATA[ sign=#sign# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id#
+		</dynamic>
+	</update>
+</sqlMap>

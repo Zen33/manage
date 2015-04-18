@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMapConfig
+	PUBLIC "-//ibatis.apache.org//DTD sql Map Config 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" errorTracingEnabled="true" maxRequests="32"
+		maxSessions="10" maxTransactions="5" useStatementNamespaces="true" />
+
+	<sqlMap resource="ibatis/sqlmap-UserInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-AdminInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachComment.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachPlan.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachService.xml" />
+	<sqlMap resource="ibatis/sqlmap-FavCoach.xml" />
+	<sqlMap resource="ibatis/sqlmap-FavorTopic.xml" />
+	<sqlMap resource="ibatis/sqlmap-FriendInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-PersonalCoach.xml" />
+	<sqlMap resource="ibatis/sqlmap-PersonalPlan.xml" />
+	<sqlMap resource="ibatis/sqlmap-PersonalSubPlan.xml" />
+	<sqlMap resource="ibatis/sqlmap-StateInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-SubPlan.xml" />
+	<sqlMap resource="ibatis/sqlmap-SubPlanDesc.xml" />
+	<sqlMap resource="ibatis/sqlmap-TopicInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-TopicReply.xml" />
+	<sqlMap resource="ibatis/sqlmap-UserPassport.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachAdInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-CoachPlanTemplate.xml" />
+	<sqlMap resource="ibatis/sqlmap-RelationPlanAndSplan.xml" />
+	<sqlMap resource="ibatis/sqlmap-RelationSplanAndDesc.xml" />
+	<sqlMap resource="ibatis/sqlmap-SquareAdInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-VerifyInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-CommonCalendar.xml" />
+	<sqlMap resource="ibatis/sqlmap-CourseCalendar.xml" />
+	<sqlMap resource="ibatis/sqlmap-CourseMember.xml" />
+</sqlMapConfig>

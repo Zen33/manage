@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FriendInfo">
+	<typeAlias alias="FriendInfo" type="fitfame.po.FriendInfo" />
+
+	<select id="getFriendInfoList" parameterClass="java.util.Map" resultClass="FriendInfo">
+		select * from friends_info where uid1 = #uid1# or uid2 = #uid2# limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getFriendInfo" parameterClass="FriendInfo" resultClass="FriendInfo">
+		select * from friends_info where uid1 = #uid1# and uid2 = #uid2#
+	</select>
+	
+	<insert id="insertFriendInfo" parameterClass="FriendInfo">
+		insert into friends_info values (#uid1#, #uid2#)
+	</insert>
+	
+	<delete id="deleteFriendInfo" parameterClass="FriendInfo">
+		delete from friends_info where where uid1 = #uid1# and uid2 = #uid2#
+	</delete>
+</sqlMap>
