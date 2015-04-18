@@ -214,6 +214,7 @@ MisApp.directive('chatbox', function($state, $q, MessageService) {
 			$scope.to = "all_users";
 			$scope.message = "";
 			$scope.messages = [];
+			$scope.loading = true;
 			
 			$scope.loadMessages = function() {
 				var params = {
@@ -221,6 +222,7 @@ MisApp.directive('chatbox', function($state, $q, MessageService) {
 				} 
 				MessageService.getMessages(params).then(function(messages) {
 					$scope.messages = messages;
+					$scope.loading = false;
 				}, function(error) {
 					// went wrong, show user info
 				})

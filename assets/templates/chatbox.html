@@ -1,8 +1,8 @@
-<div class="chatbox">
+<div class="chatbox" ui-if="!loading">
 	<textarea ng-model="message" class="message" placeholder="输入你的新消息" />
 	<input type="radio" ng-model="to" value="all_users" ng-change="to = 'all_users'">所有用户可见
 	<input type="radio" ng-model="to" value="only_part" ng-change="to = 'only_part'">仅服务用户可见
-	<button type="button" class="btn btn-success">发送</button>
+	<button type="button" class="btn btn-success" ng-click="postMessage()">发送</button>
 	<div class="messages" ng-repeat="message in messages">
 		<p>{{message}}</p>
 	</div>
