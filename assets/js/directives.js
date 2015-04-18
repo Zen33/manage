@@ -224,22 +224,26 @@ MisApp.directive('chatbox', function($state, $q, MessageService) {
 				}, function(error) {
 					// went wrong, show user info
 				})
-			}
-			$scope.send = function() {
+			};
+			$scope.postMessage = function() {
 				var params = {
-					content: $scope.message,
-					timestamp: "",
-					to: "",
-					from: ""
-				} // params you gonna send to server and create a new message
-				$http.post('/someUrl', params).
-					success(function(data, status, headers, config) {
-						// return;
-						// append new message into messages list
-					}).
-					error(function(data, status, headers, config) {
-						// show error info to users
-  					});
+					// params you gonna send to server and create a new message
+				} 
+				MessageService.postMessage(params).then(function(message) {
+					$scope.messages.push(message);
+				}, function(error) {
+					// went wrong, show user info
+				})
+			};
+			$scope.deleteMessage = function() {
+				var params = {
+					// params you need to send delete
+				}
+				MessageService.deleteMessage(params).then(function(resp) {
+					$scope.loadMessages();
+				}, function(error) {
+					// went wrong, show user info 
+				})
 			}
 		}
 	}
