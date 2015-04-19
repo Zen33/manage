@@ -1,6 +1,6 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('comfirm', function($state) {
+MisApp.directive('comfirm', function($state, UserService) {
 	return {
 		templateUrl: 'assets/templates/comfirm.html',
 		restrict: 'E',
@@ -11,22 +11,18 @@ MisApp.directive('comfirm', function($state) {
 				rememberMe: true
 			};
 			$scope.login = function() {
-				// $http.post('/someUrl', $scope.loginObj).
-			  	// success(function(data, status, headers, config) {
-				    // this callback will be called asynchronously
-				    // when the response is available
 				    var data = {
-				    	user_name: "黄舒宁",
-				    	user_avator: "assets/imgs/muscle.jpeg",
-				    	user_specialty: "特短",
-				    	user_desc: "详细介绍什么的，谁会写啊"
+				    	tel: "18611586414",
+				    	pw: "111111"
 				    }
-				    $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
-			  	// }).
-			  	// error(function(data, status, headers, config) {
-				    // called asynchronously if an error occurs
-				    // or server returns response with an error status.
-			  	// });
+				    UserService.auth(data).then(function (data) {
+				    	console.log("succ", data)
+				    	// $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
+				    }, function(error) {
+	                    // something went wrong
+	                    console.log("error", error);
+	                    // $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
+	            	})
 			};
 			$scope.onTextClick = function($event) {
 				$event.target.select();

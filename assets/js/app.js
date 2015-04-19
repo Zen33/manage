@@ -2,8 +2,10 @@ var MisApp = angular.module('misapp', ['ui.router', 'ui.grid', 'ngTouch', 'ui.gr
 	, 'ui.grid.cellNav', 'ui.grid.pagination', 'ui.grid.selection', 'ui.bootstrap']);
 
 MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
-  $urlRouterProvider.otherwise("/");
-  $stateProvider
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+	$urlRouterProvider.otherwise("/");
+	$stateProvider
     .state('authentication', {
 		url: "/",
 		templateUrl: "index.html"
