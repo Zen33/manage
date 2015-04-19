@@ -52,3 +52,29 @@ intro 简介
 同登录
 ｝
 
+3. 教练公开计划
+访问方法	get
+访问地址	restapi/plan/coach
+访问参数	token
+
+返回内容	
+{
+	status:200,
+	plan:[{  数组
+		duration: 30, 计划总天数 int
+		name,
+		intro,简介
+		pid, long, 计划id
+	}]
+}
+
+3. 教练计划模版
+访问方法	get
+访问地址	restapi/plan/coach/plantemplate
+访问参数	token
+
+返回内容	
+{
+	同上
+}
+
