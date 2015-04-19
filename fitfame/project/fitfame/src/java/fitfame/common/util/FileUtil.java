@@ -95,12 +95,34 @@ public class FileUtil {
 		return icon;
 	}
 	
-	public static String SaveADFile(String id , File file, String Type) throws IOException
+	public static String SaveHeadFile(String id , File file, String Type) throws IOException
 	{
 		InputStream rtInStream;
-		String icon = "http://112.124.52.165:8080/resources/AD/" +
+		String icon = "http://112.124.52.165:8080/resources/HeaderPicture/" +
 		id + "." + Type.substring(6);
-		String url = "/usr/local/tomcat/webapps/resources/AD/"  + id + "." + Type.substring(6);
+		String url = "/usr/local/tomcat/webapps/resources/HeaderPicture/"  + id + "." + Type.substring(6);
+		rtInStream = new FileInputStream(file);
+		File outFile = new File(url);
+		FileOutputStream fos = new FileOutputStream(outFile);
+		byte buffer[] = new byte[1024];
+		int temp = 0;
+		while((temp = rtInStream.read(buffer)) != -1) {
+			fos.write(buffer, 0, temp);
+		}		
+		
+		fos.flush();  
+		fos.close();
+		return icon;
+	}
+	
+	public static String SaveADFile(String id , File file, String Type) throws IOException
+	{
+		Random random = new Random();
+		int r = random.nextInt(10000);
+		InputStream rtInStream;
+		String icon = "http://112.124.52.165:8080/resources/AD/" +
+		id +  "_" + r +  "." + Type.substring(6);
+		String url = "/usr/local/tomcat/webapps/resources/AD/"  + id +  "_" + r + "." + Type.substring(6);
 		rtInStream = new FileInputStream(file);
 		File outFile = new File(url);
 		FileOutputStream fos = new FileOutputStream(outFile);

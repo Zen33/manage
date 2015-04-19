@@ -3,6 +3,7 @@
  */
 package fitfame.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -263,11 +264,20 @@ public class UserService {
 		}
 		
 		UserInfo user = userInfoDaoImpl.getUserInfoByUid(uid);
-		json = UserBasicInfo(user);
-		json.accumulate("state", queryStateInfo(uid));
-		json.accumulate("token", TokenUtil.produceToken(uid));
+		JSONObject pjson = UserBasicInfo(user);
+		pjson.accumulate("state", queryStateInfo(uid));
+		pjson.accumulate("token", TokenUtil.produceToken(uid));
 		
-		
+		if(user.getCategory() == 1)
+		{
+			pjson.accumulate("coach_info", coachInfoDaoImpl.getCoachInfo(user.getUid()));
+			pjson.accumulate("coach_ad", coachAdInfoDaoImpl.getCoachAdInfoList(user.getUid()));
+			json.accumulate("success_jsonpCallback", pjson);	
+		}
+		else
+		{
+			json = pjson;
+		}
 		return json;
 	}
 
@@ -406,6 +416,68 @@ public class UserService {
 		}
 		up.setPw(npw);
 		userPassportDaoImpl.updateUserPassport(up);
+		return json;
+	}
+
+	public JSONObject CoachCompleteInfo(String uid, File icon, String sex,
+			String username, String picType, int brithday, int height,
+			int weight, String city, String dist, int category, List<File> ads,
+			List<String> adsType, String intro, int exp) {
+		JSONObject json = new JSONObject();
+		UserInfo user = userInfoDaoImpl.getUserInfoByUid(uid);
+		user.setBrithday(brithday);
+		user.setCategory(1);
+		user.setCity(city);
+		user.setDist(dist);
+		user.setHeight(height);
+		user.setWeight(weight);
+		user.setSex(sex);
+		user.setUsername(username);
+		
+		String url = null;
+		try {
+			if (icon != null)
+				url = FileUtil.SaveADFile(uid, icon, picType);
+		} catch (IOException e) {
+			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, uid);
+			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, uid);
+		}
+		user.setIcon(url);
+		userInfoDaoImpl.updateUserInfo(user);
+		
+		coachAdInfoDaoImpl.deleteCoachAdInfo(uid);
+		
+		for(int i = 0; i < ads.size(); i ++)
+		{
+			File ad = ads.get(i);
+			String adUrl = null;
+			try {
+				if (ad != null)
+					adUrl = FileUtil.SaveADFile(uid, ad, adsType.get(i));
+			} catch (IOException e) {
+				LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, uid);
+				throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, uid);
+			}
+			CoachAdInfo cai = new CoachAdInfo();
+			cai.setCid(uid);
+			cai.setUrl(adUrl);
+			coachAdInfoDaoImpl.insertCoachAdInfo(cai);
+		}
+		
+		CoachInfo coachInfo = coachInfoDaoImpl.getCoachInfo(uid);
+		coachInfo.setExp(exp);
+		coachInfo.setIntro(intro);
+		coachInfoDaoImpl.updateCoachInfo(coachInfo);
+		
+		
+		JSONObject pjson = UserBasicInfo(user);
+		pjson.accumulate("state", queryStateInfo(uid));
+		pjson.accumulate("token", TokenUtil.produceToken(uid));
+		
+		pjson.accumulate("coach_info", coachInfoDaoImpl.getCoachInfo(user.getUid()));
+		pjson.accumulate("coach_ad", coachAdInfoDaoImpl.getCoachAdInfoList(user.getUid()));
+		json.accumulate("success_jsonpCallback", pjson);
+		
 		return json;
 	}
 

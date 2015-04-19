@@ -20,6 +20,7 @@ import fitfame.common.util.ExceptionIdUtil;
 import fitfame.common.util.LogUtil;
 import fitfame.dao.ICoachPlanDao;
 import fitfame.dao.ICoachPlanTemplateDao;
+import fitfame.dao.IPersonalCoachDao;
 import fitfame.dao.IPersonalPlanDao;
 import fitfame.dao.IPersonalSubPlanDao;
 import fitfame.dao.IRelationPlanAndSplanDao;
@@ -29,6 +30,7 @@ import fitfame.dao.ISubPlanDescDao;
 import fitfame.po.CoachPlan;
 import fitfame.po.CoachPlanTemplate;
 import fitfame.po.PersonAndPlan;
+import fitfame.po.PersonalCoach;
 import fitfame.po.PersonalPlan;
 import fitfame.po.PersonalSubPlan;
 import fitfame.po.RelationPlanAndSplan;
@@ -73,6 +75,10 @@ public class PlanService {
 	@Autowired(required = true)
 	@Qualifier("relationSplanAndDescDaoImpl")
 	private  IRelationSplanAndDescDao relationSplanAndDescDaoImpl;
+	
+	@Autowired(required = true)
+	@Qualifier("personalCoachDaoImpl")
+	private IPersonalCoachDao personalCoachDaoImpl;
 	
 	public JSONObject queryUserPlan(String uid){
 		JSONObject json = new JSONObject();
@@ -188,6 +194,21 @@ public class PlanService {
 		}
 		json = queryUserUndoSubPlan(uid);
 		return json;
+	}
+	
+	public JSONObject ReplaceUserPlan(String cid, long pid, String uid) {
+		// 判断是否是私人教练
+		List<PersonalCoach> coachs = personalCoachDaoImpl.getPersonalCoachList(uid);
+		if(coachs.size() != 0 && !coachs.get(0).getUid().equals(uid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, cid + ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, cid);
+		}
+		
+		PersonalPlan pplan = personalPlanDaoImpl.getUndoPersonalPlan(uid);
+		personalPlanDaoImpl.deletePersonalPlan(pplan.getId());
+		
+		return AddUserPlan(uid, pid);
 	}
 
 	public JSONObject AddUserPlan(String myid, long pid) {
@@ -402,4 +423,6 @@ public class PlanService {
 		
 		return json.accumulate("plans", coachPlanDao.getCoachPlanList(plan.getCid()));
 	}
+
+	
 }

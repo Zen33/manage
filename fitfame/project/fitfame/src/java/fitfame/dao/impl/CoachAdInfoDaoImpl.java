@@ -64,7 +64,7 @@ public class CoachAdInfoDaoImpl extends BaseDAO<CoachAdInfo> implements ICoachAd
 		// TODO Auto-generated method stub
 		int result = 0;
 		try{
-			this.getSqlMapClientTemplate().delete("CoachAdInfo.deleteCoachAdInfoList", url);
+			this.getSqlMapClientTemplate().delete("CoachAdInfo.deleteCoachAdInfo", url);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(), e);
 			result = 1;

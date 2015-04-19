@@ -3,6 +3,9 @@
  */
 package fitfame.action;
 
+import java.io.File;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -110,14 +113,6 @@ public class UserAction {
 				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue, "/user/profile/");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-//			byte[] nameBuffer = null;
-//			if(username != null)
-//			{
-//				username = username.replace(' ', '+');
-//				BASE64Decoder decoder = new BASE64Decoder();
-//				nameBuffer = decoder.decodeBuffer(username);
-//				username = nameBuffer.toString();
-//			}
 			
 			username = new String(username.getBytes("iso8859-1"), "utf-8");
 			byte[] buffer = null;
@@ -129,6 +124,39 @@ public class UserAction {
 			
 			json = userService.CompleteInfo(uid, buffer, sex, username, picType,
 					brithday, height, weight, city, dist, category);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@POST
+	@NoCache
+	@Path("/coach/profile/")
+	@Produces("text/html;charset=utf-8")
+	public String CoachCompleteInfo(@PathParam("version") String version,
+			@FormParam("token") String token, @FormParam("sex") String sex,
+			@FormParam("username") String username,
+			@FormParam("icon") File icon,
+			@FormParam("picType") String picType,
+			@FormParam("birthday") int brithday,
+			@FormParam("height") int height, @FormParam("weight") int weight,
+			@FormParam("city") String city, @FormParam("dist") String dist,
+			@FormParam("category") int category, @FormParam("ads") List<File> ads,
+			@FormParam("adsType") List<String> adsType, @FormParam("intro") String intro,
+			@FormParam("exp") int exp) {
+		JSONObject json = new JSONObject();
+		try {
+			String uid = TokenUtil.checkToken(token);
+			if (uid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue, "/user/profile/");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = userService.CoachCompleteInfo(uid, icon, sex, username, picType,
+					brithday, height, weight, city, dist, category, ads, adsType, intro, exp);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

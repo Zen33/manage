@@ -90,6 +90,34 @@ public class PlanAction {
 	
 	@GET
 	@NoCache
+	@Path("/user/replace/")
+	@Produces("text/html;charset=utf-8")
+	public String ReplaceUserPlan(@PathParam("version") String version,
+			@QueryParam("token") String token, @QueryParam("pid") long  pid
+			, @QueryParam("uid") String  uid) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue, "/plan/user");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+
+			if (!isValidateId(pid) || !isValidateUid(uid)) {
+				LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, "/plan/user");
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
+			json = planService.ReplaceUserPlan(myid, pid,uid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
 	@Path("/user/remove/")
 	@Produces("text/html;charset=utf-8")
 	public String RemoveUserPlan(@PathParam("version") String version,

@@ -13,6 +13,6 @@
 	</insert>
 
 	<delete id="deleteCoachAdInfo">
-		delete from coach_ad_info where url = #value#
+		delete from coach_ad_info where cid = #value#
 	</delete>
 </sqlMap>

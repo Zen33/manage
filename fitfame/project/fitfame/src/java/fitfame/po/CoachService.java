@@ -34,7 +34,7 @@ public class CoachService implements Serializable {
 	private int online_times = -1;
 	// 线下服务时长
 	private int offline_times = -1;
-		// 是否在用0在用1不在用
+	// 是否在用0在用1不在用
 	private int inuse = -1;
 
 	public long getSid() {
