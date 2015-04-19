@@ -1,0 +1,48 @@
+缺少：1. 教练账单，流水，发放时间
+	  3. 教练的客户
+	  4. 群发消息
+	  5. 消息历史，以及界面修改
+	  6. 备注，备注历史
+	  7. 删除用户当前计划，给用户添加新的计划。
+	  
+1. 用户登录
+访问方法	get
+访问地址	restapi/user/login
+访问参数	tel  手机号 String类型
+pw  密码 String类型
+返回内容	{
+status:200,
+success_jsonpCallback 第一级
+
+token 二级
+
+user_info 第二级
+第三级：sex 1男 2女 username 昵称 icon 头像 birthday生日
+
+coach_ad 宣传图 二级 数组
+url 第三级 图的路径
+
+coach_info 二级
+exp 经验数，将该数字显示到技能特长上
+intro 简介
+}
+	
+
+2. 修改个人信息
+访问方法	post
+访问地址	restapi/user/coach/profile
+访问参数	token必传，其他不传默认不修改
+token 登录时获取
+username 
+icon  参数是File类型
+picType   icon的格式，png jpg等
+birthday 生日，20141209
+ads File List 类型 宣传图
+adsType 图片格式数组 
+exp 经验数
+intro 简介
+
+返回内容	{
+同登录
+｝
+
