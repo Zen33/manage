@@ -10,21 +10,27 @@
 访问地址	restapi/user/login
 访问参数	tel  手机号 String类型
 pw  密码 String类型
-返回内容	{
-status:200,
-success_jsonpCallback 第一级
-
-token 二级
-
-user_info 第二级
-第三级：sex 1男 2女 username 昵称 icon 头像 birthday生日
-
-coach_ad 宣传图 二级 数组
-url 第三级 图的路径
-
-coach_info 二级
-exp 经验数，将该数字显示到技能特长上
-intro 简介
+返回内容	
+{
+	status:200,
+	success_jsonpCallback: func,
+	token: func,
+	user_info: {
+		sex: "1male/2female", int 
+		username: "nickname",
+		icon: "avator",
+		birthday: "birth" int
+	},
+	coach_ad: {
+		ads: [
+			url:"url1",
+			url:"url2"
+		]
+	},
+	coach_info: {
+		exp: "int/experience",  // for speciality,
+		intro: "introduction"
+	} 
 }
 	
 
