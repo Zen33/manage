@@ -3,7 +3,6 @@
 	  4. 群发消息
 	  5. 消息历史，以及界面修改
 	  6. 备注，备注历史
-	  7. 删除用户当前计划，给用户添加新的计划。
 	  
 1. 用户登录
 访问方法	get
@@ -88,7 +87,7 @@ intro 简介
 	同上
 }
 
-6. 教练删除计划
+6. 教练删除公开计划
 访问方法	get
 访问地址	restapi/plan/coach/plan/remove
 访问参数	token
@@ -137,3 +136,62 @@ intro 简介
 		units: 单位 次数/时长
 	}]
 }
+
+8. 添加动作模板
+访问方法	post
+访问地址	restapi/plan/coach/plandesc/add
+访问参数	token
+			name	
+			intro
+			pic File类型
+			picType 图片类型 jpg等
+			media File 类型
+			mediaType 类型
+			category  视频1 或 图片0 int
+			quantiry 数量
+			units 单位 次数/时长 传汉字即可
+			duration 时长
+
+返回		
+{
+	status: 200
+	失败返回 400 
+			 message:"没有权限操作"
+}
+
+9. 删除动作模板
+访问方法	get
+访问地址	restapi/plan/coach/plandesc/remove
+访问参数	token
+			id	动作id
+
+返回		所有动作
+{
+	status: 200
+	同动作模板库接口
+}
+
+10. 更新动作模板
+访问方法	post
+访问地址	restapi/plan/coach/plandesc/update
+访问参数	token
+
+			id	动作id
+
+			name	
+			intro
+			pic File类型
+			picType 图片类型 jpg等
+			media File 类型
+			mediaType 类型
+			category  视频1 或 图片0 int
+			quantiry 数量
+			units 单位 次数/时长 传汉字即可
+			duration 时长
+			
+返回		
+{
+	status: 200
+}
+
+
