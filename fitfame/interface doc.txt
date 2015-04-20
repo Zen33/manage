@@ -57,7 +57,7 @@ intro 简介
 访问地址	restapi/plan/coach
 访问参数	token
 
-返回内容	
+返回内容	所有计划
 {
 	status:200,
 	plan:[{  数组
@@ -68,12 +68,32 @@ intro 简介
 	}]
 }
 
-3. 教练计划模版
+4. 教练计划模版
 访问方法	get
 访问地址	restapi/plan/coach/plantemplate
 访问参数	token
 
-返回内容	
+返回内容	所有模版
+{
+	同上
+}
+
+5. 教练发布计划（点击模版中某项）
+访问方法	get
+访问地址	restapi/plan/coach/plan/publish
+访问参数	token
+			pid 选择模版id
+返回		所有计划
+{
+	同上
+}
+
+6. 教练删除计划
+访问方法	get
+访问地址	restapi/plan/coach/plan/remove
+访问参数	token
+			pid 选择模版id
+返回		所有计划
 {
 	同上
 }
