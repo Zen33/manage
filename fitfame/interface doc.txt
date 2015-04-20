@@ -98,3 +98,42 @@ intro 简介
 	同上
 }
 
+7. 训练模板库（子计划模板库）
+访问方法	get
+访问地址	restapi/plan/coach/subplan
+访问参数	token
+
+返回		所有子计划
+{
+	status: 200
+	subplan: 训练数组
+	[{
+		id: 训练id long
+		duration: 训练时长 int
+		name: 训练名字
+		intro: 简介
+		rank: 第几天 int
+	}]
+}
+
+8. 动作模板库
+访问方法	get
+访问地址	restapi/plan/coach/plandesc
+访问参数	token
+
+返回		所有动作
+{
+	status: 200
+	desc: 动作数组
+	[{
+		id: 动作id long
+		duration: 休息时间 int
+		name: 训练名字
+		intro: 简介
+		category: 上传媒体的类型 0图片 1视频。该字段的意义在于，视频和师范图片只能上传一种，且只需要传一张图
+		pic: 缩略图， 需单独上传，放师范图片旁边，
+		url: 当类型是图片时为示范图的url，视频时为视频url，视频时不需要预览。
+		quantiry: int 数量
+		units: 单位 次数/时长
+	}]
+}
