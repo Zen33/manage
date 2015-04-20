@@ -3,6 +3,8 @@
  */
 package fitfame.action;
 
+import java.io.File;
+
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -337,13 +339,12 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
-	@Path("coach/plan/publish")
+	@Path("/coach/")
 	@Produces("text/html;charset=utf-8")
-	public String PublishCoachPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("pid") long pid) {
+	public String QueryAllPlan(@PathParam("version") String version,
+			@QueryParam("token") String token) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -353,7 +354,57 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			json = planService.publishCoachPlan(pid);
+			json = planService.queryAllPlan(myid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("coach/plan/publish")
+	@Produces("text/html;charset=utf-8")
+	public String PublishCoachPlan(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("pid") long pid) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"coach/plandesc");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = planService.publishCoachPlan(pid,myid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("coach/plan/remove")
+	@Produces("text/html;charset=utf-8")
+	public String RemoveCoachPlan(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("pid") long pid) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"coach/plandesc");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = planService.RemoveCoachPlan(pid,myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -370,8 +421,10 @@ public class PlanAction {
 			@FormParam("token") String token,
 			@FormParam("name") String name, 
 			@FormParam("intro")  String intro, 
-			@FormParam("pic") String pic,
-			@FormParam("url")  String url, 
+			@FormParam("pic") File pic,
+			@FormParam("picType")  String picType,
+			@FormParam("media")  File media,
+			@FormParam("mediaType")  String mediaType,
 			@FormParam("category") int category, 
 			@FormParam("quantity") int quantity, 
 			@FormParam("units") String units, 
@@ -386,7 +439,32 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.addPlanDesc(myid, name, intro, pic, url, category, quantity, units, duration, share);
+			planService.addPlanDesc(myid, name, intro, pic,category, quantity, units, duration, share, pic, picType, media, mediaType);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("coach/plandesc/remove")
+	@Produces("text/html;charset=utf-8")
+	public String RemoveCoachPlanDesc(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("id") long id) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"coach/plandesc");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = planService.RemoveCoachPlanDesc(id,myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -402,9 +480,12 @@ public class PlanAction {
 	public String UpdateNewPlanDesc(@PathParam("version") String version,
 			@FormParam("token") String token,
 			@FormParam("id") long id, 
+			@FormParam("name") String name, 
 			@FormParam("intro")  String intro, 
-			@FormParam("pic") String pic,
-			@FormParam("url")  String url, 
+			@FormParam("pic") File pic,
+			@FormParam("picType") String picType,
+			@FormParam("mediaType") String mediaType,
+			@FormParam("media")  File media, 
 			@FormParam("category") int category, 
 			@FormParam("quantity") int quantity, 
 			@FormParam("units") String units, 
@@ -419,7 +500,7 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.updatePlanDesc(id, intro, pic, url, category, quantity, units, duration, share);
+			planService.updatePlanDesc(id, intro, pic, category, quantity, units, duration, share, pic, picType, media, mediaType, myid,name);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -428,17 +509,15 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("coach/subplan/add")
 	@Produces("text/html;charset=utf-8")
 	public String AddNewSubPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("name") String name, 
-			@FormParam("intro")  String intro, 
-			@FormParam("icon")  String icon, 
-			@FormParam("duration") int duration,
-			@FormParam("share") int share) {
+			@QueryParam("token") String token,
+			@QueryParam("name") String name, 
+			@QueryParam("intro")  String intro,
+			@QueryParam("duration") int duration) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -448,7 +527,7 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.addSubPlan(myid, name, intro, icon, duration, share);
+			planService.addSubPlan(myid, name, intro,duration);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -457,17 +536,16 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("coach/subplan/update")
 	@Produces("text/html;charset=utf-8")
 	public String UpdateSubPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id, 
-			@FormParam("intro")  String intro, 
-			@FormParam("icon")  String icon, 
-			@FormParam("duration") int duration,
-			@FormParam("share") int share) {
+			@QueryParam("token") String token,
+			@QueryParam("id") long id, 
+			@QueryParam("name") String name,
+			@QueryParam("intro")  String intro, 
+			@QueryParam("duration") int duration) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -477,7 +555,32 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.updateSubPlan(id, intro, icon, duration, share);
+			planService.updateSubPlan(myid, id, intro, duration, name);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("coach/subplan/delete")
+	@Produces("text/html;charset=utf-8")
+	public String DeleteSubPlan(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("id") long id) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"coach/plandesc");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = planService.deleteSubPlan(myid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

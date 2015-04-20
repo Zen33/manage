@@ -19,6 +19,11 @@
 		where share = 0 and inuse=0
 	</select>
 	
+	<select id="getSubPlan" resultClass="SubPlan">
+		select * from sub_plan
+		where id = #value#
+	</select>
+	
 	<insert id="insertSubPlan" parameterClass="SubPlan">
 		insert into sub_plan values (null, #cid#, #name#, #intro#, #icon#,
 		#duration#, #share#, #inuse#, #rank#)
@@ -31,6 +36,7 @@
 		update sub_plan
 		<dynamic prepend="SET ">
 			<isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
+			<isNotEmpty property="name" prepend=","><![CDATA[ name=#name# ]]></isNotEmpty>
 			<isNotEmpty property="icon" prepend=","><![CDATA[ icon=#icon# ]]></isNotEmpty>
 			<isNotEqual property="duration" compareValue="-1" prepend=","><![CDATA[ duration=#duration# ]]></isNotEqual>
 			<isNotEqual property="share" compareValue="-1" prepend=","><![CDATA[ share=#share# ]]></isNotEqual>
@@ -41,4 +47,8 @@
 			id = #id#
 		</dynamic>
 	</update>
+	
+	<delete id="deleteSubPlan">
+		delete from sub_plan where id = #value#
+	</delete>
 </sqlMap>

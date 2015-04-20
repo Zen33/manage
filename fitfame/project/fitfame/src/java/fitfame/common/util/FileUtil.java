@@ -44,7 +44,7 @@ public class FileUtil {
 	public static String SaveStringAsHeaderPic(String uid, byte [] picture, String picType) throws IOException
 	{
 		Random random = new Random();
-		int r = random.nextInt(10000);
+		int r = random.nextInt(100000);
 		String icon = "http://112.124.52.165:8080/resources/HeaderPicture/" + uid + "_" + r + "." + picType;
 		String url = "/usr/local/tomcat/webapps/resources/HeaderPicture/"  + uid +  "_" + r + "." + picType;
 		File f=new File(url); 
@@ -62,11 +62,12 @@ public class FileUtil {
 	/**
 	 * 保存头像 返回路径
 	 */
-	public static String SaveStringAsTopicPic(byte [] picture, String picType) throws IOException
+	public static String SaveStringAsTopicPic(byte [] picture, String picType, String uid) throws IOException
 	{
-		UUID uuid = UUID.randomUUID(); 
-		String icon = "http://112.124.52.165:8080/resources/topic/" + uuid + "." + picType;
-		String url = "/usr/local/tomcat/webapps/resources/topic/"  + uuid +"." + picType;
+		Random random = new Random();
+		int r = random.nextInt(100000);
+		String icon = "http://112.124.52.165:8080/resources/topic/" + uid +  "_" + r + "_" + DateUtil.CurrentTime() + "." + picType;
+		String url = "/usr/local/tomcat/webapps/resources/topic/"  + uid+  "_" + r + "_" + DateUtil.CurrentTime() +"." + picType;
 		File f=new File(url); 
 		if (f.exists()==false) 
 		{  
@@ -81,8 +82,10 @@ public class FileUtil {
 	
 	public static String SaveStringAsADPic(String id, byte [] picture, String picType) throws IOException
 	{
-		String icon = "http://112.124.52.165:8080/resources/AD/" + id + "." + picType;
-		String url = "/usr/local/tomcat/webapps/resources/AD/"  + id + "." + picType;
+		Random random = new Random();
+		int r = random.nextInt(100000);
+		String icon = "http://112.124.52.165:8080/resources/AD/" + id +  "_" + r + "_" + DateUtil.CurrentTime() + "." + picType;
+		String url = "/usr/local/tomcat/webapps/resources/AD/"  + id +  "_" + r + "_" + DateUtil.CurrentTime() + "." + picType;
 		File f=new File(url); 
 		if (f.exists()==false) 
 		{  
@@ -97,10 +100,13 @@ public class FileUtil {
 	
 	public static String SaveHeadFile(String id , File file, String Type) throws IOException
 	{
+		Random random = new Random();
+		int r = random.nextInt(100000);
 		InputStream rtInStream;
 		String icon = "http://112.124.52.165:8080/resources/HeaderPicture/" +
-		id + "." + Type.substring(6);
-		String url = "/usr/local/tomcat/webapps/resources/HeaderPicture/"  + id + "." + Type.substring(6);
+		id +  "_" + r + "_" + DateUtil.CurrentTime() + "." + Type.substring(6);
+		String url = "/usr/local/tomcat/webapps/resources/HeaderPicture/"  +
+		id +  "_" + r + "_" + DateUtil.CurrentTime() + "." + Type.substring(6);
 		rtInStream = new FileInputStream(file);
 		File outFile = new File(url);
 		FileOutputStream fos = new FileOutputStream(outFile);
@@ -118,11 +124,35 @@ public class FileUtil {
 	public static String SaveADFile(String id , File file, String Type) throws IOException
 	{
 		Random random = new Random();
-		int r = random.nextInt(10000);
+		int r = random.nextInt(100000);
 		InputStream rtInStream;
 		String icon = "http://112.124.52.165:8080/resources/AD/" +
-		id +  "_" + r +  "." + Type.substring(6);
-		String url = "/usr/local/tomcat/webapps/resources/AD/"  + id +  "_" + r + "." + Type.substring(6);
+		id +  "_" + r + "_" + DateUtil.CurrentTime() +  "." + Type.substring(6);
+		String url = "/usr/local/tomcat/webapps/resources/AD/"  + 
+		id  +  "_" + r + "_" + DateUtil.CurrentTime() + "." + Type.substring(6);
+		rtInStream = new FileInputStream(file);
+		File outFile = new File(url);
+		FileOutputStream fos = new FileOutputStream(outFile);
+		byte buffer[] = new byte[1024];
+		int temp = 0;
+		while((temp = rtInStream.read(buffer)) != -1) {
+			fos.write(buffer, 0, temp);
+		}		
+		
+		fos.flush();  
+		fos.close();
+		return icon;
+	}
+	
+	public static String SaveDescFile(String id , File file, String Type) throws IOException
+	{
+		Random random = new Random();
+		int r = random.nextInt(100000);
+		InputStream rtInStream;
+		String icon = "http://112.124.52.165:8080/resources/Desc/" +
+		id +  "_" + r + "_" + DateUtil.CurrentTime() + "." + Type.substring(6);
+		String url = "/usr/local/tomcat/webapps/resources/Desc/"  + 
+		id +  "_"  + r +"_" + DateUtil.CurrentTime()+ "." + Type.substring(6);
 		rtInStream = new FileInputStream(file);
 		File outFile = new File(url);
 		FileOutputStream fos = new FileOutputStream(outFile);

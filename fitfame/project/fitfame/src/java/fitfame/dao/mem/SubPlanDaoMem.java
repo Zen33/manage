@@ -56,4 +56,16 @@ public class SubPlanDaoMem implements ISubPlanDao {
 		return null;
 	}
 
+	@Override
+	public SubPlan getSubPlan(long sid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int deleteSubPlan(long sid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

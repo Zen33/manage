@@ -437,7 +437,7 @@ public class UserService {
 		String url = null;
 		try {
 			if (icon != null)
-				url = FileUtil.SaveADFile(uid, icon, picType);
+				url = FileUtil.SaveHeadFile(uid, icon, picType);
 		} catch (IOException e) {
 			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, uid);
 			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, uid);

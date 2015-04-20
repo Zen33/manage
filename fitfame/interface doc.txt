@@ -194,4 +194,51 @@ intro 简介
 	status: 200
 }
 
+11. 添加训练模板
+访问方法	get
+访问地址	restapi/plan/coach/subplan/add
+访问参数	token
+			name	
+			intro
+			duration 训练时长
 
+返回		
+{
+	status: 200
+	失败返回 400 
+	message:"没有权限操作"
+}
+
+12. 删除训练模版
+访问方法	get
+访问地址	restapi/plan/coach/subplan/delete
+访问参数	token
+			id
+
+返回		
+{
+	status: 200
+	subplan: 训练数组
+	[{
+		id: 训练id long
+		duration: 训练时长 int
+		name: 训练名字
+		intro: 简介
+		rank: 第几天 int
+	}]
+}
+
+13. 更新训练模板
+访问方法	get
+访问地址	restapi/plan/coach/subplan/update
+访问参数	token
+			name	
+			intro
+			duration 训练时长
+
+返回		
+{
+	status: 200
+	失败返回 400 
+	message:"没有权限操作"
+}

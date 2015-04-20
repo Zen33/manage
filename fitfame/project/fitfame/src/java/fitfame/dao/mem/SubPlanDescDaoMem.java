@@ -56,4 +56,16 @@ public class SubPlanDescDaoMem implements ISubPlanDescDao {
 		return null;
 	}
 
+	@Override
+	public int deleteSubPlanDesc(SubPlanDesc info) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public SubPlanDesc getSubPlanDescWithId(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

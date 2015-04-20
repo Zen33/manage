@@ -19,6 +19,10 @@ public interface ISubPlanDao {
 	
 	public List<SubPlan> getShareSubPlanList();
 	
+	public SubPlan getSubPlan(long sid);
+	
+	public int deleteSubPlan(long sid);
+	
 	public int insertSubPlan(SubPlan info);
 	
 	public int updateSubPlan(SubPlan info);

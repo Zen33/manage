@@ -98,5 +98,7 @@ public class ExceptionIdUtil {
 	public static final String CoachRepeat = "只能购买同一教练的服务！";
 	
 	public static final String Quan = "没有权限操作";
+	
+	public static final String AlreadyPublish = "已经发布！";
 }
 

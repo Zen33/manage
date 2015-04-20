@@ -182,10 +182,10 @@ public class ActivityAction {
 				throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			content = new String(content.getBytes("iso8859-1"), "utf-8");
-			pic1 = transPicStreamToString(pic1, picType1);
-			pic2 = transPicStreamToString(pic2, picType2);
-			pic3 = transPicStreamToString(pic3, picType3);
-			pic4 = transPicStreamToString(pic4, picType4);
+			pic1 = transPicStreamToString(pic1, picType1, uid);
+			pic2 = transPicStreamToString(pic2, picType2, uid);
+			pic3 = transPicStreamToString(pic3, picType3, uid);
+			pic4 = transPicStreamToString(pic4, picType4, uid);
 			TopicInfo topic = new TopicInfo();
 			topic.setUid(uid);
 			topic.setContent(content);
@@ -270,7 +270,7 @@ public class ActivityAction {
 		return json.toString();
 	}
 	
-	private String transPicStreamToString(String param, String picType) {
+	private String transPicStreamToString(String param, String picType, String uid) {
 		String res = "";
 		byte[] buffer = null;
 		if (param != null) {
@@ -278,7 +278,7 @@ public class ActivityAction {
 			BASE64Decoder decoder = new BASE64Decoder();
 			try {
 				buffer = decoder.decodeBuffer(param);
-			    res = FileUtil.SaveStringAsTopicPic(buffer, picType);
+			    res = FileUtil.SaveStringAsTopicPic(buffer, picType, uid);
 			} catch (IOException e) {
 				LogUtil.WriteLog(ExceptionIdUtil.FileLordFail, "");
 				throw new BaseException(ExceptionIdUtil.FileLordFail);

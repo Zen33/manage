@@ -107,4 +107,31 @@ public class SubPlanDaoImpl extends BaseDAO<SubPlan> implements ISubPlanDao {
 		return result;
 	}
 
+	@Override
+	public SubPlan getSubPlan(long sid) {
+		SubPlan result =null;
+		try{
+			result = (SubPlan)this.getSqlMapClientTemplate().queryForObject("SubPlan.getSubPlan", sid);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getSubPlan error pid:"+sid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
+	@Override
+	public int deleteSubPlan(long sid) {
+		int result = 0;
+		try{
+			this.getSqlMapClientTemplate().delete("SubPlan.deleteSubPlan", sid);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			result = 1;
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "updateSubPlan error"+sid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }

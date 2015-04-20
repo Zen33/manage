@@ -28,7 +28,7 @@ public class SubPlanDesc implements Serializable {
 	// 教学地址类型0图片1视频
 	private int category = -1;
 	//锻炼数量
-	private int  quantity = -1;
+	private int quantity = -1;
 	//单位
 	private String  units;     
 	// 共享类型0共享1不共享

@@ -3,6 +3,8 @@
  */
 package fitfame.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import fitfame.common.exception.BaseException;
 import fitfame.common.exception.BaseServiceException;
 import fitfame.common.util.DateUtil;
 import fitfame.common.util.ExceptionIdUtil;
+import fitfame.common.util.FileUtil;
 import fitfame.common.util.LogUtil;
 import fitfame.dao.ICoachPlanDao;
 import fitfame.dao.ICoachPlanTemplateDao;
@@ -40,54 +43,56 @@ import fitfame.po.SubPlanDesc;
 
 /**
  * @author zhangshu
- *
+ * 
  */
 @Service
 public class PlanService {
 	@Autowired(required = true)
 	@Qualifier("coachPlanDaoImpl")
 	private ICoachPlanDao coachPlanDao;
-	
+
 	@Autowired(required = true)
 	@Qualifier("coachPlanTemplateDaoImpl")
 	private ICoachPlanTemplateDao coachPlanTemplateDao;
-	
+
 	@Autowired(required = true)
 	@Qualifier("personalPlanDaoImpl")
 	private IPersonalPlanDao personalPlanDaoImpl;
-	
+
 	@Autowired(required = true)
 	@Qualifier("personalSubPlanDaoImpl")
 	private IPersonalSubPlanDao personalSubPlanDaoImpl;
-	
+
 	@Autowired(required = true)
 	@Qualifier("subPlanDaoImpl")
 	private ISubPlanDao subPlanDaoImpl;
-	
+
 	@Autowired(required = true)
 	@Qualifier("subPlanDescDaoImpl")
 	private ISubPlanDescDao subPlanDescDaoImpl;
-	
+
 	@Autowired(required = true)
 	@Qualifier("relationPlanAndSplanDaoImpl")
-	private  IRelationPlanAndSplanDao relationPlanAndSplanDaoImpl;
-	
+	private IRelationPlanAndSplanDao relationPlanAndSplanDaoImpl;
+
 	@Autowired(required = true)
 	@Qualifier("relationSplanAndDescDaoImpl")
-	private  IRelationSplanAndDescDao relationSplanAndDescDaoImpl;
-	
+	private IRelationSplanAndDescDao relationSplanAndDescDaoImpl;
+
 	@Autowired(required = true)
 	@Qualifier("personalCoachDaoImpl")
 	private IPersonalCoachDao personalCoachDaoImpl;
-	
-	public JSONObject queryUserPlan(String uid){
+
+	public JSONObject queryUserPlan(String uid) {
 		JSONObject json = new JSONObject();
-		List<PersonalPlan> planlist = personalPlanDaoImpl.getPersonalPlanList(uid);
+		List<PersonalPlan> planlist = personalPlanDaoImpl
+				.getPersonalPlanList(uid);
 		List<PersonAndPlan> res = new ArrayList<PersonAndPlan>();
-		if(planlist != null){
+		if (planlist != null) {
 			for (int i = 0; i < planlist.size(); i++) {
 				PersonalPlan person = planlist.get(i);
-				CoachPlanTemplate plan = coachPlanTemplateDao.getCoachPlanTemplate(person.getPid());
+				CoachPlanTemplate plan = coachPlanTemplateDao
+						.getCoachPlanTemplate(person.getPid());
 				PersonAndPlan temp = new PersonAndPlan();
 				temp.setPerson(person);
 				temp.setPlan(plan);
@@ -96,8 +101,8 @@ public class PlanService {
 		}
 		return json.accumulate("plans", res);
 	}
-	
-	public JSONObject querySubPlan(long id){
+
+	public JSONObject querySubPlan(long id) {
 		JSONObject json = new JSONObject();
 		List<SubPlan> planlist = subPlanDaoImpl.getSubPlanList(id);
 		return json.accumulate("subplan", planlist);
@@ -116,112 +121,116 @@ public class PlanService {
 	public JSONObject queryUserUndoSubPlan(String uid) {
 		JSONObject json = new JSONObject();
 		PersonalPlan plan = personalPlanDaoImpl.getUndoPersonalPlan(uid);
-		
-		if(plan != null){
-			List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
-			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl.getPersonalSubPlanList(plan.getId());
+
+		if (plan != null) {
+			List<SubPlan> subplan = subPlanDaoImpl
+					.getSubPlanList(plan.getPid());
+			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl
+					.getPersonalSubPlanList(plan.getId());
 			json.accumulate("subplan", subplan);
 			json.accumulate("planproc", planproc);
 			json.accumulate("pplan", plan);
 			json.accumulate("tid", subplan.get(0).getCid());
-		}
-		else	
-		{
+		} else {
 			long edate = 2000000000000l;
 			plan = personalPlanDaoImpl.getDonePersonalPlan(uid, edate);
-			if(plan != null){
-				List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
-				List<PersonalSubPlan> planproc = personalSubPlanDaoImpl.getPersonalSubPlanList(plan.getId());
+			if (plan != null) {
+				List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan
+						.getPid());
+				List<PersonalSubPlan> planproc = personalSubPlanDaoImpl
+						.getPersonalSubPlanList(plan.getId());
 				json.accumulate("subplan", subplan);
 				json.accumulate("planproc", planproc);
 				json.accumulate("pplan", plan);
 				json.accumulate("tid", subplan.get(0).getCid());
 			}
 		}
-	    
 
 		return json;
 	}
-	
-	public JSONObject queryUserDoneSubPlan(String uid, long edate){
+
+	public JSONObject queryUserDoneSubPlan(String uid, long edate) {
 		JSONObject json = new JSONObject();
 		PersonalPlan plan = personalPlanDaoImpl.getDonePersonalPlan(uid, edate);
-		if(plan != null){
-			List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
-			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl.getPersonalSubPlanList(plan.getId());
+		if (plan != null) {
+			List<SubPlan> subplan = subPlanDaoImpl
+					.getSubPlanList(plan.getPid());
+			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl
+					.getPersonalSubPlanList(plan.getId());
 			json.accumulate("subplan", subplan);
 			json.accumulate("planproc", planproc);
 			json.accumulate("pplan", plan);
 			json.accumulate("tid", subplan.get(0).getCid());
 		}
-		
+
 		return json;
 	}
-	
-	public JSONObject querySubPlanDesc(long sid){
+
+	public JSONObject querySubPlanDesc(long sid) {
 		JSONObject json = new JSONObject();
 		json.accumulate("desc", subPlanDescDaoImpl.getSubPlanDesc(sid));
 		return json;
 	}
 
-	//需加回退锁
+	// 需加回退锁
 	public JSONObject updatePersonalPlanStep(String uid, long spid, int step) {
-		PersonalSubPlan psplan = personalSubPlanDaoImpl.getPersonalSubPlan(spid);
-		PersonalPlan pplan = personalPlanDaoImpl.getPersonalPlan(psplan.getPpid());
+		PersonalSubPlan psplan = personalSubPlanDaoImpl
+				.getPersonalSubPlan(spid);
+		PersonalPlan pplan = personalPlanDaoImpl.getPersonalPlan(psplan
+				.getPpid());
 		JSONObject json = new JSONObject();
-		if(psplan != null){
+		if (psplan != null) {
 			RelationPlanAndSplan info = new RelationPlanAndSplan();
 			info.setPid(pplan.getPid());
 			info.setRank(psplan.getRank());
 			info = relationPlanAndSplanDaoImpl.getRelationPlanAndSplan(info);
-			int rank = relationSplanAndDescDaoImpl.getTopRankDesc(info.getSpid());
-			
-			if(psplan.getStep() + 1 == step)
-			{
-				psplan.setStep(step);				
-			}			
-			
-			if(step == rank){
+			int rank = relationSplanAndDescDaoImpl.getTopRankDesc(info
+					.getSpid());
+
+			if (psplan.getStep() + 1 == step) {
+				psplan.setStep(step);
+			}
+
+			if (step == rank) {
 				long date = DateUtil.CurrentTime();
 				psplan.setEdate(date);
-				if(psplan.getRank() == relationPlanAndSplanDaoImpl.getTopRankSplan(pplan.getPid())){
+				if (psplan.getRank() == relationPlanAndSplanDaoImpl
+						.getTopRankSplan(pplan.getPid())) {
 					pplan.setEdate(date);
 					personalPlanDaoImpl.updatePersonalPlan(pplan);
 				}
 			}
-			
+
 			personalSubPlanDaoImpl.updatePersonalSubPlan(psplan);
 		}
 		json = queryUserUndoSubPlan(uid);
 		return json;
 	}
-	
+
 	public JSONObject ReplaceUserPlan(String cid, long pid, String uid) {
 		// 判断是否是私人教练
-		List<PersonalCoach> coachs = personalCoachDaoImpl.getPersonalCoachList(uid);
-		if(coachs.size() != 0 && !coachs.get(0).getUid().equals(uid))
-		{
+		List<PersonalCoach> coachs = personalCoachDaoImpl
+				.getPersonalCoachList(uid);
+		if (coachs.size() != 0 && !coachs.get(0).getUid().equals(uid)) {
 			LogUtil.WriteLog(ExceptionIdUtil.Quan, cid + ";" + pid);
 			throw new BaseServiceException(ExceptionIdUtil.Quan, cid);
 		}
-		
+
 		PersonalPlan pplan = personalPlanDaoImpl.getUndoPersonalPlan(uid);
 		personalPlanDaoImpl.deletePersonalPlan(pplan.getId());
-		
+
 		return AddUserPlan(uid, pid);
 	}
 
 	public JSONObject AddUserPlan(String myid, long pid) {
 		JSONObject json = new JSONObject();
 		PersonalPlan pplan = personalPlanDaoImpl.getUndoPersonalPlan(myid);
-		if(pplan != null)
-		{
+		if (pplan != null) {
 			LogUtil.WriteLog(ExceptionIdUtil.PlanExsits, myid + ";" + pid);
 			throw new BaseServiceException(ExceptionIdUtil.PlanExsits, myid);
 		}
 		CoachPlanTemplate plan = coachPlanTemplateDao.getCoachPlanTemplate(pid);
-		if(plan == null)
-		{
+		if (plan == null) {
 			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, myid + ";" + pid);
 			throw new BaseServiceException(ExceptionIdUtil.NoPlan, myid);
 		}
@@ -231,10 +240,9 @@ public class PlanService {
 		up.setSdate(DateUtil.CurrentTime());
 		up.setEdate(0);
 		long ppid = personalPlanDaoImpl.insertPersonalPlan(up);
-		
+
 		List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
-		for(SubPlan sp : subplan)
-		{
+		for (SubPlan sp : subplan) {
 			PersonalSubPlan psp = new PersonalSubPlan();
 			psp.setDefaultValue();
 			psp.setPpid(ppid);
@@ -249,8 +257,7 @@ public class PlanService {
 	public JSONObject RemoveUserPlan(String myid, long pid) {
 		JSONObject json = new JSONObject();
 		PersonalPlan pp = personalPlanDaoImpl.getPersonalPlan(pid);
-		if(pp == null)
-		{
+		if (pp == null) {
 			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, myid + ";" + pid);
 			throw new BaseServiceException(ExceptionIdUtil.NoPlan, myid);
 		}
@@ -260,27 +267,103 @@ public class PlanService {
 		personalSubPlanDaoImpl.deletePersonalSubPlan(psp);
 		return json;
 	}
-		public JSONObject queryAllAvailablePlanDesc(String uid) {
+
+	public JSONObject queryAllAvailablePlanDesc(String uid) {
 		JSONObject json = new JSONObject();
-		json.accumulate("own_desc", subPlanDescDaoImpl.getCoachOwnPlanDesc(uid));
-		json.accumulate("share_desc", subPlanDescDaoImpl.getSharePlanDesc());
+		List<SubPlanDesc> allPlan = new ArrayList<SubPlanDesc>();
+		allPlan.addAll(subPlanDescDaoImpl.getCoachOwnPlanDesc(uid));
+		allPlan.addAll(subPlanDescDaoImpl.getSharePlanDesc());
+		json.accumulate("desc", allPlan);
 		return json;
 	}
-
-	public void addPlanDesc(String uid, String name, String intro, String pic,
-			String url, int category, int quantity, String units, int duration,
-			int share) {
+	
+	public void updatePlanDesc(long id, String intro, File pic, int category,
+			int quantity, String units, int duration, int share, File pic2,
+			String picType, File media, String mediaType, String myid, String name) {
 		SubPlanDesc desc = new SubPlanDesc();
-		desc.setCid(uid);
+		desc.setCid(myid);
+		desc.setId(id);
 		desc.setDuration(duration);
 		desc.setIntro(intro);
 		desc.setInuse(0);
 		desc.setName(name);
-		desc.setPic(pic);
+		
+		String picUrl = null;
+		try {
+			if (pic != null)
+				picUrl = FileUtil.SaveDescFile(myid + "suolue", pic, picType);
+		} catch (IOException e) {
+			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, myid);
+			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, myid);
+		}
+		
+		desc.setPic(picUrl);
+		
+		String mediaUrl = null;
+		try {
+			if (media != null)
+				mediaUrl = FileUtil.SaveDescFile(myid, media, mediaType);
+		} catch (IOException e) {
+			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, myid);
+			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, myid);
+		}
+		
+		desc.setUrl(mediaUrl);
 		desc.setQuantity(quantity);
-		desc.setShare(share);
+		desc.setShare(1);
+		desc.setUnits(units);
+		subPlanDescDaoImpl.updateSubPlanDesc(desc);
+	}
+
+	public void addPlanDesc(String myid, String name, String intro, File pic,
+			int category, int quantity, String units, int duration, int share,
+			File pic2, String picType, File media, String mediaType) {
+		SubPlanDesc desc = new SubPlanDesc();
+		desc.setCid(myid);
+		desc.setDuration(duration);
+		desc.setIntro(intro);
+		desc.setInuse(0);
+		desc.setName(name);
+		
+		String picUrl = null;
+		try {
+			if (pic != null)
+				picUrl = FileUtil.SaveDescFile(myid + "suolue", pic, picType);
+		} catch (IOException e) {
+			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, myid);
+			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, myid);
+		}
+		
+		desc.setPic(picUrl);
+		
+		String mediaUrl = null;
+		try {
+			if (media != null)
+				mediaUrl = FileUtil.SaveDescFile(myid, media, mediaType);
+		} catch (IOException e) {
+			LogUtil.WriteLog(ExceptionIdUtil.MediaLordFail, myid);
+			throw new BaseServiceException(ExceptionIdUtil.MediaLordFail, myid);
+		}
+		
+		desc.setUrl(mediaUrl);
+		desc.setQuantity(quantity);
+		desc.setShare(1);
 		desc.setUnits(units);
 		subPlanDescDaoImpl.insertSubPlanDesc(desc);
+	}
+	
+	public JSONObject RemoveCoachPlanDesc(long id, String myid) {
+		JSONObject json = new JSONObject();
+		SubPlanDesc desc = subPlanDescDaoImpl.getSubPlanDescWithId(id);
+		if(desc == null || !desc.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
+		}
+		
+		subPlanDescDaoImpl.deleteSubPlanDesc(desc);
+		json = queryAllAvailablePlanDesc(myid);
+		return json;
 	}
 
 	public void updatePlanDesc(long sid, String intro, String pic, String url,
@@ -292,20 +375,23 @@ public class PlanService {
 		desc.setInuse(0);
 		desc.setPic(pic);
 		desc.setQuantity(quantity);
-		desc.setShare(share);
+		desc.setShare(1);
 		desc.setUnits(units);
 		subPlanDescDaoImpl.updateSubPlanDesc(desc);
 	}
 
 	public JSONObject queryAllAvailableSubPlan(String uid) {
 		JSONObject json = new JSONObject();
-		json.accumulate("own_subplan", subPlanDaoImpl.getOwnSubPlanList(uid));
-		json.accumulate("share_subplan", subPlanDaoImpl.getShareSubPlanList());
+		List<SubPlan> allPlan = new ArrayList<SubPlan>();
+		allPlan.addAll(subPlanDaoImpl.getOwnSubPlanList(uid));
+		allPlan.addAll(subPlanDaoImpl.getShareSubPlanList());
+
+		json.accumulate("subplan", allPlan);
 		return json;
 	}
 
 	public void assignDescToSubPlan(long pid, long did, int rank, int quantity,
-			int duration){
+			int duration) {
 		RelationSplanAndDesc info = new RelationSplanAndDesc();
 		info.setDid(did);
 		info.setDuration(duration);
@@ -314,9 +400,9 @@ public class PlanService {
 		info.setSpid(pid);
 		relationSplanAndDescDaoImpl.insertRelationSplanAndDesc(info);
 	}
-	
+
 	public void updateDescToSubPlan(long id, int rank, int quantity,
-			int duration){
+			int duration) {
 		RelationSplanAndDesc info = new RelationSplanAndDesc();
 		info.setId(id);
 		info.setDuration(duration);
@@ -324,44 +410,69 @@ public class PlanService {
 		info.setRank(rank);
 		relationSplanAndDescDaoImpl.updateRelationSplanAndDesc(info);
 	}
-	
-	public void removeDescFromSubPlan(long id){
+
+	public void removeDescFromSubPlan(long id) {
 		relationSplanAndDescDaoImpl.deleteRelationSplanAndDesc(id);
 	}
-	
-	public void addSubPlan(String cid, String name, String intro, String icon,
-			int duration, int share) {
+
+	public void addSubPlan(String cid, String name, String intro,
+			int duration) {
 		SubPlan plan = new SubPlan();
 		plan.setCid(cid);
 		plan.setDuration(duration);
-		plan.setIcon(icon);
+		plan.setIcon(null);
 		plan.setIntro(intro);
 		plan.setInuse(0);
 		plan.setName(name);
 		plan.setRank(0);
-		plan.setShare(share);
+		plan.setShare(1);
 		subPlanDaoImpl.insertSubPlan(plan);
 	}
 	
-	public void updateSubPlan(long pid, String intro, String icon,
-			int duration, int share) {
-		SubPlan plan = new SubPlan();
+	public JSONObject deleteSubPlan(String myid, long id) {
+		JSONObject json = new JSONObject();
+		SubPlan plan = subPlanDaoImpl.getSubPlan(id);
+		if(plan == null || !plan.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
+		}
+		subPlanDaoImpl.deleteSubPlan(id);
+		
+		json = queryAllAvailableSubPlan(myid);
+		return json;
+	}
+
+	public void updateSubPlan(String myid,long pid, String intro, 
+			int duration,String name) {
+		SubPlan plan = subPlanDaoImpl.getSubPlan(pid);
+		if(plan == null || !plan.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
+		}
 		plan.setId(pid);
+		plan.setName(name);
 		plan.setDuration(duration);
-		plan.setIcon(icon);
+		plan.setIcon(null);
 		plan.setIntro(intro);
 		plan.setInuse(0);
-		plan.setShare(share);
+		plan.setShare(1);
 		subPlanDaoImpl.updateSubPlan(plan);
 	}
-	
-	public JSONObject queryAllPlanTemplate(String cid){
+
+	public JSONObject queryAllPlanTemplate(String cid) {
 		JSONObject json = new JSONObject();
-		return json.accumulate("plan", coachPlanTemplateDao.getCoachPlanTemplateList(cid));
+		return json.accumulate("plan",
+				coachPlanTemplateDao.getCoachPlanTemplateList(cid));
 	}
-	
-	public void assignSubPlanToPlan(long pid, long spid, int rank, 
-			int duration){
+
+	public JSONObject queryAllPlan(String myid) {
+		JSONObject json = new JSONObject();
+		return json.accumulate("plan", coachPlanDao.getCoachPlanList(myid));
+	}
+
+	public void assignSubPlanToPlan(long pid, long spid, int rank, int duration) {
 		RelationPlanAndSplan info = new RelationPlanAndSplan();
 		info.setDuration(duration);
 		info.setPid(spid);
@@ -369,22 +480,21 @@ public class PlanService {
 		info.setSpid(spid);
 		relationPlanAndSplanDaoImpl.insertRelationPlanAndSplan(info);
 	}
-	
-	public void updateSubPlanToPlan(long id, int rank, 
-			int duration){
+
+	public void updateSubPlanToPlan(long id, int rank, int duration) {
 		RelationPlanAndSplan info = new RelationPlanAndSplan();
 		info.setDuration(duration);
 		info.setRank(rank);
 		info.setId(id);
 		relationPlanAndSplanDaoImpl.insertRelationPlanAndSplan(info);
 	}
-	
-	public void removeSubPlanFromPlan(long id){
+
+	public void removeSubPlanFromPlan(long id) {
 		relationPlanAndSplanDaoImpl.deleteRelationPlanAndSplan(id);
 	}
-	
-	public void addPlanTemplate(String cid, String name, String intro, String icon,
-			int duration){
+
+	public void addPlanTemplate(String cid, String name, String intro,
+			String icon, int duration) {
 		CoachPlanTemplate info = new CoachPlanTemplate();
 		info.setCid(cid);
 		info.setDuration(duration);
@@ -394,9 +504,9 @@ public class PlanService {
 		info.setName(name);
 		coachPlanTemplateDao.insertCoachPlanTemplate(info);
 	}
-	
+
 	public void updatePlanTemplate(long id, String intro, String icon,
-			int duration){
+			int duration) {
 		CoachPlanTemplate info = new CoachPlanTemplate();
 		info.setPid(id);
 		info.setDuration(duration);
@@ -405,14 +515,25 @@ public class PlanService {
 		info.setInuse(0);
 		coachPlanTemplateDao.updateCoachPlanTemplate(info);
 	}
-	
-	public JSONObject publishCoachPlan(long pid){
+
+	public JSONObject publishCoachPlan(long pid, String myid) {
 		JSONObject json = new JSONObject();
-		CoachPlanTemplate plant = coachPlanTemplateDao.getCoachPlanTemplate(pid);
-		if(plant == null)
-			throw new BaseException(ExceptionIdUtil.TemplateNotExsits);
-		
-		CoachPlan plan = new CoachPlan();
+		CoachPlanTemplate plant = coachPlanTemplateDao
+				.getCoachPlanTemplate(pid);
+		if (plant == null || !plant.getCid().equals(myid)) {
+			LogUtil.WriteLog(ExceptionIdUtil.TemplateNotExsits, ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.TemplateNotExsits,
+					"" + pid);
+		}
+
+		CoachPlan plan = coachPlanDao.getCoachPlan(pid);
+		if (plan != null) {
+			LogUtil.WriteLog(ExceptionIdUtil.AlreadyPublish, ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.AlreadyPublish, ""
+					+ pid);
+		}
+
+		plan = new CoachPlan();
 		plan.setCid(plant.getCid());
 		plan.setDuration(plant.getDuration());
 		plan.setIcon(plant.getIcon());
@@ -420,9 +541,21 @@ public class PlanService {
 		plan.setName(plant.getName());
 		plan.setPid(plant.getPid());
 		coachPlanDao.insertCoachPlan(plan);
-		
-		return json.accumulate("plans", coachPlanDao.getCoachPlanList(plan.getCid()));
+
+		return json.accumulate("plan",
+				coachPlanDao.getCoachPlanList(plan.getCid()));
 	}
 
-	
+	public JSONObject RemoveCoachPlan(long pid, String myid) {
+		JSONObject json = new JSONObject();
+		CoachPlan plan = coachPlanDao.getCoachPlan(pid);
+		if (plan == null || !plan.getCid().equals(myid)) {
+			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.NoPlan, "" + pid);
+		}
+
+		coachPlanDao.deleteCoachPlan(pid);
+		return json.accumulate("plan",
+				coachPlanDao.getCoachPlanList(plan.getCid()));
+	}
 }

@@ -19,7 +19,11 @@ public interface ISubPlanDescDao {
 	
 	public List<SubPlanDesc> getSharePlanDesc();
 	
+	public SubPlanDesc getSubPlanDescWithId(long id);
+	
 	public int insertSubPlanDesc(SubPlanDesc info);
 	
 	public int updateSubPlanDesc(SubPlanDesc info);
+	
+	public int deleteSubPlanDesc(SubPlanDesc info);
 }

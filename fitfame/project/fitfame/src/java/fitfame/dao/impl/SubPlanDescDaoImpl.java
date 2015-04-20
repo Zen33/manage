@@ -109,4 +109,31 @@ public class SubPlanDescDaoImpl extends BaseDAO<SubPlanDesc> implements
 		return result;
 	}
 
+	@Override
+	public int deleteSubPlanDesc(SubPlanDesc info) {
+		int result = 0;
+		try{
+			this.getSqlMapClientTemplate().delete("SubPlanDesc.deleteSubPlanDesc", info);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			result = 1;
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "deleteSubPlanDesc error"+SqlErrorUtil.FormSubPlanDescLog(info));
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
+	@Override
+	public SubPlanDesc getSubPlanDescWithId(long id) {
+		SubPlanDesc result =null;
+		try{
+			result = (SubPlanDesc)this.getSqlMapClientTemplate().queryForObject("SubPlanDesc.getSubPlanDescWithId", id);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getSubPlanDesc error uid:"+id);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }
