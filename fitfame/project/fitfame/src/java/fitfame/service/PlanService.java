@@ -504,15 +504,36 @@ public class PlanService {
 		info.setName(name);
 		coachPlanTemplateDao.insertCoachPlanTemplate(info);
 	}
+	
+	public JSONObject deletePlanTemplate(String myid, long id) {
+		JSONObject json = new JSONObject();
+		CoachPlanTemplate info = coachPlanTemplateDao.getCoachPlanTemplate(id);
+		if(info == null || !info.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, ";" + id);
+			throw new BaseServiceException(ExceptionIdUtil.NoPlan, "" + id);
+		}
+		
+		coachPlanTemplateDao.deleteCoachPlanTemplate(id);
+		
+		json = queryAllPlanTemplate(myid);
+		return json;
+	}
 
-	public void updatePlanTemplate(long id, String intro, String icon,
-			int duration) {
-		CoachPlanTemplate info = new CoachPlanTemplate();
+	public void updatePlanTemplate(String myid, long id, String intro, String icon,
+			int duration, String name) {
+		CoachPlanTemplate info = coachPlanTemplateDao.getCoachPlanTemplate(id);
+		if(info == null || !info.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, ";" + id);
+			throw new BaseServiceException(ExceptionIdUtil.NoPlan, "" + id);
+		}
 		info.setPid(id);
 		info.setDuration(duration);
 		info.setIcon(icon);
 		info.setIntro(intro);
 		info.setInuse(0);
+		info.setName(name);
 		coachPlanTemplateDao.updateCoachPlanTemplate(info);
 	}
 

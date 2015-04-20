@@ -22,13 +22,14 @@
 		</selectKey>
 	</insert>
 
-	<update id="deleteCoachPlanTemplate">
-		update coach_plan_template set inuse = 1 where pid = #value#
-	</update>
+	<delete id="deleteCoachPlanTemplate">
+		delete from coach_plan_template where pid = #value#
+	</delete>
 
 	<update id="updateCoachPlanTemplate" parameterClass="CoachPlanTemplate">
 		update coach_plan_template
 		<dynamic prepend="SET ">
+		    <isNotEmpty property="name" prepend=","><![CDATA[ name=#name# ]]></isNotEmpty>
 			<isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
 			<isNotEmpty property="icon" prepend=","><![CDATA[ icon=#icon# ]]></isNotEmpty>
 			<isNotEqual property="duration" compareValue="-1" prepend=","><![CDATA[ duration=#duration# ]]></isNotEqual>

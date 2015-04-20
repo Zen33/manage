@@ -589,16 +589,16 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("coach/plantemplate/add")
 	@Produces("text/html;charset=utf-8")
 	public String AddNewPlanTemplate(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("name") String name, 
-			@FormParam("intro")  String intro, 
-			@FormParam("icon")  String icon, 
-			@FormParam("duration") int duration) {
+			@QueryParam("token") String token,
+			@QueryParam("name") String name, 
+			@QueryParam("intro")  String intro, 
+			@QueryParam("icon")  String icon, 
+			@QueryParam("duration") int duration) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -617,16 +617,17 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("coach/plantemplate/update")
 	@Produces("text/html;charset=utf-8")
 	public String UpdatePlanTemplate(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id, 
-			@FormParam("intro")  String intro, 
-			@FormParam("icon")  String icon, 
-			@FormParam("duration") int duration) {
+			@QueryParam("token") String token,
+			@QueryParam("name") String name,
+			@QueryParam("id") long id, 
+			@QueryParam("intro")  String intro, 
+			@QueryParam("icon")  String icon, 
+			@QueryParam("duration") int duration) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -636,7 +637,32 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.updatePlanTemplate(id, intro, icon, duration);
+			planService.updatePlanTemplate(myid, id, intro, icon, duration, name);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("coach/plantemplate/delete")
+	@Produces("text/html;charset=utf-8")
+	public String DeletePlanTemplate(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("id") long id) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"coach/plandesc");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = planService.deletePlanTemplate(myid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

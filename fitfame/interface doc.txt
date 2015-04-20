@@ -235,7 +235,55 @@ intro 简介
 			name	
 			intro
 			duration 训练时长
+			id
 
+返回		
+{
+	status: 200
+	失败返回 400 
+	message:"没有权限操作"
+}
+
+14. 添加计划模板
+访问方法	get
+访问地址	restapi/plan/coach/plantemplate/add
+访问参数	token
+			name	
+			intro
+			duration 训练时长
+
+返回		
+{
+	status: 200
+	失败返回 400 
+	message:"没有权限操作"
+}
+
+15. 删除计划模版
+访问方法	get
+访问地址	restapi/plan/coach/plantemplate/delete
+访问参数	token
+			id
+
+返回		
+{
+	status: 200
+	plan:[{  数组
+		duration: 30, 计划总天数 int
+		name,
+		intro,简介
+		pid, long, 计划id
+	}]
+}
+
+16. 更新计划模板
+访问方法	get
+访问地址	restapi/plan/coach/plantemplate/update
+访问参数	token
+			name	
+			intro
+			duration 训练时长
+			id 
 返回		
 {
 	status: 200
