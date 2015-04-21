@@ -120,16 +120,24 @@ public class CoachAction {
 	@Path("/coach/service")
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachService(@PathParam("version") String version,
-			@QueryParam("cid") String cid) {
+			@QueryParam("token") String token, @QueryParam("cid") String cid) {
 		JSONObject json = new JSONObject();
 		try {
-
-			if (!isValidateUid(cid)) {
-				LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, "/coach/service");
-				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			String myid = TokenUtil.checkToken(token);
+			if(myid != null)
+			{
+				json = coachService.queryCoachAllService(myid);
 			}
+			else
+			{
+				if (!isValidateUid(cid)) {
+					LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, "/coach/service");
+					throw new BaseException(ExceptionIdUtil.IllegalInput);
+				}
 
-			json = coachService.queryCoachAllService(cid);
+				json = coachService.queryCoachAllService(cid);
+			}
+			
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -138,19 +146,19 @@ public class CoachAction {
 		return json.toString();
 	}
 
-	@POST
+	@GET
 	@NoCache
 	@Path("/coach/service/add")
 	@Produces("text/html;charset=utf-8")
 	public String AddCoachService(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("name") String name,
-			@FormParam("intro") String intro,
-			@FormParam("cost") int cost,
-			@FormParam("online_times") int online_times,
-			@FormParam("offline_times") int offline_times,
-			@FormParam("online") int online,
-			@FormParam("offline") int offline) {
+			@QueryParam("token") String token,
+			@QueryParam("name") String name,
+			@QueryParam("intro") String intro,
+			@QueryParam("cost") int cost,
+			@QueryParam("online_times") int online_times,
+			@QueryParam("offline_times") int offline_times,
+			@QueryParam("online") int online,
+			@QueryParam("offline") int offline) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -169,19 +177,19 @@ public class CoachAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("/coach/service/update")
 	@Produces("text/html;charset=utf-8")
 	public String updateCoachService(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("sid") long sid,
-			@FormParam("intro") String intro,
-			@FormParam("cost") int cost,
-			@FormParam("online_times") int online_times,
-			@FormParam("offline_times") int offline_times,
-			@FormParam("online") int online,
-			@FormParam("offline") int offline) {
+			@QueryParam("token") String token,
+			@QueryParam("sid") long sid,
+			@QueryParam("intro") String intro,
+			@QueryParam("cost") int cost,
+			@QueryParam("online_times") int online_times,
+			@QueryParam("offline_times") int offline_times,
+			@QueryParam("online") int online,
+			@QueryParam("offline") int offline) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -191,7 +199,7 @@ public class CoachAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			coachService.updateCoachService(sid, intro, cost, online_times, offline_times, online, offline);
+			json = coachService.updateCoachService(myid,sid, intro, cost, online_times, offline_times, online, offline);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -200,13 +208,13 @@ public class CoachAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("/coach/service/remove")
 	@Produces("text/html;charset=utf-8")
 	public String removeCoachService(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("sid") long sid) {
+			@QueryParam("token") String token,
+			@QueryParam("sid") long sid) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -216,7 +224,7 @@ public class CoachAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			coachService.removeCoachService(sid);
+			json = coachService.removeCoachService(myid, sid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

@@ -21,6 +21,7 @@ import fitfame.common.exception.BaseServiceException;
 import fitfame.common.page.PageInfo;
 import fitfame.common.util.DateUtil;
 import fitfame.common.util.ExceptionIdUtil;
+import fitfame.common.util.LogUtil;
 import fitfame.dao.ICoachAdInfoDao;
 import fitfame.dao.ICoachCommentDao;
 import fitfame.dao.ICoachInfoDao;
@@ -125,7 +126,6 @@ public class CoachCommonService {
 	}
 
 	public JSONObject queryPersonalCoachInfo(String myid, String uid) {
-		// TODO Auto-generated method stub
 		JSONObject json = new JSONObject();
 		List<PersonalCoach> pc = personalCoachDaoImpl.getPersonalCoachList(uid);
 		if (pc != null && pc.size() > 0) {
@@ -134,19 +134,24 @@ public class CoachCommonService {
 			if (coach == null)
 				throw new BaseException(ExceptionIdUtil.CoachNotExsits);
 
-			UserInfo info = userInfoDaoImpl.getUserInfoByUid(cid);
-			List<CoachPlan> plan = coachPlanDaoImpl.getCoachPlanList(cid);
-			CoachUser cu = new CoachUser();
-			cu.setCoach(coach);
-			cu.setUser(info);
-			json.accumulate("coach", cu);
-			json.accumulate("plan", plan);
-			json.accumulate("fav", isFavCoach(myid, coach.getCid()));
+			if(!coach.getCid().equals(myid))
+			{
+				UserInfo info = userInfoDaoImpl.getUserInfoByUid(cid);
+				List<CoachPlan> plan = coachPlanDaoImpl.getCoachPlanList(cid);
+				CoachUser cu = new CoachUser();
+				cu.setCoach(coach);
+				cu.setUser(info);
+				json.accumulate("coach", cu);
+				json.accumulate("plan", plan);
+				json.accumulate("fav", isFavCoach(myid, coach.getCid()));
+			}
 			
 			List<CoachService> css = new ArrayList<CoachService>();
 			for(PersonalCoach item : pc)
 			{
 				CoachService cs = coachServiceDaoImpl.getCoachService(item.getSid());
+				cs.setOffline(item.getOffline_unsign());
+				cs.setOnline(item.getOnline_unsign());
 				css.add(cs);
 			}
 			json.accumulate("services", css);
@@ -193,7 +198,6 @@ public class CoachCommonService {
 		public JSONObject AddCoachService(String cid, String name, String intro,
 			int cost, int online_times, int offline_times, int online,
 			int offline) {
-		// TODO Auto-generated method stub
 		JSONObject json = new JSONObject();
 		CoachService service = new CoachService();
 		service.setCid(cid);
@@ -210,11 +214,16 @@ public class CoachCommonService {
 		return json.accumulate("sid", res);
 	}
 
-	public void updateCoachService(long sid, String intro,
+	public JSONObject updateCoachService(String myid, long sid, String intro,
 			int cost, int online_times, int offline_times, int online,
 			int offline) {
-		// TODO Auto-generated method stub
-		CoachService service = new CoachService();
+		JSONObject json = new JSONObject();
+		CoachService service = coachServiceDaoImpl.getCoachService(sid);
+		if(service == null || !service.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid + ";" + sid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
+		}
 		service.setSid(sid);
 		service.setCost(cost);
 		service.setIntro(intro);
@@ -223,10 +232,19 @@ public class CoachCommonService {
 		service.setOnline(online);
 		service.setOnline_times(online_times);
 		coachServiceDaoImpl.updateCoachService(service);
+		return json;
 	}
 
-	public void removeCoachService(long sid){
+	public JSONObject removeCoachService(String myid, long sid){
+		CoachService service = coachServiceDaoImpl.getCoachService(sid);
+		if(service == null || !service.getCid().equals(myid))
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid + ";" + sid);
+			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
+		}
 		coachServiceDaoImpl.deleteCoachService(sid);
+		
+		return queryCoachAllService(myid);
 	}
 	
 	public void addCoachInfo(CoachInfo coach) {
