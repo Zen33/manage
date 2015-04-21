@@ -21,6 +21,9 @@ public interface IPersonalCoachDao {
 	public List<PersonalCoach> getPersonCoachByOnlineService(long sid);
 	
 	public List<PersonalCoach> getPersonCoachByOfflineService(long sid);
+	
+	public List<PersonalCoach> getPersonalCoachs(String cid);
+	
 	public int insertPersonalCoach(PersonalCoach info);
 	
 	public int updatePersonalCoach(PersonalCoach info);

@@ -18,4 +18,8 @@ public interface IRelationSplanAndDescDao {
 	public int updateRelationSplanAndDesc(RelationSplanAndDesc info);
 	
 	public int deleteRelationSplanAndDesc(long id);
+	
+	public int updateRelationSplanAndDescRank(int rank, long spid);
+	
+	public RelationSplanAndDesc getRelationSplanAndDesc(long id);
 }

@@ -6,6 +6,7 @@ package fitfame.dao;
 import java.util.List;
 
 import fitfame.po.SubPlan;
+import fitfame.po.SubPlanWithId;
 
 /**
  * @author zhangshu
@@ -13,7 +14,7 @@ import fitfame.po.SubPlan;
  */
 public interface ISubPlanDao {
 
-	public List<SubPlan> getSubPlanList(long pid);
+	public List<SubPlanWithId> getSubPlanList(long pid);
 	
 	public List<SubPlan> getOwnSubPlanList(String cid);
 	

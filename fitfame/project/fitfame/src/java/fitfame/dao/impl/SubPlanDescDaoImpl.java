@@ -15,6 +15,7 @@ import fitfame.common.util.LogUtil;
 import fitfame.common.util.SqlErrorUtil;
 import fitfame.dao.ISubPlanDescDao;
 import fitfame.po.SubPlanDesc;
+import fitfame.po.SubPlanDescWithId;
 
 /**
  * @author zhangshu
@@ -29,11 +30,11 @@ public class SubPlanDescDaoImpl extends BaseDAO<SubPlanDesc> implements
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SubPlanDesc> getSubPlanDesc(long sid) {
+	public List<SubPlanDescWithId> getSubPlanDesc(long sid) {
 		// TODO Auto-generated method stub
-		List<SubPlanDesc> result =null;
+		List<SubPlanDescWithId> result =null;
 		try{
-			result = (List<SubPlanDesc>)this.getSqlMapClientTemplate().queryForList("SubPlanDesc.getSubPlanDesc", sid);
+			result = (List<SubPlanDescWithId>)this.getSqlMapClientTemplate().queryForList("SubPlanDesc.getSubPlanDesc", sid);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(), e);
 			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getSubPlanDesc error uid:"+sid);

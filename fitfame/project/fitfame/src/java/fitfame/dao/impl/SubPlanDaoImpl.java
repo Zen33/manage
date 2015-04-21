@@ -15,6 +15,7 @@ import fitfame.common.util.LogUtil;
 import fitfame.common.util.SqlErrorUtil;
 import fitfame.dao.ISubPlanDao;
 import fitfame.po.SubPlan;
+import fitfame.po.SubPlanWithId;
 
 /**
  * @author zhangshu
@@ -28,11 +29,11 @@ public class SubPlanDaoImpl extends BaseDAO<SubPlan> implements ISubPlanDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SubPlan> getSubPlanList(long pid) {
+	public List<SubPlanWithId> getSubPlanList(long pid) {
 		// TODO Auto-generated method stub
-		List<SubPlan> result =null;
+		List<SubPlanWithId> result =null;
 		try{
-			result = (List<SubPlan>)this.getSqlMapClientTemplate().queryForList("SubPlan.getSubPlanList", pid);
+			result = (List<SubPlanWithId>)this.getSqlMapClientTemplate().queryForList("SubPlan.getSubPlanList", pid);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(), e);
 			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getSubPlanList error pid:"+pid);

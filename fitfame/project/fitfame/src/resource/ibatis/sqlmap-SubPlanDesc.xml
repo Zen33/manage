@@ -4,10 +4,10 @@
 <sqlMap namespace="SubPlanDesc">
 	<typeAlias alias="SubPlanDesc" type="fitfame.po.SubPlanDesc" />
 
-	<select id="getSubPlanDesc" resultClass="SubPlanDesc">
+	<select id="getSubPlanDesc" resultClass="fitfame.po.SubPlanDescWithId">
 		select A.id,A.name, A.cid,
 		A.intro, A.pic, A.url, A.category, B.quantity, A.units, B.duration,
-		A.share, A.inuse, B.rank from
+		A.share, A.inuse, B.rank, B.id as rid from
 		sub_plan_desc as A , relation_splan_and_desc as
 		B where B.spid = #value# and A.id = B.did order by B.rank asc
 	</select>

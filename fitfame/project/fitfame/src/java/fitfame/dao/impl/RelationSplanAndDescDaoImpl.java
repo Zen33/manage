@@ -3,6 +3,9 @@
  */
 package fitfame.dao.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -85,6 +88,36 @@ public class RelationSplanAndDescDaoImpl extends BaseDAO<RelationSplanAndDesc> i
 			logger.error(e.getMessage(), e);
 			result = 1;
 			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "RelationSplanAndDesc error spid="+spid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
+	@Override
+	public int updateRelationSplanAndDescRank(int rank, long spid) {
+		Map<String, Object> parameter = new HashMap<String, Object>();
+		parameter.put("rank", rank);
+		parameter.put("spid", spid);
+		int result = 0;
+		try{
+			this.getSqlMapClientTemplate().update("RelationSplanAndDesc.updateRelationSplanAndDescRank", parameter);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			result = 1;
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "RelationSplanAndDesc error spid="+spid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
+	@Override
+	public RelationSplanAndDesc getRelationSplanAndDesc(long id) {
+		RelationSplanAndDesc result = null;
+		try{
+			result = (RelationSplanAndDesc)this.getSqlMapClientTemplate().queryForObject("RelationSplanAndDesc.getRelationSplanAndDesc", id);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "RelationSplanAndDesc error spid="+id);
 			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
 		}
 		return result;

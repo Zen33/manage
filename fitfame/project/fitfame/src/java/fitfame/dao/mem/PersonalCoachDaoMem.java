@@ -71,4 +71,10 @@ public class PersonalCoachDaoMem implements IPersonalCoachDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<PersonalCoach> getPersonalCoachs(String cid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

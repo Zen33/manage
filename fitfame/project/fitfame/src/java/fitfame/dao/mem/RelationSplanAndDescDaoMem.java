@@ -48,4 +48,16 @@ public class RelationSplanAndDescDaoMem implements IRelationSplanAndDescDao {
 		return 0;
 	}
 
+	@Override
+	public int updateRelationSplanAndDescRank(int rank, long spid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public RelationSplanAndDesc getRelationSplanAndDesc(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

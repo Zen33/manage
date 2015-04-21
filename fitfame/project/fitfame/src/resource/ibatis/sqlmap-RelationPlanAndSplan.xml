@@ -13,6 +13,11 @@
 		select * from relation_plan_and_splan where pid = #pid# and rank = #rank#
 	</select>
 	
+	<select id="getRelationPlanAndSplanWithId" 
+	    resultClass="RelationPlanAndSplan">
+		select * from relation_plan_and_splan where id = #value#
+	</select>
+	
 	<insert id="insertRelationPlanAndSplan" parameterClass="RelationPlanAndSplan">
 		insert into relation_plan_and_splan values (null, #pid#, #spid#, #rank#, 
 		#duration#)

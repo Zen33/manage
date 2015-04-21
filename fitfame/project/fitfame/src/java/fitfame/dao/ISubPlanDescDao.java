@@ -6,6 +6,7 @@ package fitfame.dao;
 import java.util.List;
 
 import fitfame.po.SubPlanDesc;
+import fitfame.po.SubPlanDescWithId;
 
 /**
  * @author zhangshu
@@ -13,7 +14,7 @@ import fitfame.po.SubPlanDesc;
  */
 public interface ISubPlanDescDao {
 
-	public List<SubPlanDesc> getSubPlanDesc(long sid);
+	public List<SubPlanDescWithId> getSubPlanDesc(long sid);
 	
 	public List<SubPlanDesc> getCoachOwnPlanDesc(String uid);
 	

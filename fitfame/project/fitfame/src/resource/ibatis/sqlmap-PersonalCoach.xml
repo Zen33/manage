@@ -20,6 +20,10 @@
 		select * from personal_coach where sid = #value# and offline_unsign != 0;
 	</select>
 	
+	<select id="getPersonalCoachs" resultClass="PersonalCoach">
+		select * from personal_coach where cid = #value#
+	</select>
+	
 	<insert id="insertPersonalCoach" parameterClass="PersonalCoach">
 		insert into personal_coach values (#uid#, #cid#, #sdate#, #edate#, #sid#, #price#, #online#, #offline#,#online_unsign#,#offline_unsign#)
 	</insert>

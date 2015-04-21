@@ -20,4 +20,6 @@ public interface IRelationPlanAndSplanDao {
 	public int updateRelationPlanAndSplan(RelationPlanAndSplan info);
 	
 	public int deleteRelationPlanAndSplan(long id);
+	
+	public RelationPlanAndSplan getRelationPlanAndSplanWithId(long rid);
 }

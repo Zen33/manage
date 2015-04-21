@@ -144,20 +144,53 @@ public class PlanAction {
 		}
 		return json.toString();
 	}
-
+	
 	@GET
 	@NoCache
-	@Path("/subplan/")
+	@Path("/coach/user/")
 	@Produces("text/html;charset=utf-8")
-	public String QuerySubPlan(@PathParam("version") String version,
-			@QueryParam("id") long id) {
+	public String QueryCoachUser(@PathParam("version") String version,
+			@QueryParam("token") String token) {
 		JSONObject json = new JSONObject();
 		try {
-			if(!isValidateId(id))
-			{
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"/plan/user/subplan/");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+
+			json = planService.queryCoachUser(myid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("/coach/user/undo/")
+	@Produces("text/html;charset=utf-8")
+	public String QueryUserSubPlan(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("uid") String uid) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"/plan/user/subplan/");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			if (!isValidateUid(uid)) {
+				LogUtil.WriteLog(ExceptionIdUtil.IllegalInput,
+						"/plan/user/subplan/");
 				throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
-			json = planService.querySubPlan(id);
+
+			json = planService.QueryUserSubPlan(myid,uid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -240,7 +273,10 @@ public class PlanAction {
 						"/plan/user/subplan/");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(spid))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.updatePersonalPlanStep(myid,spid, step);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -250,22 +286,6 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@GET
-	@NoCache
-	@Path("/subplan/desc")
-	@Produces("text/html;charset=utf-8")
-	public String QuerySubPlanDesc(@PathParam("version") String version,
-			 @QueryParam("spid") long spid) {
-		JSONObject json = new JSONObject();
-		try {
-			json = planService.querySubPlanDesc(spid);
-			json.accumulate("status", 200);
-		} catch (Exception e) {
-			json.put("status", 400);
-			json.put("message", e.getMessage());
-		}
-		return json.toString();
-	}
 
 	@GET
 	@NoCache
@@ -378,7 +398,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(pid))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.publishCoachPlan(pid,myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -403,7 +426,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(pid))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.RemoveCoachPlan(pid,myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -463,7 +489,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.RemoveCoachPlanDesc(id,myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -499,7 +528,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			planService.updatePlanDesc(id, intro, pic, category, quantity, units, duration, share, pic, picType, media, mediaType, myid,name);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -554,7 +586,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			planService.updateSubPlan(myid, id, intro, duration, name);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -579,7 +614,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.deleteSubPlan(myid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -636,7 +674,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			planService.updatePlanTemplate(myid, id, intro, icon, duration, name);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -661,7 +702,10 @@ public class PlanAction {
 						"coach/plandesc");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			json = planService.deletePlanTemplate(myid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
@@ -671,17 +715,31 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
+	@NoCache
+	@Path("/subplan/desc")
+	@Produces("text/html;charset=utf-8")
+	public String QuerySubPlanDesc(@PathParam("version") String version,
+			 @QueryParam("spid") long spid) {
+		JSONObject json = new JSONObject();
+		try {
+			json = planService.querySubPlanDesc(spid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
 	@NoCache
 	@Path("coach/subplan/desc/add")
 	@Produces("text/html;charset=utf-8")
 	public String AssignDescToSubPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("pid") long pid, 
-			@FormParam("did") long did, 
-			@FormParam("rank") int rank, 
-			@FormParam("quantity") int quantity,
-			@FormParam("duration") int duration) {
+			@QueryParam("token") String token,
+			@QueryParam("spid") long pid, 
+			@QueryParam("did") long did) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -690,36 +748,12 @@ public class PlanAction {
 						"coach/subplan/desc/add");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
-			planService.assignDescToSubPlan(pid, did, rank, quantity, duration);
-			json.accumulate("status", 200);
-		} catch (Exception e) {
-			json.put("status", 400);
-			json.put("message", e.getMessage());
-		}
-		return json.toString();
-	}
-	
-	@POST
-	@NoCache
-	@Path("coach/subplan/desc/update")
-	@Produces("text/html;charset=utf-8")
-	public String UpdateDescToSubPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id, 
-			@FormParam("rank") int rank, 
-			@FormParam("quantity") int quantity,
-			@FormParam("duration") int duration) {
-		JSONObject json = new JSONObject();
-		try {
-			String myid = TokenUtil.checkToken(token);
-			if (myid == null) {
-				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
-						"coach/subplan/desc/update");
-				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			if(!isValidateId(pid) || !isValidateId(did))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			planService.updateDescToSubPlan(id, rank, quantity, duration);
+			json = planService.assignDescToSubPlan(myid, pid, did);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -728,13 +762,43 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+//	@GET
+//	@NoCache
+//	@Path("coach/subplan/desc/update")
+//	@Produces("text/html;charset=utf-8")
+//	public String UpdateDescToSubPlan(@PathParam("version") String version,
+//			@QueryParam("token") String token,
+//			@QueryParam("id") long id, 
+//			@QueryParam("rank") int rank) {
+//		JSONObject json = new JSONObject();
+//		try {
+//			String myid = TokenUtil.checkToken(token);
+//			if (myid == null) {
+//				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+//						"coach/subplan/desc/update");
+//				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+//			}
+//			if(!isValidateId(id))
+//			{
+//				throw new BaseException(ExceptionIdUtil.IllegalInput);
+//			}
+//			
+//			planService.updateDescToSubPlan(id, rank, quantity, duration);
+//			json.accumulate("status", 200);
+//		} catch (Exception e) {
+//			json.put("status", 400);
+//			json.put("message", e.getMessage());
+//		}
+//		return json.toString();
+//	}
+	
+	@GET
 	@NoCache
 	@Path("coach/subplan/desc/remove")
 	@Produces("text/html;charset=utf-8")
 	public String UnassignDescFromSubPlan(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id) {
+			@QueryParam("token") String token,
+			@QueryParam("rid") long id) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -743,8 +807,12 @@ public class PlanAction {
 						"coach/subplan/desc/remove");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
 			
-			planService.removeDescFromSubPlan(id);
+			json = planService.removeDescFromSubPlan(myid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -753,16 +821,36 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
+	@NoCache
+	@Path("/subplan/")
+	@Produces("text/html;charset=utf-8")
+	public String QuerySubPlan(@PathParam("version") String version,
+			@QueryParam("id") long id) {
+		JSONObject json = new JSONObject();
+		try {
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
+			json = planService.querySubPlan(id);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		return json.toString();
+	}
+	
+	@GET
 	@NoCache
 	@Path("coach/plan/subplan/add")
 	@Produces("text/html;charset=utf-8")
 	public String AssignSubPlanToPlanTemplate(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("pid") long pid, 
-			@FormParam("spid") long spid, 
-			@FormParam("rank") int rank, 
-			@FormParam("duration") int duration) {
+			@QueryParam("token") String token,
+			@QueryParam("pid") long pid, 
+			@QueryParam("spid") long spid, 
+			@QueryParam("rank") int rank) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -771,35 +859,12 @@ public class PlanAction {
 						"coach/plan/subplan/update");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			
-			planService.assignSubPlanToPlan(pid, spid, rank, duration);
-			json.accumulate("status", 200);
-		} catch (Exception e) {
-			json.put("status", 400);
-			json.put("message", e.getMessage());
-		}
-		return json.toString();
-	}
-	
-	@POST
-	@NoCache
-	@Path("coach/plan/subplan/update")
-	@Produces("text/html;charset=utf-8")
-	public String UpdateSubPlanToPlanTemplate(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id, 
-			@FormParam("rank") int rank, 
-			@FormParam("duration") int duration) {
-		JSONObject json = new JSONObject();
-		try {
-			String myid = TokenUtil.checkToken(token);
-			if (myid == null) {
-				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
-						"coach/plan/subplan/update");
-				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			if(!isValidateId(pid))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			planService.updateSubPlanToPlan(id, rank, duration);
+			json = planService.assignSubPlanToPlan(pid, spid, rank, myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -808,13 +873,44 @@ public class PlanAction {
 		return json.toString();
 	}
 	
-	@POST
+//	@GET
+//	@NoCache
+//	@Path("coach/plan/subplan/update")
+//	@Produces("text/html;charset=utf-8")
+//	public String UpdateSubPlanToPlanTemplate(@PathParam("version") String version,
+//			@QueryParam("token") String token,
+//			@QueryParam("id") long id, 
+//			@QueryParam("rank") int rank, 
+//			@QueryParam("duration") int duration) {
+//		JSONObject json = new JSONObject();
+//		try {
+//			String myid = TokenUtil.checkToken(token);
+//			if (myid == null) {
+//				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+//						"coach/plan/subplan/update");
+//				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+//			}
+//			if(!isValidateId(id))
+//			{
+//				throw new BaseException(ExceptionIdUtil.IllegalInput);
+//			}
+//			
+//			planService.updateSubPlanToPlan(id, rank, duration);
+//			json.accumulate("status", 200);
+//		} catch (Exception e) {
+//			json.put("status", 400);
+//			json.put("message", e.getMessage());
+//		}
+//		return json.toString();
+//	}
+	
+	@GET
 	@NoCache
 	@Path("coach/plan/subplan/remove")
 	@Produces("text/html;charset=utf-8")
 	public String UnassignSubPlanFromPlanTemplate(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id) {
+			@QueryParam("token") String token,
+			@QueryParam("rid") long id) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -824,7 +920,11 @@ public class PlanAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			planService.removeSubPlanFromPlan(id);
+			if(!isValidateId(id))
+			{
+				throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
+			json = planService.removeSubPlanFromPlan(id, myid);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

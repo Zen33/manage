@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import fitfame.dao.ISubPlanDescDao;
 import fitfame.po.SubPlanDesc;
+import fitfame.po.SubPlanDescWithId;
 
 /**
  * @author zhangshu
@@ -21,7 +22,7 @@ public class SubPlanDescDaoMem implements ISubPlanDescDao {
 	 * @see fitfame.dao.ISubPlanDescDao#getSubPlanDesc(long)
 	 */
 	@Override
-	public List<SubPlanDesc> getSubPlanDesc(long sid) {
+	public List<SubPlanDescWithId> getSubPlanDesc(long sid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

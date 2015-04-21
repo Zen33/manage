@@ -56,6 +56,7 @@ import fitfame.po.PersonalPlan;
 import fitfame.po.PersonalSubPlan;
 import fitfame.po.StateInfo;
 import fitfame.po.SubPlan;
+import fitfame.po.SubPlanWithId;
 import fitfame.po.UserInfo;
 import fitfame.po.UserPassport;
 
@@ -224,7 +225,7 @@ public class UserService {
 		PersonalPlan plan = personalPlanDaoImpl.getUndoPersonalPlan(user.getUid());
 		
 		if(plan != null){
-			List<SubPlan> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
+			List<SubPlanWithId> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
 			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl.getPersonalSubPlanList(plan.getId());
 			json.accumulate("subplan", subplan);
 			json.accumulate("planproc", planproc);
