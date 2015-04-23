@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import fitfame.dao.ICourseMemberDao;
+import fitfame.po.CourseCalendar;
 import fitfame.po.CourseMember;
 
 /**
@@ -42,6 +43,18 @@ public class CourseMemberDaoMem implements ICourseMemberDao {
 	public void deleteCourseMember(CourseMember member) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public CourseMember getCourseMember(CourseMember info) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CourseCalendar> getCourseMembers(String uid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

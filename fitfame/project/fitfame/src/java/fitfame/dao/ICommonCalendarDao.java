@@ -13,5 +13,7 @@ import fitfame.po.CommonCalendar;
  */
 public interface ICommonCalendarDao {
 
-	public List<CommonCalendar> getMonthCalendar(int month);
+	public List<CommonCalendar> getMonthCalendar(int firstDay, int endDay);
+	
+	public CommonCalendar getCommonCalendarByDate(int date);
 }

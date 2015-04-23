@@ -31,4 +31,8 @@ public interface ICourseCalendarDao {
 	public int insertCourseCalendar(CourseCalendar info);
 	
 	public int deleteCourseCalendar(long id);
+	
+	public int getCourseNum(long tid, String cid);
+	
+	public List<CourseCalendar> getCourseCalendars(long tid, String cid);
 }

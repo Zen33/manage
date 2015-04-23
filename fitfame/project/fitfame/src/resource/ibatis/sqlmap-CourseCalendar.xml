@@ -9,6 +9,16 @@
 		course_calendar where id = #value#
 	</select>
 	
+	<select id="getCourseNum" resultClass="Integer" parameterClass="java.util.Map">
+		select count(*) from
+		course_calendar where tid = #tid# and cid = #cid#
+	</select>
+	
+	<select id="getCourseCalendars" resultClass="CourseCalendar" parameterClass="java.util.Map">
+		select * from
+		course_calendar where tid = #tid# and cid = #cid# order by cdate asc
+	</select>
+	
 	<select id="getNextCourseCalendar" parameterClass="java.util.Map" resultClass="CourseCalendar">
 	<![CDATA[ 
 		select * from
@@ -60,7 +70,7 @@
 	
 	<insert id="insertCourseCalendar" parameterClass="CourseCalendar">
 		insert into course_calendar values (null, #cid#, #sid#, #stype#, #cdate#,
-		#minutes#, #published#, #maxlimit#, #sign#)
+		#minutes#, #published#, #maxlimit#, #sign#, #intro#, #tid#)
 		<selectKey resultClass="long" type="post" keyProperty="id">
 			select LAST_INSERT_ID() as value
 		</selectKey>
@@ -73,6 +83,7 @@
 	<update id="updateCourseCalendar" parameterClass="CourseCalendar">
 		update course_calendar
 		<dynamic prepend="SET ">
+		    <isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
 			<isNotEqual property="published" compareValue="-1" prepend=","><![CDATA[ published=#published# ]]></isNotEqual>
 			<isNotEqual property="maxlimit" compareValue="-1" prepend=","><![CDATA[ maxlimit=#maxlimit# ]]></isNotEqual>
 			<isNotEqual property="sign" compareValue="-1" prepend=","><![CDATA[ sign=#sign# ]]></isNotEqual>

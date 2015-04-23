@@ -3,9 +3,7 @@
  */
 package fitfame.action;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,8 +39,7 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCalendarInfo(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("cid") String cid,
-			@QueryParam("month") int month) {
+			@QueryParam("page") int page) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -52,12 +49,12 @@ public class CourseCalendarAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			if(month < 20150400 || !isValidateUid(cid)){
+			if(!isValidateUid(uid)|| page < -10 || page > 10){
 				LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, "calendar/course/");
 			    throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			json = courseCalendarService.getCourseCalendar(cid, month);
+			json = courseCalendarService.getCourseCalendar(uid, page);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -67,16 +64,74 @@ public class CourseCalendarAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
+	@NoCache
+	@Path("/course/detail/")
+	@Produces("text/html;charset=utf-8")
+	public String QueryCourseInfo(@PathParam("version") String version,
+			@QueryParam("token") String token,
+			@QueryParam("cid") long cid) {
+		JSONObject json = new JSONObject();
+		try{
+			String uid = TokenUtil.checkToken(token);
+			if (uid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"calendar/course/");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			if(!isValidateUid(uid)|| !isValidateId(cid)){
+				LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, "calendar/course/");
+			    throw new BaseException(ExceptionIdUtil.IllegalInput);
+			}
+			
+			json = courseCalendarService.getCourse(uid, cid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("/course/user/")
+	@Produces("text/html;charset=utf-8")
+	public String QueryUserCalendarInfo(@PathParam("version") String version,
+			@QueryParam("token") String token) {
+		JSONObject json = new JSONObject();
+		try{
+			String uid = TokenUtil.checkToken(token);
+			if (uid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue,
+						"calendar/course/");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+			
+			json = courseCalendarService.getUserCourseCalendar(uid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+
+		return json.toString();
+	}
+	
+	@GET
 	@NoCache
 	@Path("/course/add")
 	@Produces("text/html;charset=utf-8")
 	public String AddCourseCalendar(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("cdate") long cdate,
-			@FormParam("sid") long sid, 
-			@FormParam("maxlimit") int maxlimit,
-			@FormParam("stype") int stype) {
+			@QueryParam("token") String token,
+			@QueryParam("cdate") long cdate,
+			@QueryParam("sid") long sid, 
+			@QueryParam("maxlimit") int maxlimit,
+			@QueryParam("stype") int stype,
+			@QueryParam("intro") String intro,
+			@QueryParam("cid") long tid) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -91,7 +146,7 @@ public class CourseCalendarAction {
 			    throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			json = courseCalendarService.addCourseCalendar(cid, cdate, maxlimit, sid, stype);
+			json = courseCalendarService.addCourseCalendar(cid, cdate, maxlimit, sid, stype, tid, intro);
 			json.accumulate("status", 200);
 			
 		} catch (Exception e) {
@@ -102,14 +157,14 @@ public class CourseCalendarAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("/course/refresh")
 	@Produces("text/html;charset=utf-8")
 	public String RefreshCourseCalendar(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id,
-			@FormParam("maxlimit") int maxlimit) {
+			@QueryParam("token") String token,
+			@QueryParam("id") long id,
+			@QueryParam("maxlimit") int maxlimit) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -135,13 +190,13 @@ public class CourseCalendarAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("/course/remove")
 	@Produces("text/html;charset=utf-8")
 	public String RemoveCourseCalendar(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id) {
+			@QueryParam("token") String token,
+			@QueryParam("id") long id) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -156,7 +211,7 @@ public class CourseCalendarAction {
 			    throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			courseCalendarService.removeCourseCalendar(id);
+			json = courseCalendarService.removeCourseCalendar(id);
 			json.accumulate("status", 200);
 			
 		} catch (Exception e) {
@@ -173,8 +228,7 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCourseMember(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("id") long id,
-			@QueryParam("type") int type) {
+			@QueryParam("cid") long id) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -184,7 +238,7 @@ public class CourseCalendarAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			json = courseCalendarService.getCourseMember(id, type);
+			json = courseCalendarService.getCourseMember(uid, id);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);
@@ -194,15 +248,15 @@ public class CourseCalendarAction {
 		return json.toString();
 	}
 	
-	@POST
+	@GET
 	@NoCache
 	@Path("/member/operation")
 	@Produces("text/html;charset=utf-8")
 	public String operateCourseMember(@PathParam("version") String version,
-			@FormParam("token") String token,
-			@FormParam("id") long id,
-			@FormParam("assign") String assign,
-			@FormParam("unassign") String unassign) {
+			@QueryParam("token") String token,
+			@QueryParam("id") long id,
+			@QueryParam("assign") String[] assign,
+			@QueryParam("unassign") String[] unassign) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -211,20 +265,18 @@ public class CourseCalendarAction {
 						"/member/operation");
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
-			String[] strArray1 = assign.split(",");
-			String[] strArray2 = unassign.split(",");
 			
-			for(int i=0; i<strArray1.length; i++){
-				if(!isValidateUid(strArray1[i]))
+			for(int i=0; i<assign.length; i++){
+				if(!isValidateUid(assign[i]))
 					throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 
-			for(int i=0; i<strArray2.length; i++){
-				if(!isValidateUid(strArray2[i]))
+			for(int i=0; i<unassign.length; i++){
+				if(!isValidateUid(unassign[i]))
 					throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			
-			json = courseCalendarService.assignAndUnassignCourseMember(id, strArray1, strArray2);
+			json = courseCalendarService.assignAndUnassignCourseMember(cid, id, assign, unassign);
 			json.accumulate("status", 200);
 			
 		} catch (Exception e) {
@@ -240,6 +292,15 @@ public class CourseCalendarAction {
 			return true;
 		}
 		LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, uid);
+		return false;
+	}
+	
+	private boolean isValidateId(long id) {
+		if(id > 0)
+		{
+			return true;
+		}
+		LogUtil.WriteLog(ExceptionIdUtil.IllegalInput, id + "");
 		return false;
 	}
 }

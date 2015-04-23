@@ -11,9 +11,6 @@ import java.io.Serializable;
  */
 public class CourseCalendar implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8484947243937506427L;
 
 	private long id;
@@ -33,6 +30,11 @@ public class CourseCalendar implements Serializable {
 	private int maxlimit=-1;
 	//已报名人数
 	private int sign=-1;
+	
+	private String intro;
+	
+	private long tid;
+	
 	public long getId() {
 		return id;
 	}
@@ -86,5 +88,17 @@ public class CourseCalendar implements Serializable {
 	}
 	public void setSign(int sign) {
 		this.sign = sign;
+	}
+	public String getIntro() {
+		return intro;
+	}
+	public void setIntro(String intro) {
+		this.intro = intro;
+	}
+	public long getTid() {
+		return tid;
+	}
+	public void setTid(long tid) {
+		this.tid = tid;
 	}
 }

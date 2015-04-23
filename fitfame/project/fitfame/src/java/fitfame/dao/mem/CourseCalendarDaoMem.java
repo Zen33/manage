@@ -92,4 +92,16 @@ public class CourseCalendarDaoMem implements ICourseCalendarDao {
 		return null;
 	}
 
+	@Override
+	public int getCourseNum(long tid, String cid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<CourseCalendar> getCourseCalendars(long tid, String cid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

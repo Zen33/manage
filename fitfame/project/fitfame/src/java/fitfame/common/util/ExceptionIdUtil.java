@@ -5,7 +5,7 @@ public class ExceptionIdUtil {
 	 * 异常信息
 	 */
 	
-	public static final String IllegalSqlOperation = "数据异常p002，请求无法处理，请尝试重新登陆！";
+	public static final String IllegalSqlOperation = "数据异常，请求无法处理，请尝试重新登陆！";
 	
 	public static final String OverCacheSize = "超出了缓存池的范围！";
 
@@ -80,6 +80,10 @@ public class ExceptionIdUtil {
 	public static final String LessThanAssign = "设定限制少于已分配数量！";
 	
 	public static final String CannotRemoveWithMember = "有学员被分配了该课程，不能移除！";
+	
+	public static final String NoCourse = "无此课程！";
+	
+	public static final String AsignCourse = "已经排课！";
 	
 	public static final String FavCoachRepeatError = "已经点赞！";
 	

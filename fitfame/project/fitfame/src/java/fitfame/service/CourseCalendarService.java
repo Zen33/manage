@@ -4,6 +4,7 @@
 package fitfame.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fitfame.common.exception.BaseException;
+import fitfame.common.util.DateUtil;
 import fitfame.common.util.ExceptionIdUtil;
 import fitfame.dao.ICoachServiceDao;
 import fitfame.dao.ICommonCalendarDao;
@@ -22,6 +24,7 @@ import fitfame.dao.IPersonalCoachDao;
 import fitfame.dao.IUserInfoDao;
 import fitfame.po.CoachService;
 import fitfame.po.CommonCalendar;
+import fitfame.po.CommonCalendarWithNum;
 import fitfame.po.CourseAndCalendar;
 import fitfame.po.CourseCalendar;
 import fitfame.po.CourseMember;
@@ -59,14 +62,54 @@ public class CourseCalendarService {
 	private IPersonalCoachDao personalCoachDaoImpl;
 	
 	
-	public JSONObject getCourseCalendar(String cid, int month){
+	public JSONObject getCourseCalendar(String cid, int page){
 		JSONObject json = new JSONObject();
-		List<CommonCalendar> calendar = commonCalendarDaoImpl.getMonthCalendar(month);
+		//找到第一个周一的日期
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(DateUtil.getNowDate());
+		int curweek = cal.get(Calendar.DAY_OF_WEEK);
+		int offset = 0;
+		if (curweek == 1) {
+		    // 星期天
+		    offset = 6;
+		} else {
+		    // 星期一至星期六
+		    offset = curweek - 2;
+		}
+		cal.setTime(DateUtil.getBeforeDate(offset + page * 28));
+		int beforeYear = cal.get(Calendar.YEAR);
+		int beforemonth=cal.get(Calendar.MONTH)+1;   
+		int beforeday =cal.get(Calendar.DAY_OF_MONTH);
+		int firstDay = beforeYear * 10000 + beforemonth * 100 + beforeday;
+		
+		cal.setTime(DateUtil.getAfterDate(cal.getTime(), 28));
+		int lastYear = cal.get(Calendar.YEAR);
+		int lastmonth=cal.get(Calendar.MONTH)+1;   
+		int lastday =cal.get(Calendar.DAY_OF_MONTH);
+		int endDay = lastYear * 10000 + lastmonth * 100 + lastday;
+		
+		List<CommonCalendar> calendar = commonCalendarDaoImpl.getMonthCalendar(firstDay,endDay);
 		if(calendar == null)
 			throw new BaseException(ExceptionIdUtil.CalendarNotExsits);
+		List<CommonCalendarWithNum> ccnList = new ArrayList<CommonCalendarWithNum>();
+		for(CommonCalendar cc: calendar)
+		{
+			CommonCalendarWithNum ccn = new CommonCalendarWithNum();
+			ccn.setCdate(cc.getCdate());
+			ccn.setCid(cc.getCid());
+			ccn.setHoliday(cc.getHoliday());
+			ccn.setWeek(cc.getWeek());
+			ccn.setNum(courseCalendarDaoImpl.getCourseNum(cc.getCid(), cid));
+			ccnList.add(ccn);
+		}
 		
-		json.accumulate("calendar", calendar);
-		List<CourseCalendar> courseList = courseCalendarDaoImpl.getMonthCourseCalendar(cid, month);
+		json.accumulate("calendar", ccnList);
+		return json;
+	}
+	
+	public JSONObject getCourse(String uid, long cid) {
+		JSONObject json = new JSONObject();
+		List<CourseCalendar> courseList = courseCalendarDaoImpl.getCourseCalendars(cid, uid);
 		List<CourseAndCalendar> ccList = new ArrayList<CourseAndCalendar>();
 		if(courseList != null){
 			for (int i = 0; i < courseList.size(); i++) {
@@ -80,21 +123,23 @@ public class CourseCalendarService {
 		}
 		
 		json.accumulate("course", ccList);
+		List<CoachService> css = coachServiceDaoImpl.getCoachServiceList(uid);
+		json.accumulate("service", css);
 		return json;
 	}
 
 	//加时间判断
-	public JSONObject addCourseCalendar(String cid, long cdate, int maxlimit, long sid, int stype){
+	public JSONObject addCourseCalendar(String cid, long cdate, int maxlimit, long sid, int stype, long tid, String intro){
 		JSONObject json = new JSONObject();
 		CoachService service  = coachServiceDaoImpl.getCoachService(sid);
-		if (service == null)
+		if (service == null || !service.getCid().equals(cid))
 			throw new BaseException(ExceptionIdUtil.ServiceNotExsits);
 		
 		int minutes = 0;
 		if (stype == 0){
-			minutes = service.getOnline();
+			minutes = service.getOnline_times();
 		}else{
-			minutes = service.getOffline();
+			minutes = service.getOffline_times();
 		}
 		
 		if (minutes == 0)
@@ -108,6 +153,12 @@ public class CourseCalendarService {
 		if (nextCalendar!=null && cdate+minutes>nextCalendar.getCdate())
 			throw new BaseException(ExceptionIdUtil.OutOfTimeLimit);
 		
+		CommonCalendar cc = commonCalendarDaoImpl.getCommonCalendarByDate((int)(cdate/10000));
+		if(cc == null || cc.getCid() != tid)
+		{
+			throw new BaseException(ExceptionIdUtil.OutOfTimeLimit);
+		}
+		
 		CourseCalendar calendar = new CourseCalendar();
 		calendar.setCid(cid);
 		calendar.setCdate(cdate);
@@ -117,8 +168,10 @@ public class CourseCalendarService {
 		calendar.setSid(sid);
 		calendar.setSign(0);
 		calendar.setStype(stype);
+		calendar.setIntro(intro);
+		calendar.setTid(tid);
 		long id = courseCalendarDaoImpl.insertCourseCalendar(calendar);
-		json.accumulate("id", id);
+		json = getCourse(cid, tid);
 		return json;
 	}
 	
@@ -140,7 +193,8 @@ public class CourseCalendarService {
 		return json;
 	}
 	
-	public void removeCourseCalendar(long id){
+	public JSONObject removeCourseCalendar(long id){
+		JSONObject json = new JSONObject();
 		CourseCalendar cc = courseCalendarDaoImpl.getCourseCalendar(id);
 		if(cc == null)
 			throw new BaseException(ExceptionIdUtil.RecordNotExsits);
@@ -149,20 +203,16 @@ public class CourseCalendarService {
 			throw new BaseException(ExceptionIdUtil.CannotRemoveWithMember);
 		
 		courseCalendarDaoImpl.deleteCourseCalendar(id);
+		json = getCourse(cc.getCid(), cc.getTid());
+		return json;
 	}
 	
-	public JSONObject getCourseMember(long cid, int type){
+	public JSONObject getCourseMember(String uid, long cid){
 		JSONObject json = new JSONObject();
 		List<CourseMember> members = courseMemberDaoImpl.getCourseMemberList(cid);
 		List<UserInfo> users = new ArrayList<UserInfo>();
 		List<PersonalCoach> coachList = null;
-		if (type ==1){
-			//线下
-			coachList = personalCoachDaoImpl.getPersonCoachByOfflineService(cid);
-		}else{
-			//线下
-			coachList = personalCoachDaoImpl.getPersonCoachByOnlineService(cid);
-		}
+		coachList = personalCoachDaoImpl.getPersonalCoachs(uid);
 		
 		if(members!= null){
 			for(int i = 0; i < members.size(); i++){
@@ -195,7 +245,7 @@ public class CourseCalendarService {
 	}
 	
 	//需加事物
-	public JSONObject assignAndUnassignCourseMember(long id, String[] assign, String[] unassign){
+	public JSONObject assignAndUnassignCourseMember(String myid, long id, String[] assign, String[] unassign){
 		JSONObject json = new JSONObject();
 		CourseCalendar calendar = courseCalendarDaoImpl.getCourseCalendar(id);
 		int deep = assign.length-unassign.length;
@@ -214,7 +264,7 @@ public class CourseCalendarService {
 		
 		calendar = courseCalendarDaoImpl.getCourseCalendar(id);
 		
-		return json.accumulate("calendar", calendar);
+		return getCourseMember(myid, id);
 	}
 	
 	//需加事物
@@ -222,6 +272,10 @@ public class CourseCalendarService {
 		CourseMember member = new CourseMember();
 		member.setCid(id);
 		member.setUid(uid);
+		if(courseMemberDaoImpl.getCourseMember(member)==null)
+		{
+			throw new BaseException(ExceptionIdUtil.NoCourse);
+		}
 		courseMemberDaoImpl.deleteCourseMember(member);
 		CourseCalendar calendar = courseCalendarDaoImpl.getCourseCalendar(id);
 		int signed = calendar.getSign()-1;
@@ -260,6 +314,10 @@ public class CourseCalendarService {
 		CourseMember member = new CourseMember();
 		member.setCid(id);
 		member.setUid(uid);
+		if(courseMemberDaoImpl.getCourseMember(member)!=null)
+		{
+			throw new BaseException(ExceptionIdUtil.AsignCourse);
+		}
 		courseMemberDaoImpl.insertCourseMember(member);
 		CourseCalendar calendar = courseCalendarDaoImpl.getCourseCalendar(id);
 		int signed = calendar.getSign()+1;
@@ -291,5 +349,12 @@ public class CourseCalendarService {
 		}
 		
 		personalCoachDaoImpl.updatePersonalCoach(coach);
+	}
+
+	public JSONObject getUserCourseCalendar(String uid) {
+		JSONObject json = new JSONObject();
+		List<CourseCalendar> courses = courseMemberDaoImpl.getCourseMembers(uid);
+		json.accumulate("course", courses);
+		return json;
 	}
 }
