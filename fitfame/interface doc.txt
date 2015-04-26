@@ -467,7 +467,7 @@ intro 简介
 *************************************************************
 
 访问方法	get
-访问地址	restapi/plan/coach/user
+访问地址	restapi/plan/coach/user/undo
 访问参数	token
 			uid 用户id
 
