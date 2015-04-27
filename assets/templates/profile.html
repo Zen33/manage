@@ -2,16 +2,16 @@
     <div class="userBox">
         <div class="header">
         </div>
-        <span class="userPic" ng-click="editProfile()" ng-style="{'background-image':'url({{userinfo.user_avator}})'}"></span>
+        <span class="userPic" ng-click="editProfile()" ng-style="{'background-image':'url({{userinfo.icon}})'}"></span>
         <modal title="Edit Profile" visible="showModal">
             <profilemodal userinfo="userinfo"/>
         </modal>
         <div class="middle">
             <div class="middleText">
-            <p>{{userinfo.user_name}}</p>
-            <span>{{userinfo.user_specialty}}</span> 
+            <p>{{userinfo.username}}</p>
+            <span>{{userinfo.exp}}</span> 
             <br />
-            {{userinfo.user_desc}}
+            {{userinfo.intro}}
             </div>
         </div>
         <div class="footer">

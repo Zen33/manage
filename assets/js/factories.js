@@ -1,6 +1,7 @@
 var MisApp = angular.module('misapp');
 var resource = "http://112.124.52.165:8080/fitfame/v1/";
 MisApp.factory('UserService', function ($http, $q) {
+    var token = "";
 	return {
 		auth: function(params) {
 			// params = {
@@ -9,14 +10,11 @@ MisApp.factory('UserService', function ($http, $q) {
 			// }
 			return $http.jsonp(resource + 'restapi/user/login' + '?callback=JSON_CALLBACK', {params: params})
 				.then(function (resp) {
-                    angular.callbacks._0(data)
-                     console.log("dddd", resp)
 					if (resp.status === 200) {
 						return resp;
 					}
 					else {
 	                    // invalid response
-	                    console.log("call", resp)
 	                    return $q.reject(resp);
 	                }
 	            }, function(response) {
@@ -24,13 +22,16 @@ MisApp.factory('UserService', function ($http, $q) {
                     return $q.reject(response);
                 })
 		}
+        getToken: function() {
+            return token;
+        }
 	}
 });
 
 MisApp.factory('PlanService', function ($http, $q) {
     return {
-        getPlans: function(params) {
-            return $http.jsonp(resource + 'restapi/user/plan?callbacks=JSON_CALLBACK', {params: params}) // your url
+        getPublicPlans: function(params) {
+            return $http.jsonp(resource + 'restapi/plan/coach?callback=JSON_CALLBACK', {params: params}) // your url
                 .then(function(response) {
                     // if success
                     if (response.status === 200) {
@@ -46,8 +47,25 @@ MisApp.factory('PlanService', function ($http, $q) {
                     return $q.reject(response.data);
                 });
         },
-        postPlan: function(params) {
-            return $http.post('url', params) // your url
+        getPlanModels: function(params) {
+            return $http.jsonp(resource + 'restapi/plan/coach/plantemplate?callback=JSON_CALLBACK', {params: params}) // your url
+                .then(function(response) {
+                    // if success
+                    if (response.status === 200) {
+                        // return messages
+                        return response.data;
+                    } else {
+                        // invalid response
+                        return $q.reject(response.data);
+                    }
+
+                }, function(response) {
+                    // something went wrong
+                    return $q.reject(response.data);
+                });
+        },
+        postPublicPlan: function(params) {
+            return $http.jsonp(resource + 'restapi/plan/coach/plan/publish?callback=JSON_CALLBACK', params) // your url
                 .then(function(response) {
                     // if success
                     if (response.status === 201) {

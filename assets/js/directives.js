@@ -1,110 +1,28 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('comfirm', function($state, UserService) {
+MisApp.directive('comfirm', function($state, UserService, customtable) {
 	return {
 		templateUrl: 'assets/templates/comfirm.html',
 		restrict: 'E',
 		controller: function($scope, $http) {
 			$scope.loginObj = {
-				username: "",
-				password: "",
-				rememberMe: true
+				tel: "",
+				pw: ""
 			};
 			$scope.login = function() {
-				    var data = {
-				    	tel: "18611586414",
-				    	pw: "111111"
-				    }
-				    UserService.auth(data).then(function (data) {
-				    	console.log("succ", data)
+				    var data = $scope.loginObj;
+				    // UserService.auth(data).then(function (data) {
+				    	// console.log("succ", data)
 				    	// $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
-				    }, function(error) {
+				    // }, function(error) {
 	                    // something went wrong
-	                    console.log("error", error);
-	                    // $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
-	            	})
+	                    // console.log("error", error);
+	                    var data = customtable.fixtures.coach_info;
+	                    $state.go('main', {active: 'users', userinfo: data, tableVisible: true});
+	            	// })
 			};
 			$scope.onTextClick = function($event) {
 				$event.target.select();
-			}
-		}
-	}
-});
-
-MisApp.directive('customtable', function($compile) {
-	return {
-		templateUrl: 'assets/templates/customtable.html',
-		restrict: 'E',
-		link: function(scope, elm, attrs) {
-			scope.gridOptions = {
-				enableRowSelection: true,
-    			enableSelectAll: false,
-    			enableCellEditOnFocus: true,
-    			useExternalPagination: true,
-    			paginationPageSizes: [50, 100, 200],
-    			paginationPageSize: 20
-			};
-			scope.$watch(attrs.customData, function(value) {
-				scope.gridOptions.columnDefs = value.columnDefs;
-		    });
-
-
-			// $http.get('/data/500_complex.json')
-			// .success(function(data) {
-			//   $scope.gridOptions.data = data;
-			// });
-
-			scope.currentFocused = "";
-
-			scope.getCurrentFocus = function(){
-				var rowCol = scope.gridApi.cellNav.getFocusedCell();
-				if(rowCol !== null) {
-				  	scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
-				}
-			}
-
-			scope.gridOptions.onRegisterApi = function(gridApi) {
-				scope.gridApi = gridApi;
-				scope.gridApi.pagination.on.paginationChanged(scope, function( currentPage, pageSize){
-					scope.getPage(currentPage, pageSize);
-				});
-    		}
-
-    		scope.clearAll = function() {
-				scope.gridApi.selection.clearSelectedRows();
-			}
-
-			scope.rmData = function() {
-				var selections = scope.gridApi.selection.getSelectedRows();
-				selections.filter(function(s) { return s; });
-				// $http.put('', selections);
-				var currentPage = scope.gridApi.pagination.getPage();
-				scope.getPage(currentPage, 20);
-			}
-
-			scope.getPage = function(pageNumber, pageSize){
-				var startingRow = pageSize * ( pageNumber - 1);   // page number starts at 1, not zero
-				var newData = [];
-				scope.$watch(attrs.customData, function(value) {
-					var data = value.data;
-					for( var i = startingRow; i < startingRow + scope.gridOptions.paginationPageSize; i++ ) {
-						newData.push( data[i] );
-					}
-					scope.gridOptions.data = newData;
-					scope.gridOptions.totalItems = data.length;
-			    });
-				
-			}
-
-			scope.getPage(1, 20);
-
-			scope.addData = function() {
-				var columnDefs = scope.gridOptions.columnDefs;
-				var newRow = {};
-				for (var i in columnDefs) {
-					newRow[columnDefs[i].name] = '';
-				}
-				// $http.post('', newRow);
 			}
 		}
 	}
@@ -117,22 +35,23 @@ MisApp.directive('profile', function($state) {
 		scope: {
 			userinfo: '='
 		},
-		link: function(scope, elem, attrs) {
-			scope.userinfo = scope.$parent.userinfo;
-		},
 		controller: function($scope) {
+			$scope.userinfo = $scope.$parent.userinfo.user_info;
+			$scope.userinfo['intro'] = $scope.$parent.userinfo.coach_info.intro;
+			$scope.userinfo['exp'] = $scope.$parent.userinfo.coach_info.exp;
+			$scope.userinfo['ads'] = $scope.$parent.userinfo.coach_ad;
+			console.log("link", $scope.userinfo, $scope.$parent.userinfo.user_info)
 			$scope.myInterval = 5000;
 			$scope.showModal = false;
 			var slides = $scope.slides = [];
 			$scope.addSlide = function() {
-				var newWidth = 600 + slides.length + 1;
 				slides.push({
-					image: 'http://placekitten.com/' + newWidth + '/300',
+					image: $scope.userinfo.ads[slides.length].url,
 					text: ['More','Extra','Lots of','Surplus'][slides.length % 4] + ' ' +
 					['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
 					});
 			};
-			for (var i=0; i<4; i++) {
+			for (var i=0; i<$scope.$parent.userinfo.coach_ad.length; i++) {
 				$scope.addSlide();
 			}
 			$scope.editProfile = function() {

@@ -19,9 +19,9 @@
 
 		 <div id="login-tab-content" ng-class="{active:login}" >
 			<form class="login-form" method="post" name="loginForm">
-				<input type="text" ng-model="loginObj.username" class="input" name="username" id="user_name" autocomplete="off" placeholder="用户名">
+				<input type="text" ng-model="loginObj.tel" class="input" name="username" id="user_name" autocomplete="off" placeholder="用户名">
 				<p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block">Your name is required.</p>
-				<input type="password" ng-model="loginObj.password" class="input" name="username" id="user_pass" autocomplete="off" placeholder="密码">
+				<input type="password" ng-model="loginObj.pw" class="input" name="username" id="user_pass" autocomplete="off" placeholder="密码">
 				<p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block">Password is required.</p>
 				<input type="checkbox" class="checkbox" id="remember_me" ng-model="loginObj.rememberMe">
 				<label for="remember_me" >Remember me</label>
