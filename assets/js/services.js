@@ -1,4 +1,4 @@
-angular.module('misapp.service', [])
+angular.module('misapp')
 .value('customtable', {
 	defaultColumnDefs: function(dataType) {
 		switch(dataType) {
@@ -9,37 +9,62 @@ angular.module('misapp.service', [])
 				{ field: 'intro', displayName: '计划介绍'},
 				{ field: 'duration', displayName: '时长'},
 				{ field: 'icon', displayName: '计划标志'},
+				{ name: 'plan', displayName: '查看计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '},
 				{name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '}
 			];
 		case "users":
 			return [
 				{ field: 'uid', displayName: 'id', enableCellEdit: false},
-				{ field: 'username', displayName: '名字', type: 'string'},
+				{ field: 'username', displayName: '名字', type: 'string', enableCellEdit: false},
 				{ field: 'sex', displayName: '性别', editDropdownValueLabel: 'sex', editableCellTemplate: 'ui-grid/dropdownEditor', editDropdownOptionsArray: [
 			      { id: 1, sex: '男' },
 			      { id: 2, sex: '女' }
-			    ]},
+			    ], enableCellEdit: false},
 			     // cellTemplate: '<input id="editBtn" type="file" class="btn-small" ng-change="grid.addScope.storeMedia"></input> '
-				{ field: 'brithday', displayName: '生日', type: 'date'},
-				{ field: 'city', displayName: '城市', type: 'string'},
-				{ field: 'icon', displayName: '头像'},
-				{ field: 'height', displayName: '身高'},
-				{ field: 'weight', displayName: '体重'},
-				{name: 'plan', displayName: '计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '}
-			]
-		case "train":
+				{ field: 'brithday', displayName: '生日', type: 'date', enableCellEdit: false},
+				{ field: 'city', displayName: '城市', type: 'string', enableCellEdit: false},
+				{ field: 'icon', displayName: '头像', enableCellEdit: false},
+				{ field: 'height', displayName: '身高', enableCellEdit: false},
+				{ field: 'weight', displayName: '体重', enableCellEdit: false},
+				{ name: 'plan', displayName: '查看计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '},
+				{ name: 'service', displayName: '查看服务', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewService(row.entity)" >查看服务</button> '}
+			];
+		case "trainings":
 			return [
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
 				{ field: 'rank', displayName: '第几天', type: 'number', cellTemplate: '<span>第{{row.entity.rank}}天</span>'},
 				{ field: 'name', displayName: '训练名称'},
 				{ field: 'intro', displayName: '训练介绍'},
 				{ field: 'duration', displayName: '时长'},
-				{name: 'training', displayName: '训练', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTrainings(row.entity)" >查看训练</button> '}
+				{name: 'training', displayName: '训练', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTraining(row.entity)" >查看动作</button> '}
+			];
+		case "actions":
+			return [
+				{ field: 'id', displayName: 'id', enableCellEdit: false},
+				{ field: 'name', displayName: '训练名称'},
+				{ field: 'intro', displayName: '训练介绍'},
+				{ field: 'duration', displayName: '时长'},
+				{ field: 'url', displayName: '实例', type: 'file'},
+				{ field: 'quantity', displayName: '数量', type: 'int'},
+				{ field: 'units', displayName: '单位', type: 'string'},
+			];
+		case "home":
+			return [
+				{ field: 'id', displayName: 'id', enableCellEdit: false},
+				{ field: 'name', displayName: '训练名称'},
+				{ field: 'intro', displayName: '训练介绍'},
+				{ field: 'duration', displayName: '时长'},
+				{ field: 'url', displayName: '实例', type: 'file'},
+				{ field: 'quantity', displayName: '数量', type: 'int'},
+				{ field: 'units', displayName: '单位', type: 'string'},
 			]
 		}
 	},
-	getDataFromResponse: function(resp) {
-		return _.filter(resp, function(value, key) { return key !== "status"; })[0];
+	getBodyFromResponse: function(resp) {
+		return _.map(_.filter(resp, function(value, key) { return key !== "status"; })[0], function(value, key) { return value; });
+	},
+	getId: function(row) {
+		return _.find(row, function(value, key) { return key.indexOf('id') !== -1; });
 	},
 	fixtures: {
 		coach_info: {
@@ -58,7 +83,7 @@ angular.module('misapp.service', [])
 	            "reply": 0,
 	            "uid": "17088099"
 	        },
-	        "token": "C850C5FBE6787BF9DC6D42A5142135DE",
+	        "token": "5DCC37937437E7078EAA7C5627D5A620",
 	        "coach_info": {
 	            "cid": "17088099",
 	            "circle": 59098,
@@ -96,7 +121,7 @@ angular.module('misapp.service', [])
 		    }],
 		    "status": 200
 		},
-		project_model: {
+		project_models: {
 		    "plan": [{
 		        "cid": "17088099",
 		        "duration": 30,
@@ -547,6 +572,7 @@ angular.module('misapp.service', [])
 		    }],
 		    "status": 200
 		},
+		subplan_actions: {"desc":[{"category":0,"cid":"13610140","duration":30,"id":22,"intro":"好好练21","inuse":0,"name":"好好练","pic":"http://112.124.52.165:8080/resources/AD/test.png","quantity":30,"rank":1,"rid":22,"share":1,"units":"分钟","url":"http://112.124.52.165:8080/resources/AD/test.png"},{"category":1,"cid":"13610140","duration":30,"id":23,"intro":"好好练22","inuse":0,"name":"好好练","pic":"http://112.124.52.165:8080/resources/AD/test.png","quantity":30,"rank":2,"rid":23,"share":1,"units":"分钟","url":""},{"category":1,"cid":"13610140","duration":30,"id":24,"intro":"好好练23","inuse":0,"name":"好好练","pic":"http://112.124.52.165:8080/resources/AD/test.png","quantity":30,"rank":3,"rid":24,"share":1,"units":"分钟","url":""},{"category":1,"cid":"13610140","duration":30,"id":25,"intro":"好好练24","inuse":0,"name":"好好练","pic":"http://112.124.52.165:8080/resources/AD/test.png","quantity":30,"rank":4,"rid":25,"share":1,"units":"分钟","url":""}],"status":200},
 		action_models: {
 		    "desc": [{
 		        "category": 1,
