@@ -10,7 +10,7 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 		templateUrl: "index.html"
     })
     .state('main', {
-		url: "/main/:params",
+		url: "/:params",
 		params: {active: null, userinfo: null},
 		templateUrl: "assets/templates/main.html",
 		resolve: {
@@ -51,7 +51,7 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 			$scope.userinfo = $stateParams.userinfo;
 			$scope.tableVisible = ($stateParams.active !== "courses" && $stateParams.active !== "messages");
 			$scope.chatboxVisible = ($stateParams.active === "messages");
-			// $scope.calendarVisible = ($stateParams.active === "courses");
+			$scope.calendarVisible = ($stateParams.active === "courses");
 			$scope.tableData = tableData;
 	    }
 	})
