@@ -23,6 +23,9 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					case 'home':
 						scope.switchToBill();
 						break;
+					case 'services':
+						scope.switchToService();
+						break;
 				}
 		    });
 
@@ -71,6 +74,27 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				});
 				columnDefs.push({name: 'active', displayName: '公开', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.activeModel(row.entity)" >公开</button> '});
 				columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
+				scope.gridOptions.columnDefs = columnDefs;
+			};
+
+			scope.switchToService = function() {
+				var columnDefs = _.map(customtable.defaultColumnDefs('services'), function(columnDef) {
+					if (columnDef.displayName !== 'id') {
+						columnDef['enableCellEdit'] = true;
+					}
+					return columnDef;
+				});
+				if (scope.active === "services") {
+					columnDefs.push({name: 'add', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
+					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
+					scope.buttonText = "添加服务";
+					scope.gridOptions.data = scope.customdata;
+				}
+				else {
+					scope.buttonText = "";
+					scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.user_services);
+					scope.back = true;
+				}
 				scope.gridOptions.columnDefs = columnDefs;
 			};
 
@@ -157,6 +181,14 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						scope.modaltitle = "更换计划";
 						scope.modalData = scope.customdata['model'];
 						break;
+					case "添加服务":
+						var columnDefs = scope.gridOptions.columnDefs;
+		    			var newRow = {};
+		    			for (var i in columnDefs) {
+							newRow[columnDefs[i].field] = '';
+						}
+		    			scope.gridOptions.data.push(newRow);
+		    			break;
 				}
 			}
 
@@ -168,6 +200,9 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 							scope.gridOptions.data.pop();
 							break;
 						case "添加训练":
+							scope.gridOptions.data.pop();
+							break;
+						case "添加服务":
 							scope.gridOptions.data.pop();
 							break;
 					}
@@ -182,6 +217,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 							});
 							break;
 						case "添加训练":
+							break;
+						case "添加服务":
 							break;
 					}
 				}
@@ -221,6 +258,10 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				// PlanService.postPublicPlan(token).then(function(data) {
 				// 	scope.customdata['public'] = data;
 				// })
+			}
+
+			scope.viewService = function(rowEntity) {
+				scope.switchToService();
 			}
 
 			scope.saveData = function( rowEntity ) {

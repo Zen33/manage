@@ -45,7 +45,7 @@ angular.module('misapp')
 				{ field: 'intro', displayName: '训练介绍'},
 				{ field: 'duration', displayName: '时长'},
 				{ field: 'url', displayName: '实例', type: 'file'},
-				{ field: 'quantity', displayName: '数量', type: 'int'},
+				{ field: 'quantity', displayName: '数量', type: 'number'},
 				{ field: 'units', displayName: '单位', type: 'string'},
 			];
 		case "home":
@@ -55,8 +55,20 @@ angular.module('misapp')
 				{ field: 'intro', displayName: '训练介绍'},
 				{ field: 'duration', displayName: '时长'},
 				{ field: 'url', displayName: '实例', type: 'file'},
-				{ field: 'quantity', displayName: '数量', type: 'int'},
-				{ field: 'units', displayName: '单位', type: 'string'},
+				{ field: 'quantity', displayName: '数量', type: 'number'},
+				{ field: 'units', displayName: '单位', type: 'string'}
+			];
+		case "services":
+			return [
+				{ field: 'sid', displayName: 'id', enableCellEdit: false},
+				{ field: 'name', displayName: '服务名称'},
+				{ field: 'intro', displayName: '服务介绍'},
+				{ field: 'cost', displayName: '费用'},
+				{ field: 'month', displayName: '有效时间/月', type: 'number'},
+				{ field: 'online', displayName: '视频服务次数', type: 'number'},
+				{ field: 'offline', displayName: '线下指导次数', type: 'number'},
+				{ field: 'online_times', displayName: '视频时长'},
+				{ field: 'offline_times', displayName: '线下时长'},
 			]
 		}
 	},

@@ -42,7 +42,8 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     					projects['model'] = customtable.getBodyFromResponse(customtable.fixtures.project_models);
     					projects['public'] = customtable.getBodyFromResponse(customtable.fixtures.public_projects);
     					return projects;
-
+    				case 'services':
+    					return customtable.getBodyFromResponse(customtable.fixtures.coach_services);
 				}
 			}
 		},
