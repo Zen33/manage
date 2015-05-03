@@ -54,4 +54,10 @@ public class FriendInfoDaoMem implements IFriendInfoDao {
 		return 0;
 	}
 
+	@Override
+	public int getSum(String uid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

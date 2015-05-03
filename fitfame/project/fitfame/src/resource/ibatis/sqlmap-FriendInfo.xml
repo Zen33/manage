@@ -5,11 +5,19 @@
 	<typeAlias alias="FriendInfo" type="fitfame.po.FriendInfo" />
 
 	<select id="getFriendInfoList" parameterClass="java.util.Map" resultClass="FriendInfo">
-		select * from friends_info where uid1 = #uid1# or uid2 = #uid2# limit #FromItemNo#, #ToItemNo#
+		select * from friends_info where uid1 = #uid#  limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getFriendInfoList_count" parameterClass="java.util.Map" resultClass="Integer">
+		select count(*) from friends_info where uid1 = #uid# 
 	</select>
 	
 	<select id="getFriendInfo" parameterClass="FriendInfo" resultClass="FriendInfo">
 		select * from friends_info where uid1 = #uid1# and uid2 = #uid2#
+	</select>
+	
+	<select id="getSum" resultClass="Integer">
+		select count(*) from friends_info where uid1 = #value# 
 	</select>
 	
 	<insert id="insertFriendInfo" parameterClass="FriendInfo">
@@ -17,6 +25,6 @@
 	</insert>
 	
 	<delete id="deleteFriendInfo" parameterClass="FriendInfo">
-		delete from friends_info where where uid1 = #uid1# and uid2 = #uid2#
+		delete from friends_info  where uid1 = #uid1# and uid2 = #uid2#
 	</delete>
 </sqlMap>

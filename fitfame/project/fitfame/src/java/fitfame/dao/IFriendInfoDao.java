@@ -21,4 +21,6 @@ public interface IFriendInfoDao {
 	public int insertFriendInfo(FriendInfo info);
 	
 	public int deleteFriendInfo(FriendInfo info);
+	
+	public int getSum(String uid);
 }

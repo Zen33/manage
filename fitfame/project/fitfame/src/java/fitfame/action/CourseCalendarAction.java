@@ -39,7 +39,8 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCalendarInfo(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("page") int page) {
+			@QueryParam("page") int page, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -60,7 +61,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -70,7 +74,8 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCourseInfo(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("cid") long cid) {
+			@QueryParam("cid") long cid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -91,7 +96,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -100,7 +108,8 @@ public class CourseCalendarAction {
 	@Path("/course/user/")
 	@Produces("text/html;charset=utf-8")
 	public String QueryUserCalendarInfo(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -116,7 +125,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -131,7 +143,8 @@ public class CourseCalendarAction {
 			@QueryParam("maxlimit") int maxlimit,
 			@QueryParam("stype") int stype,
 			@QueryParam("intro") String intro,
-			@QueryParam("cid") long tid) {
+			@QueryParam("cid") long tid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -153,7 +166,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -164,7 +180,8 @@ public class CourseCalendarAction {
 	public String RefreshCourseCalendar(@PathParam("version") String version,
 			@QueryParam("token") String token,
 			@QueryParam("id") long id,
-			@QueryParam("maxlimit") int maxlimit) {
+			@QueryParam("maxlimit") int maxlimit, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -186,7 +203,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -196,7 +216,8 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String RemoveCourseCalendar(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("id") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -218,7 +239,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -228,7 +252,8 @@ public class CourseCalendarAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCourseMember(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("cid") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String uid = TokenUtil.checkToken(token);
@@ -244,7 +269,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -256,7 +284,8 @@ public class CourseCalendarAction {
 			@QueryParam("token") String token,
 			@QueryParam("id") long id,
 			@QueryParam("assign") String[] assign,
-			@QueryParam("unassign") String[] unassign) {
+			@QueryParam("unassign") String[] unassign, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try{
 			String cid = TokenUtil.checkToken(token);
@@ -283,7 +312,10 @@ public class CourseCalendarAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	

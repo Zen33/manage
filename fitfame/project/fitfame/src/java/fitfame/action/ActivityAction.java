@@ -51,7 +51,8 @@ public class ActivityAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryPublicInfo(@PathParam("version") String version,
 			@QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1) {
@@ -68,7 +69,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -79,7 +83,8 @@ public class ActivityAction {
 	public String QueryUserTopicInfo(@PathParam("version") String version,
 			@QueryParam("uid") String uid,
 			@QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1
@@ -97,7 +102,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -107,7 +115,8 @@ public class ActivityAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryTopicReplyInfo(@PathParam("version") String version,
 			@QueryParam("tid") long tid, @QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1
@@ -125,7 +134,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -136,7 +148,8 @@ public class ActivityAction {
 	public String QueryUnreadReplyInfo(@PathParam("version") String version,
 			@QueryParam("uid") String uid,
 			@QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1
@@ -154,7 +167,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -169,7 +185,8 @@ public class ActivityAction {
 			@FormParam("pic2") String pic2, @FormParam("picType2") String picType2,
 			@FormParam("pic3") String pic3, @FormParam("picType3") String picType3,
 			@FormParam("pic4") String pic4, @FormParam("picType4") String picType4,
-			@FormParam("city") String city) {
+			@FormParam("city") String city, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -203,7 +220,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -214,7 +234,8 @@ public class ActivityAction {
 	public String AddNewReply(@PathParam("version") String version,
 			@QueryParam("token") String token,
 			@QueryParam("content") String content,
-			@QueryParam("totid") long totid) {
+			@QueryParam("totid") long totid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -238,7 +259,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -248,7 +272,8 @@ public class ActivityAction {
 	@Produces("text/html;charset=utf-8")
 	public String AddNewFav(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("tid") long tid) {
+			@QueryParam("tid") long tid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -266,7 +291,10 @@ public class ActivityAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	

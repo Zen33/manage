@@ -265,20 +265,10 @@ public class UserService {
 		}
 		
 		UserInfo user = userInfoDaoImpl.getUserInfoByUid(uid);
-		JSONObject pjson = UserBasicInfo(user);
-		pjson.accumulate("state", queryStateInfo(uid));
-		pjson.accumulate("token", TokenUtil.produceToken(uid));
+		json = UserBasicInfo(user);
+		json.accumulate("state", queryStateInfo(uid));
+		json.accumulate("token", TokenUtil.produceToken(uid));
 		
-		if(user.getCategory() == 1)
-		{
-			pjson.accumulate("coach_info", coachInfoDaoImpl.getCoachInfo(user.getUid()));
-			pjson.accumulate("coach_ad", coachAdInfoDaoImpl.getCoachAdInfoList(user.getUid()));
-			json.accumulate("success_jsonpCallback", pjson);	
-		}
-		else
-		{
-			json = pjson;
-		}
 		return json;
 	}
 

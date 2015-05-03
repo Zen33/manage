@@ -42,7 +42,8 @@ public class FriendAction {
 	public String QueryFriendInfo(@PathParam("version") String version,
 			@QueryParam("token") String token,
 			@QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -65,15 +66,20 @@ public class FriendAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
-	@POST
+	@GET
 	@NoCache
 	@Path("/info/delete")
 	@Produces("text/html;charset=utf-8")
 	public String RemoveFriend(@PathParam("version") String version,
-			@FormParam("token") String token, @FormParam("uid") String uid) {
+			@QueryParam("token") String token, @QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -92,6 +98,38 @@ public class FriendAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
+		return json.toString();
+	}
+	
+	@GET
+	@NoCache
+	@Path("/info/sum")
+	@Produces("text/html;charset=utf-8")
+	public String FriendSum(@PathParam("version") String version,
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
+		JSONObject json = new JSONObject();
+		try {
+			String myid = TokenUtil.checkToken(token);
+			if (myid == null) {
+				LogUtil.WriteLog(ExceptionIdUtil.TokenOverDue, "/friend/info/delete");
+				throw new BaseException(ExceptionIdUtil.TokenOverDue);
+			}
+
+			json = friendService.FriendSum(myid);
+			json.accumulate("status", 200);
+		} catch (Exception e) {
+			json.put("status", 400);
+			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -100,7 +138,8 @@ public class FriendAction {
 	@Path("/info/add")
 	@Produces("text/html;charset=utf-8")
 	public String AddFriend(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("uid") String uid) {
+			@QueryParam("token") String token, @QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -119,6 +158,10 @@ public class FriendAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}

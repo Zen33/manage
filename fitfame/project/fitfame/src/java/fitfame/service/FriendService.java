@@ -6,6 +6,7 @@ package fitfame.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,12 @@ public class FriendService {
 			throw new BaseServiceException(ExceptionIdUtil.UserNotExsits, uid2);
 		}
 		
+		int sum = friendInfoDaoImpl.getSum(uid1);
+		if(sum > 500)
+		{
+			throw new BaseServiceException(ExceptionIdUtil.OverMaxFriendLimit, uid1);
+		}
+		
 		FriendInfo info = new FriendInfo();
 		info.setUid1(uid1);
 		info.setUid2(uid2);
@@ -73,11 +80,6 @@ public class FriendService {
 	}
 	
 	public void RemoveFriend(String uid1, String uid2){
-		if (uid1.compareTo(uid2)>0){
-			String temp = uid1;
-			uid1 = uid2;
-			uid2 = temp;
-		}
 		
 		FriendInfo info = new FriendInfo();
 		info.setUid1(uid1);
@@ -88,23 +90,23 @@ public class FriendService {
 	public JSONObject queryMyFriend(String uid, PageInfo page){
 		JSONObject json = new JSONObject();
 		List<FriendInfo> friends= friendInfoDaoImpl.getFriendInfoList(uid, page);
-		List<UserInfo> info = new ArrayList<UserInfo>();
+		JSONArray jArray = new JSONArray();
 		if(friends != null){
 			for(int i = 0; i < friends.size(); i++)  
 	        { 
 				FriendInfo temp = friends.get(i);
 				UserInfo user = new UserInfo();
-				if(temp.getUid1().equals(uid)){
-					user = userInfoDaoImpl.getUserInfoByUid(temp.getUid2());
-				}
-				else
-				{
-					user = userInfoDaoImpl.getUserInfoByUid(temp.getUid1());
-				}
-				info.add(user);
+				user = userInfoDaoImpl.getUserInfoByUid(temp.getUid2());
+				jArray.add(UserBasicInfoWithoutPlan(user));
 	        }
 		}
 		
-		return json.accumulate("friends", info);
+		return json.accumulate("friends", jArray);
+	}
+
+	public JSONObject FriendSum(String myid) {
+		JSONObject json = new JSONObject();
+		json.accumulate("sum", friendInfoDaoImpl.getSum(myid));
+		return json;
 	}
 }

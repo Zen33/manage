@@ -41,7 +41,8 @@ public class PlanAction {
 	@Path("/user/")
 	@Produces("text/html;charset=utf-8")
 	public String QueryUserPlan(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("uid") String uid) {
+			@QueryParam("token") String token, @QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -60,6 +61,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -68,7 +73,8 @@ public class PlanAction {
 	@Path("/user/add/")
 	@Produces("text/html;charset=utf-8")
 	public String AddUserPlan(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("pid") long  pid) {
+			@QueryParam("token") String token, @QueryParam("pid") long  pid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -87,6 +93,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -96,7 +106,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String ReplaceUserPlan(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("pid") long  pid
-			, @QueryParam("uid") String  uid) {
+			, @QueryParam("uid") String  uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -115,6 +126,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -123,7 +138,8 @@ public class PlanAction {
 	@Path("/user/remove/")
 	@Produces("text/html;charset=utf-8")
 	public String RemoveUserPlan(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("pid") long  pid) {
+			@QueryParam("token") String token, @QueryParam("pid") long  pid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -142,6 +158,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -150,7 +170,8 @@ public class PlanAction {
 	@Path("/coach/user/")
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachUser(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -166,6 +187,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -175,7 +200,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryUserSubPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("uid") String uid) {
+			@QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -196,6 +222,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -204,7 +234,8 @@ public class PlanAction {
 	@Path("/user/subplan/undo")
 	@Produces("text/html;charset=utf-8")
 	public String QueryUndoUserSubPlan(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("uid") String uid) {
+			@QueryParam("token") String token, @QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -225,6 +256,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -234,7 +269,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryDoneUserSubPlan(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("uid") String uid,
-			@QueryParam("edate") long edate) {
+			@QueryParam("edate") long edate, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -255,6 +291,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -264,7 +304,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String updateSubPlanStep(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("spid") long spid,
-			@QueryParam("step") int step) {
+			@QueryParam("step") int step, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -283,6 +324,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -292,7 +337,8 @@ public class PlanAction {
 	@Path("coach/plandesc")
 	@Produces("text/html;charset=utf-8")
 	public String QueryAvailableSubPlanDesc(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -308,6 +354,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -316,7 +366,8 @@ public class PlanAction {
 	@Path("coach/subplan")
 	@Produces("text/html;charset=utf-8")
 	public String QueryAvailableSubPlan(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -332,6 +383,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -340,7 +395,8 @@ public class PlanAction {
 	@Path("coach/plantemplate")
 	@Produces("text/html;charset=utf-8")
 	public String QueryAllPlanTemplate(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -356,6 +412,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -364,7 +424,8 @@ public class PlanAction {
 	@Path("/coach/")
 	@Produces("text/html;charset=utf-8")
 	public String QueryAllPlan(@PathParam("version") String version,
-			@QueryParam("token") String token) {
+			@QueryParam("token") String token, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -380,6 +441,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -389,7 +454,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String PublishCoachPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("pid") long pid) {
+			@QueryParam("pid") long pid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -408,6 +474,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -417,7 +487,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String RemoveCoachPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("pid") long pid) {
+			@QueryParam("pid") long pid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -435,6 +506,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -455,7 +530,8 @@ public class PlanAction {
 			@FormParam("quantity") int quantity, 
 			@FormParam("units") String units, 
 			@FormParam("duration") int duration,
-			@FormParam("share") int share) {
+			@FormParam("share") int share, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -471,6 +547,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -480,7 +560,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String RemoveCoachPlanDesc(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("id") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -498,6 +579,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -519,7 +604,8 @@ public class PlanAction {
 			@FormParam("quantity") int quantity, 
 			@FormParam("units") String units, 
 			@FormParam("duration") int duration,
-			@FormParam("share") int share) {
+			@FormParam("share") int share, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -538,6 +624,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -549,7 +639,8 @@ public class PlanAction {
 			@QueryParam("token") String token,
 			@QueryParam("name") String name, 
 			@QueryParam("intro")  String intro,
-			@QueryParam("duration") int duration) {
+			@QueryParam("duration") int duration, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -565,6 +656,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -577,7 +672,8 @@ public class PlanAction {
 			@QueryParam("id") long id, 
 			@QueryParam("name") String name,
 			@QueryParam("intro")  String intro, 
-			@QueryParam("duration") int duration) {
+			@QueryParam("duration") int duration, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -596,6 +692,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -605,7 +705,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String DeleteSubPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("id") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -624,6 +725,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -636,7 +741,8 @@ public class PlanAction {
 			@QueryParam("name") String name, 
 			@QueryParam("intro")  String intro, 
 			@QueryParam("icon")  String icon, 
-			@QueryParam("duration") int duration) {
+			@QueryParam("duration") int duration, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -652,6 +758,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -665,7 +775,8 @@ public class PlanAction {
 			@QueryParam("id") long id, 
 			@QueryParam("intro")  String intro, 
 			@QueryParam("icon")  String icon, 
-			@QueryParam("duration") int duration) {
+			@QueryParam("duration") int duration, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -684,6 +795,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -693,7 +808,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String DeletePlanTemplate(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("id") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -712,6 +828,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -720,7 +840,8 @@ public class PlanAction {
 	@Path("/subplan/desc")
 	@Produces("text/html;charset=utf-8")
 	public String QuerySubPlanDesc(@PathParam("version") String version,
-			 @QueryParam("spid") long spid) {
+			 @QueryParam("spid") long spid, 
+				@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			json = planService.querySubPlanDesc(spid);
@@ -728,6 +849,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -739,7 +864,8 @@ public class PlanAction {
 	public String AssignDescToSubPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
 			@QueryParam("spid") long pid, 
-			@QueryParam("did") long did) {
+			@QueryParam("did") long did, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -758,6 +884,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -798,7 +928,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String UnassignDescFromSubPlan(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("rid") long id) {
+			@QueryParam("rid") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -818,6 +949,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -826,7 +961,8 @@ public class PlanAction {
 	@Path("/subplan/")
 	@Produces("text/html;charset=utf-8")
 	public String QuerySubPlan(@PathParam("version") String version,
-			@QueryParam("id") long id) {
+			@QueryParam("id") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if(!isValidateId(id))
@@ -839,6 +975,10 @@ public class PlanAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -850,7 +990,8 @@ public class PlanAction {
 			@QueryParam("token") String token,
 			@QueryParam("pid") long pid, 
 			@QueryParam("spid") long spid, 
-			@QueryParam("rank") int rank) {
+			@QueryParam("rank") int rank, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -869,6 +1010,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -910,7 +1055,8 @@ public class PlanAction {
 	@Produces("text/html;charset=utf-8")
 	public String UnassignSubPlanFromPlanTemplate(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("rid") long id) {
+			@QueryParam("rid") long id, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -929,6 +1075,10 @@ public class PlanAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}

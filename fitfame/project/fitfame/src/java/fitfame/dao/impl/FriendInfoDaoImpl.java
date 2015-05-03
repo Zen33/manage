@@ -100,4 +100,18 @@ public class FriendInfoDaoImpl extends BaseDAO<FriendInfo> implements
 		return result;
 	}
 
+	@Override
+	public int getSum(String uid) {
+		int result = 0;
+		try{
+			result = (Integer)this.getSqlMapClientTemplate().queryForObject("FriendInfo.getSum", uid);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			result = 1;
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "deleteFriendInfo error"+uid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }

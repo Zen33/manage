@@ -67,7 +67,8 @@ public class AdminAction {
 	@Produces("text/html;charset=utf-8")
 	public String Login(@PathParam("version") String version,
 			@QueryParam("name") String name, @QueryParam("pw") String pw,
-			@Context HttpServletRequest request) {
+			@Context HttpServletRequest request, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 
 		if (!isIPAuth()) {
@@ -85,6 +86,10 @@ public class AdminAction {
 				json.put("status", 400);
 				json.put("message", e.getMessage());
 			}
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		String res = json.toString();
 		return res;

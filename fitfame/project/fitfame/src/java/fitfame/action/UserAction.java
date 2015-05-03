@@ -48,7 +48,8 @@ public class UserAction {
 	@Produces("text/html;charset=utf-8")
 	public String Verify(@PathParam("version") String version,
 			@QueryParam("tel") String tel,
-			@Context HttpServletRequest request)
+			@Context HttpServletRequest request, 
+			@QueryParam("callback") String callback)
 	{
 		JSONObject json = new JSONObject();
 		try{
@@ -65,7 +66,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-		
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -75,7 +79,8 @@ public class UserAction {
 	@Produces("text/html;charset=utf-8")
 	public String RegisterUser(@PathParam("version") String version,
 			@FormParam("tel") String tel, @FormParam("pw") String pw,
-			@FormParam("check") String check) {
+			@FormParam("check") String check, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidatePhone(tel) || !isValidatePw(pw) || !isValidateCheck(check)) {
@@ -89,7 +94,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -105,7 +113,8 @@ public class UserAction {
 			@FormParam("birthday") int brithday,
 			@FormParam("height") int height, @FormParam("weight") int weight,
 			@FormParam("city") String city, @FormParam("dist") String dist,
-			@FormParam("category") int category) {
+			@FormParam("category") int category, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -129,6 +138,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -146,7 +159,8 @@ public class UserAction {
 			@FormParam("city") String city, @FormParam("dist") String dist,
 			@FormParam("category") int category, @FormParam("ads") List<File> ads,
 			@FormParam("adsType") List<String> adsType, @FormParam("intro") String intro,
-			@FormParam("exp") int exp) {
+			@FormParam("exp") int exp, 
+			@FormParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -162,6 +176,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -171,7 +189,8 @@ public class UserAction {
 	@Path("/login/")
 	@Produces("text/html;charset=utf-8")
 	public String Login(@PathParam("version") String version,
-			@QueryParam("tel") String tel, @QueryParam("pw") String pw) {
+			@QueryParam("tel") String tel, @QueryParam("pw") String pw, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidatePhone(tel) || !isValidatePw(pw)) {
@@ -185,7 +204,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -198,7 +220,8 @@ public class UserAction {
 			@QueryParam("date") long date, @QueryParam("content") String content,
 			@QueryParam("dure") int dure, @QueryParam("mediaUrl") String mediaUrl,
 			@QueryParam("type") int type,@QueryParam("mediaType") int mediaType,
-			@QueryParam("qid") int qid) {
+			@QueryParam("qid") int qid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -224,6 +247,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -232,7 +259,8 @@ public class UserAction {
 	@Path("/findPw/")
 	@Produces("text/html;charset=utf-8")
 	public String FindPw(@PathParam("version") String version,
-			@QueryParam("tel") String tel)
+			@QueryParam("tel") String tel, 
+			@QueryParam("callback") String callback)
 	{
 		JSONObject json = new JSONObject();
 		try{
@@ -248,7 +276,10 @@ public class UserAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-		
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -258,7 +289,8 @@ public class UserAction {
 	@Produces("text/html;charset=utf-8")
 	public String ChangePw(@PathParam("version") String version,
 			@QueryParam("token") String token, 
-			@QueryParam("npw") String npw) {
+			@QueryParam("npw") String npw, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -274,6 +306,10 @@ public class UserAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}

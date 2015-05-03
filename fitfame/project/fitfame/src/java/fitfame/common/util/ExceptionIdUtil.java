@@ -106,5 +106,7 @@ public class ExceptionIdUtil {
 	public static final String AlreadyPublish = "已经发布！";
 	
 	public static final String CantChangePublic = "公有库不可被改变！";
+	
+	public static final String OverMaxFriendLimit = "超出好友人数上限！";
 }
 

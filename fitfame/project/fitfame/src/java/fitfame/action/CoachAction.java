@@ -44,7 +44,8 @@ public class CoachAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachListInfo(@PathParam("version") String version,
 			@QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1) {
@@ -62,6 +63,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -70,7 +75,8 @@ public class CoachAction {
 	@Path("/coach/info")
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachInfo(@PathParam("version") String version,
-			 @QueryParam("cid") String cid) {
+			 @QueryParam("cid") String cid, 
+				@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidateUid(cid)) {
@@ -84,6 +90,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -92,7 +102,8 @@ public class CoachAction {
 	@Path("/coach/info/personal")
 	@Produces("text/html;charset=utf-8")
 	public String QueryPersonalCoachInfo(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("uid") String uid) {
+			@QueryParam("token") String token, @QueryParam("uid") String uid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -112,6 +123,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -120,7 +135,8 @@ public class CoachAction {
 	@Path("/coach/service")
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachService(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("cid") String cid) {
+			@QueryParam("token") String token, @QueryParam("cid") String cid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -143,6 +159,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 
@@ -158,7 +178,8 @@ public class CoachAction {
 			@QueryParam("online_times") int online_times,
 			@QueryParam("offline_times") int offline_times,
 			@QueryParam("online") int online,
-			@QueryParam("offline") int offline) {
+			@QueryParam("offline") int offline, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -173,6 +194,10 @@ public class CoachAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
@@ -189,7 +214,8 @@ public class CoachAction {
 			@QueryParam("online_times") int online_times,
 			@QueryParam("offline_times") int offline_times,
 			@QueryParam("online") int online,
-			@QueryParam("offline") int offline) {
+			@QueryParam("offline") int offline, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -205,6 +231,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -214,7 +244,8 @@ public class CoachAction {
 	@Produces("text/html;charset=utf-8")
 	public String removeCoachService(@PathParam("version") String version,
 			@QueryParam("token") String token,
-			@QueryParam("sid") long sid) {
+			@QueryParam("sid") long sid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 
@@ -230,6 +261,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -238,7 +273,8 @@ public class CoachAction {
 	@Path("/coach/fav")
 	@Produces("text/html;charset=utf-8")
 	public String AddFavCoach(@PathParam("version") String version,
-			@QueryParam("token") String token, @QueryParam("cid") String cid) {
+			@QueryParam("token") String token, @QueryParam("cid") String cid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String myid = TokenUtil.checkToken(token);
@@ -258,6 +294,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -268,7 +308,8 @@ public class CoachAction {
 	public String AddCoachReply(@PathParam("version") String version,
 			@QueryParam("token") String token,
 			@QueryParam("content") String content,
-			@QueryParam("cid") String cid) {
+			@QueryParam("cid") String cid, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			String uid = TokenUtil.checkToken(token);
@@ -292,7 +333,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -302,7 +346,8 @@ public class CoachAction {
 	@Produces("text/html;charset=utf-8")
 	public String QueryCoachReplyInfo(@PathParam("version") String version,
 			@QueryParam("cid") String cid, @QueryParam("pagesize") int pagesize,
-			@QueryParam("pageno") int pageno) {
+			@QueryParam("pageno") int pageno, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (pagesize <= 0 || pageno < 1
@@ -320,7 +365,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
-
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -330,7 +378,8 @@ public class CoachAction {
 	@Produces("text/html;charset=utf-8")
 	public String BuyCoachCourse(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("cid") String cid, 
-			@QueryParam("sids") long [] sids) {
+			@QueryParam("sids") long [] sids, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidateUid(cid) || sids.length < 1) {
@@ -351,6 +400,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -360,7 +413,8 @@ public class CoachAction {
 	@Produces("text/html;charset=utf-8")
 	public String VerifyCoachCourse(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("cid") String cid, 
-			@QueryParam("sids") long [] sids) {
+			@QueryParam("sids") long [] sids, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidateUid(cid) || sids.length < 1) {
@@ -381,6 +435,10 @@ public class CoachAction {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
 		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
+		}
 		return json.toString();
 	}
 	
@@ -391,7 +449,8 @@ public class CoachAction {
 	public String CompleteCoachCourse(@PathParam("version") String version,
 			@QueryParam("token") String token, @QueryParam("cid") String cid, 
 			@QueryParam("sid") long sid, @QueryParam("online") int online,
-			@QueryParam("offline") int offline) {
+			@QueryParam("offline") int offline, 
+			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
 			if (!isValidateUid(cid)) {
@@ -411,6 +470,10 @@ public class CoachAction {
 		} catch (Exception e) {
 			json.put("status", 400);
 			json.put("message", e.getMessage());
+		}
+		if(callback != null)
+		{
+			return callback + "(" + json.toString() + ")";
 		}
 		return json.toString();
 	}
