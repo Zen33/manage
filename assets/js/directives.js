@@ -1,114 +1,23 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('comfirm', function($state) {
+MisApp.directive('comfirm', function($state, UserService, customtable) {
 	return {
 		templateUrl: 'assets/templates/comfirm.html',
 		restrict: 'E',
 		controller: function($scope, $http) {
 			$scope.loginObj = {
-				username: "",
-				password: "",
-				rememberMe: true
+				tel: "18012345678",
+				pw: "123456"
 			};
 			$scope.login = function() {
-				// $http.post('/someUrl', $scope.loginObj).
-			  	// success(function(data, status, headers, config) {
-				    // this callback will be called asynchronously
-				    // when the response is available
-				    var data = {
-				    	user_name: "黄舒宁",
-				    	user_avator: "assets/imgs/muscle.jpeg",
-				    	user_specialty: "特短",
-				    	user_desc: "详细介绍什么的，谁会写啊"
-				    }
-				    $state.go('main', {active: 'home', userinfo: data, tableVisible: true});
-			  	// }).
-			  	// error(function(data, status, headers, config) {
-				    // called asynchronously if an error occurs
-				    // or server returns response with an error status.
-			  	// });
+				    UserService.auth($scope.loginObj).then(function (data) {
+				    	$state.go('main', {active: 'users', userinfo: data, tableVisible: true});
+				    }, function(error) {
+
+	            	})
 			};
 			$scope.onTextClick = function($event) {
 				$event.target.select();
-			}
-		}
-	}
-});
-
-MisApp.directive('customtable', function($compile) {
-	return {
-		templateUrl: 'assets/templates/customtable.html',
-		restrict: 'E',
-		link: function(scope, elm, attrs) {
-			scope.gridOptions = {
-				enableRowSelection: true,
-    			enableSelectAll: false,
-    			enableCellEditOnFocus: true,
-    			useExternalPagination: true,
-    			paginationPageSizes: [50, 100, 200],
-    			paginationPageSize: 20
-			};
-			scope.$watch(attrs.customData, function(value) {
-				scope.gridOptions.columnDefs = value.columnDefs;
-		    });
-
-
-			// $http.get('/data/500_complex.json')
-			// .success(function(data) {
-			//   $scope.gridOptions.data = data;
-			// });
-
-			scope.currentFocused = "";
-
-			scope.getCurrentFocus = function(){
-				var rowCol = scope.gridApi.cellNav.getFocusedCell();
-				if(rowCol !== null) {
-				  	scope.currentFocused = 'Row Id:' + rowCol.row.entity.id + ' col:' + rowCol.col.colDef.name;
-				}
-			}
-
-			scope.gridOptions.onRegisterApi = function(gridApi) {
-				scope.gridApi = gridApi;
-				scope.gridApi.pagination.on.paginationChanged(scope, function( currentPage, pageSize){
-					scope.getPage(currentPage, pageSize);
-				});
-    		}
-
-    		scope.clearAll = function() {
-				scope.gridApi.selection.clearSelectedRows();
-			}
-
-			scope.rmData = function() {
-				var selections = scope.gridApi.selection.getSelectedRows();
-				selections.filter(function(s) { return s; });
-				// $http.put('', selections);
-				var currentPage = scope.gridApi.pagination.getPage();
-				scope.getPage(currentPage, 20);
-			}
-
-			scope.getPage = function(pageNumber, pageSize){
-				var startingRow = pageSize * ( pageNumber - 1);   // page number starts at 1, not zero
-				var newData = [];
-				scope.$watch(attrs.customData, function(value) {
-					var data = value.data;
-					for( var i = startingRow; i < startingRow + scope.gridOptions.paginationPageSize; i++ ) {
-						newData.push( data[i] );
-					}
-					scope.gridOptions.data = newData;
-					scope.gridOptions.totalItems = data.length;
-			    });
-				
-			}
-
-			scope.getPage(1, 20);
-
-			scope.addData = function() {
-				var columnDefs = scope.gridOptions.columnDefs;
-				var newRow = {};
-				for (var i in columnDefs) {
-					newRow[columnDefs[i].name] = '';
-				}
-				// $http.post('', newRow);
 			}
 		}
 	}
@@ -121,22 +30,23 @@ MisApp.directive('profile', function($state) {
 		scope: {
 			userinfo: '='
 		},
-		link: function(scope, elem, attrs) {
-			scope.userinfo = scope.$parent.userinfo;
-		},
 		controller: function($scope) {
+			$scope.userinfo = $scope.$parent.userinfo.user_info;
+			$scope.userinfo['intro'] = $scope.$parent.userinfo.coach_info.intro;
+			$scope.userinfo['exp'] = $scope.$parent.userinfo.coach_info.exp;
+			$scope.userinfo['ads'] = $scope.$parent.userinfo.coach_ad;
 			$scope.myInterval = 5000;
 			$scope.showModal = false;
+			$scope.modaltitle = "编辑教练信息";
 			var slides = $scope.slides = [];
 			$scope.addSlide = function() {
-				var newWidth = 600 + slides.length + 1;
 				slides.push({
-					image: 'http://placekitten.com/' + newWidth + '/300',
+					image: $scope.userinfo.ads[slides.length].url,
 					text: ['More','Extra','Lots of','Surplus'][slides.length % 4] + ' ' +
 					['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
 					});
 			};
-			for (var i=0; i<4; i++) {
+			for (var i=0; i<$scope.$parent.userinfo.coach_ad.length; i++) {
 				$scope.addSlide();
 			}
 			$scope.editProfile = function() {
@@ -156,8 +66,8 @@ MisApp.directive('nav', function($state) {
 		link: function(scope, elem, attrs) {
 			scope.active = scope.$parent.active;
 			scope.switchTab = function(nextTab) {
-				$state.go('main', {active: nextTab, tableVisible: nextTab === "messages" ? false : true}); //second parameter is for $stateParams
-				scope.active = nextTab
+				$state.go('main', {active: nextTab});
+				// scope.active = nextTab;
 			};
 		}
 	}
@@ -171,8 +81,10 @@ MisApp.directive('modal', function($state) {
 		replace:true,
 		scope:true,
 		link: function(scope, element, attrs) {
-			scope.title = attrs.title;
-			scope.$watch(attrs.visible, function(value){
+			scope.$watch(attrs.modaltitle, function(value) {
+				scope.title = value;
+			});
+			scope.$watch(attrs.visible, function(value) {
 				value ? $(element).modal('show') : $(element).modal('hide');
 			});
 			$(element).on('shown.bs.modal', function(){
@@ -205,6 +117,129 @@ MisApp.directive('profilemodal', function($state) {
 		}
 	}
 });
+
+MisApp.directive('calendar', function($state, customtable) {
+	return {
+		templateUrl: 'assets/templates/calendar.html',
+		restrict: 'E',
+		controller: function($scope, $http, $compile, uiCalendarConfig) {
+			var date = new Date();
+		    var d = date.getDate();
+		    var m = date.getMonth();
+		    var y = date.getFullYear();
+		    
+		    // $scope.changeTo = 'Hungarian';
+		    /* event source that pulls from google.com */
+		    // $scope.eventSource = {
+		    //         url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+		    //         className: 'gcal-event',           // an option!
+		    //         currentTimezone: 'China' // an option!
+		    // };
+		    /* event source that contains custom events on the scope */
+		    // $scope.events = customtable.getBodyFromResponse(customtable.fixtures.current_course_schedule);
+		    $scope.events = [
+		      {title: 'a',start: moment()},
+		      // {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
+		      // {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
+		      // {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
+		      // {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false},
+		      // {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+		    ];
+		    /* event source that calls a function on every view switch */
+		  //   $scope.eventsF = function (start, end, timezone, callback) {
+		  //     var s = new Date(start).getTime() / 1000;
+		  //     var e = new Date(end).getTime() / 1000;
+		  //     var m = new Date(start).getMonth();
+		  //     var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
+		  //     callback(events);
+		  //   };
+
+		  //   $scope.calEventsExt = {
+				// color: '#f00',
+				// textColor: 'yellow',
+				// events: [ 
+		  //         {type:'party',title: 'Lunch',start: new Date(y, m, d, 12, 0),end: new Date(y, m, d, 14, 0),allDay: false},
+		  //         {type:'party',title: 'Lunch 2',start: new Date(y, m, d, 12, 0),end: new Date(y, m, d, 14, 0),allDay: false},
+		  //         {type:'party',title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+		  //       ]
+		  //   };
+		  //   /* alert on eventClick */
+		  //   $scope.alertOnEventClick = function( date, jsEvent, view){
+		  //       $scope.alertMessage = (date.title + ' was clicked ');
+		  //   };
+		  //   /* alert on Drop */
+		  //    $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
+		  //      $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
+		  //   };
+		  //   /* alert on Resize */
+		  //   $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view ){
+		  //      $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
+		  //   };
+		  //   /* add and removes an event source of choice */
+		  //   $scope.addRemoveEventSource = function(sources,source) {
+		  //     var canAdd = 0;
+		  //     angular.forEach(sources,function(value, key){
+		  //       if(sources[key] === source){
+		  //         sources.splice(key,1);
+		  //         canAdd = 1;
+		  //       }
+		  //     });
+		  //     if(canAdd === 0){
+		  //       sources.push(source);
+		  //     }
+		  //   };
+		  //   /* add custom event*/
+		  //   $scope.addEvent = function() {
+		  //     $scope.events.push({
+		  //       title: 'Open Sesame',
+		  //       start: new Date(y, m, 28),
+		  //       end: new Date(y, m, 29),
+		  //       className: ['openSesame']
+		  //     });
+		  //   };
+		  //   /* remove event */
+		  //   $scope.remove = function(index) {
+		  //     $scope.events.splice(index,1);
+		  //   };
+		  //   /* Change View */
+		  //   $scope.changeView = function(view,calendar) {
+		  //     uiCalendarConfig.calendars[calendar].fullCalendar('changeView',view);
+		  //   };
+		  //   /* Change View */
+		  //   $scope.renderCalender = function(calendar) {
+		  //     if(uiCalendarConfig.calendars[calendar]){
+		  //       uiCalendarConfig.calendars[calendar].fullCalendar('render');
+		  //     }
+		  //   };
+		  //    /* Render Tooltip */
+		  //   $scope.eventRender = function( event, element, view ) { 
+		  //       element.attr({'tooltip': event.title,
+		  //                    'tooltip-append-to-body': true});
+		  //       $compile(element)($scope);
+		  //   };
+		    /* config object */
+		 //    $scope.uiConfig = {
+		 //      calendar:{
+		 //        height: 450,
+		 //        editable: true,
+		 //        header:{
+		 //          left: 'title',
+		 //          center: '',
+		 //          right: 'today prev,next'
+		 //        },
+		 //        eventClick: $scope.alertOnEventClick,
+		 //        eventDrop: $scope.alertOnDrop,
+		 //        eventResize: $scope.alertOnResize,
+		 //        eventRender: $scope.eventRender
+		 //      }
+		 //    };
+
+		 //    /* event sources array*/
+		 //    $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
+		 //    $scope.eventSources2 = [$scope.calEventsExt, $scope.eventsF, $scope.events];
+		}
+	}
+})
 
 MisApp.directive('chatbox', function($state, $q, MessageService) {
 	return {

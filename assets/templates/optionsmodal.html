@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+    <div ng-repeat="option in options">
+        <input type="checkbox" ng-model="optionsChecked[option.id]" ng-change="onChange(option.id)">
+        <label>id</label>
+        <span>{{option.id}}</span>
+        <label> | 名字</label>
+        <span>{{option.name}}</span>
+        <label> | 时长</label>
+        <span>{{option.duration}}</span>
+        <label> | 简介</label>
+        <span>{{option.intro}}</span>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

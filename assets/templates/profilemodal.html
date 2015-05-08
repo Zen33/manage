@@ -1,15 +1,15 @@
 <form role="form" >
     <div class="form-group">
         <label for="name">Name</label>
-        <input type="name" class="form-control" ng-model='userinfo.user_name' id="name" placeholder="{{userinfo.user_name}}" />
+        <input type="name" class="form-control" ng-model='userinfo.username' id="name" placeholder="{{userinfo.username}}" />
     </div>
     <div class="form-group">
         <label for="specialty">Specialty</label>
-        <input type="specialty" class="form-control" ng-model="userinfo.user_specialty" placeholder="{{userinfo.user_specialty}}" />
+        <input type="specialty" class="form-control" ng-model="userinfo.exp" placeholder="{{userinfo.exp}}" />
     </div>
     <div class="form-group">
         <label for="desc">Description</label>
-        <input type="desc" class="form-control" ng-model="userinfo.user_desc" placeholder="{{userinfo.user_desc}}" />
+        <input type="desc" class="form-control" ng-model="userinfo.intro" placeholder="{{userinfo.intro}}" />
     </div>
     <button type="submit" class="btn btn-default" ng-click="save()">Save</button>
     <button type="submit" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>

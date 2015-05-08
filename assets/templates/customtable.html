@@ -1,7 +1,12 @@
 <div class="customtable">
-	<!-- <button type="button" id="addData" class="btn btn-success" ng-click="addData()">Add Row</button> -->
-	<p>Adding and deletion buttons are hidden since adding and deletion have to do api call so as to get new data.</p>
-	<button type="button" id="addData" class="btn btn-success" ng-click="clearAll()">Clear All</button>
-	<!-- <button type="button" id="addData" class="btn btn-success" ng-click="rmData()">Delete Row(s)</button> -->
-	<div ui-grid="gridOptions" ui-grid-pagination ui-grid-edit ui-grid-cellnav ui-grid-selection class="grid"></div>
+	<alert ng-if="alert.msg" type="{{alert.type}}" close="alert.msg=''">{{alert.msg}}</alert>
+	<div class="btn-group" ng-if="active === 'projects'">
+		<label class="btn btn-success" ng-model="radioModel" btn-radio="'model'" ng-change="loadTable()">模板</label>
+		<label class="btn btn-success" ng-model="radioModel" btn-radio="'public'" ng-change="loadTable()">公开</label>
+	</div>
+	<button ng-if="back" type="button" class="btn btn-success" ng-click="handleBack()">Back</button>
+	<button ng-if="buttonText" type="button" id="addData" class="btn btn-success" ng-click="handleClickOnRightBtn()">{{buttonText}}</button>
+	<br />
+	<br />
+	<div ui-grid="gridOptions" ui-grid-pagination ui-grid-edit ui-grid-cellNav ui-grid-importer class="grid"></div>
 </div>
