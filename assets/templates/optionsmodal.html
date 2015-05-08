@@ -1,8 +1,11 @@
-<form role="form">
-    <div ng-repeat="option in gridOptions2">
-        <input type="checkbox" ng-model="optionsChecked[option.pid]" ng-change="onChange(option.pid)">
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+    <div ng-repeat="option in options">
+        <input type="checkbox" ng-model="optionsChecked[option.id]" ng-change="onChange(option.id)">
         <label>id</label>
-        <span>{{option.pid}}</span>
+        <span>{{option.id}}</span>
         <label> | 名字</label>
         <span>{{option.name}}</span>
         <label> | 时长</label>
@@ -10,6 +13,8 @@
         <label> | 简介</label>
         <span>{{option.intro}}</span>
     </div>
-    <button type="submit" class="btn btn-default" ng-click="save()">Save</button>
-    <button type="submit" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cancel</button>
-</form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

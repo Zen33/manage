@@ -4,16 +4,17 @@ angular.module('misapp')
 		switch(dataType) {
 		case "projects": 
 			return [
+				{ field: 'icon', displayName: '计划标志', enableCellEdit: false, cellTemplate: '<img src="{{row.entity.icon}}" width="30px" height="30px"/>'},
 				{ field: 'pid', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '计划名称'},
 				{ field: 'intro', displayName: '计划介绍'},
 				{ field: 'duration', displayName: '时长'},
-				{ field: 'icon', displayName: '计划标志'},
 				{ name: 'plan', displayName: '查看计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '},
 				{name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '}
 			];
-		case "users":
+		case "users": 
 			return [
+				{ field: 'icon', displayName: '', enableCellEdit: false, cellTemplate: '<img src="{{row.entity.icon}}" width="30px" height="30px"/>'},
 				{ field: 'uid', displayName: 'id', enableCellEdit: false},
 				{ field: 'username', displayName: '名字', type: 'string', enableCellEdit: false},
 				{ field: 'sex', displayName: '性别', editDropdownValueLabel: 'sex', editableCellTemplate: 'ui-grid/dropdownEditor', editDropdownOptionsArray: [
@@ -23,7 +24,6 @@ angular.module('misapp')
 			     // cellTemplate: '<input id="editBtn" type="file" class="btn-small" ng-change="grid.addScope.storeMedia"></input> '
 				{ field: 'brithday', displayName: '生日', type: 'date', enableCellEdit: false},
 				{ field: 'city', displayName: '城市', type: 'string', enableCellEdit: false},
-				{ field: 'icon', displayName: '头像', enableCellEdit: false},
 				{ field: 'height', displayName: '身高', enableCellEdit: false},
 				{ field: 'weight', displayName: '体重', enableCellEdit: false},
 				{ name: 'plan', displayName: '查看计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '},
@@ -32,7 +32,6 @@ angular.module('misapp')
 		case "trainings":
 			return [
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
-				{ field: 'rank', displayName: '第几天', type: 'number', cellTemplate: '<span>第{{row.entity.rank}}天</span>'},
 				{ field: 'name', displayName: '训练名称'},
 				{ field: 'intro', displayName: '训练介绍'},
 				{ field: 'duration', displayName: '时长'},
@@ -41,12 +40,11 @@ angular.module('misapp')
 		case "actions":
 			return [
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
-				{ field: 'name', displayName: '训练名称'},
-				{ field: 'intro', displayName: '训练介绍'},
+				{ field: 'name', displayName: '动作名称'},
+				{ field: 'intro', displayName: '动作介绍'},
 				{ field: 'duration', displayName: '时长'},
-				{ field: 'url', displayName: '实例', type: 'file'},
 				{ field: 'quantity', displayName: '数量', type: 'number'},
-				{ field: 'units', displayName: '单位', type: 'string'},
+				{ field: 'units', displayName: '单位', type: 'string'}
 			];
 		case "home":
 			return [
@@ -67,13 +65,14 @@ angular.module('misapp')
 				{ field: 'month', displayName: '有效时间/月', type: 'number'},
 				{ field: 'online', displayName: '视频服务次数', type: 'number'},
 				{ field: 'offline', displayName: '线下指导次数', type: 'number'},
-				{ field: 'online_times', displayName: '视频时长'},
-				{ field: 'offline_times', displayName: '线下时长'},
+				{ field: 'online_times', displayName: '视频时长', type: 'number'},
+				{ field: 'offline_times', displayName: '线下时长', type: 'number'},
 			]
 		}
 	},
 	getBodyFromResponse: function(resp) {
-		return _.map(_.filter(resp, function(value, key) { return key !== "status"; })[0], function(value, key) { return value; });
+		delete resp.status;
+		return resp;
 	},
 	getId: function(row) {
 		return _.find(row, function(value, key) { return key.indexOf('id') !== -1; });
@@ -137,7 +136,7 @@ angular.module('misapp')
 		    "plan": [{
 		        "cid": "17088099",
 		        "duration": 30,
-		        "icon": "",
+		        "icon": "http://112.124.52.165:8080/resources/AD/ad.jpg",
 		        "intro": "good",
 		        "inuse": 1,
 		        "name": "模版1",
@@ -329,11 +328,8 @@ angular.module('misapp')
 		},
 		current_course_schedules: {
 		    "calendar": [{
-		        "cdate": 20150420,
-		        "cid": 1,
-		        "holiday": "",
-		        "num": 0,
-		        "week": 1
+		        "start": "2015-04-20",
+		        "title": 1
 		    }, {
 		        "cdate": 20150421,
 		        "cid": 2,

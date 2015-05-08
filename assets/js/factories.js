@@ -13,12 +13,13 @@ MisApp.factory('UserService', function ($http, $q, customtable) {
             var deferred = $q.defer();
 			$http.jsonp(resource + 'user/login' + '?callback=JSON_CALLBACK', {params: params})
 			.then(function (resp) {
-				if (resp.status === 200) {
-					deferred.resolve(resp);
+				if (resp.data.status === 200) {
+                    token = resp.data.token;
+					deferred.resolve(customtable.getBodyFromResponse(resp.data));
 				}
 				else {
                     // invalid response
-                    deferred.reject(resp);
+                    deferred.reject(resp.data.message);
                 }
             }, function(response) {
                 // something went wrong
@@ -33,12 +34,12 @@ MisApp.factory('UserService', function ($http, $q, customtable) {
             var deferred = $q.defer();
             $http.jsonp(resource + 'plan/coach/user' + '?callback=JSON_CALLBACK', {params: params})
             .then(function (resp) {
-                if (resp.status === 200) {
-                    deferred.resolve(resp);
+                if (resp.data.status === 200) {
+                    deferred.resolve(customtable.getBodyFromResponse(resp.data).users);
                 }
                 else {
                     // invalid response
-                    deferred.reject(resp);
+                    deferred.reject(resp.data.message);
                 }
             }, function(response) {
                 // something went wrong
@@ -83,12 +84,12 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).plan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
 
                 }
 
@@ -106,14 +107,13 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/plantemplate?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).plan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
-
             }, function(response) {
                 // something went wrong
                 defer.reject(response.data);
@@ -129,17 +129,17 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/user/undo?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.error);
             });
             return defer.promise;
         },
@@ -152,17 +152,17 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/plan/publish?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).plan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.error);
             });
             return defer.promise;
         },
@@ -201,12 +201,12 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/user/replace?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
@@ -227,17 +227,17 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/plantemplate/update?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(params);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.error);
             });
             return defer.promise;
         },
@@ -250,17 +250,17 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/plantemplate/delete?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).plan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.statusText);
             });
             return defer.promise;
         },
@@ -273,24 +273,24 @@ MisApp.factory('PlanService', function ($http, $q, customtable) {
             $http.jsonp(resource + 'plan/coach/plan/remove?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).plan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.statusText);
             });
             return defer.promise;
         }
     };
 });
 
-MisApp.factory('TrainService', function ($http, $q) {
+MisApp.factory('TrainService', function ($http, $q, customtable) {
     return {
         getTrainModels: function(params) {
             // params = {
@@ -302,7 +302,7 @@ MisApp.factory('TrainService', function ($http, $q) {
                 // if success
                 if (response.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
                     defer.reject(response.data);
@@ -322,12 +322,12 @@ MisApp.factory('TrainService', function ($http, $q) {
             $http.jsonp(resource + 'plan/subplan?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
@@ -344,15 +344,15 @@ MisApp.factory('TrainService', function ($http, $q) {
             //     rank:
             // }
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/subplan?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.jsonp(resource + 'plan/coach/plan/subplan/add?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
@@ -372,17 +372,17 @@ MisApp.factory('TrainService', function ($http, $q) {
             $http.jsonp(resource + 'plan/coach/subplan/add?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve();
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.statusText);
             });
             return defer.promise;
         },
@@ -412,35 +412,80 @@ MisApp.factory('TrainService', function ($http, $q) {
             });
             return defer.promise;
         },
-        deleteTrain: function(params) {
+        deletePlanTrain: function(params) {
             // params = {
             //     token:
             //     rid:
             // }
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/subplan/remove?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.jsonp(resource + 'plan/coach/plan/subplan/remove?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        deleteTrainModel: function(params) {
+            // params = {
+            //     token:
+            //     id:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'plan/coach/subplan/delete?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data).subplan);
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
             });
             return defer.promise;
         }
     }
 });
 
-MisApp.factory('ActionService', function ($http, $q) {
+MisApp.factory('ActionService', function ($http, $q, customtable) {
     return {
-        getActions: function(params) {
+        getActionModels: function(params) {
+            // params = {
+            //     token:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'plan/subplan/desc?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data).desc);
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response);
+            });
+            return defer.promise;
+        },
+        getSubplanActions: function(params) {
             // params = {
             //     spid:
             // }
@@ -450,10 +495,10 @@ MisApp.factory('ActionService', function ($http, $q) {
                 // if success
                 if (response.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).desc);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
@@ -462,7 +507,7 @@ MisApp.factory('ActionService', function ($http, $q) {
             });
             return defer.promise;
         },
-        postAction: function(params) {
+        postSubplanAction: function(params) {
             // params = {
             //     spid:
             //     did:
@@ -472,21 +517,53 @@ MisApp.factory('ActionService', function ($http, $q) {
             $http.jsonp(resource + 'plan/coach/subplan/desc/add?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).desc);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
-                defer.reject(response.data);
+                defer.reject(response.error);
             });
             return defer.promise;
         },
-        deleteAction: function(params) {
+        postActionModel: function(params) {
+            // params = {
+            //     token:
+            //     name:    
+            //     intro:
+            //     pic:
+            //     picType:
+            //     media:
+            //     mediaType:
+            //     category:
+            //     quantiry:
+            //     units:
+            //     duration:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'plan/coach/plandesc/add?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve("success!");
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        deleteSubplanAction: function(params) {
             // params = {
             //     token:
             //     rid:
@@ -512,7 +589,7 @@ MisApp.factory('ActionService', function ($http, $q) {
     }
 });
 
-MisApp.factory('ServiceService', function ($http, $q) {
+MisApp.factory('ServiceService', function ($http, $q, customtable) {
     return {
         getUserServices: function(params) {
             // params = {
@@ -520,15 +597,15 @@ MisApp.factory('ServiceService', function ($http, $q) {
             //     uid:
             // }  
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/coach/info/personal?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.jsonp(resource + 'coach/info/personal?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).services);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
@@ -545,17 +622,76 @@ MisApp.factory('ServiceService', function ($http, $q) {
             $http.jsonp(resource + 'coach/service?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
-                if (response.status === 200) {
+                if (response.data.status === 200) {
                     // return messages
-                    defer.resolve(response.data);
+                    defer.resolve(customtable.getBodyFromResponse(response.data).services);
                 } else {
                     // invalid response
-                    defer.reject(response.data);
+                    defer.reject(response.data.message);
                 }
 
             }, function(response) {
                 // something went wrong
                 defer.reject(response.data);
+            });
+            return defer.promise;
+        },
+        postService: function(params) {
+            // var params = {
+            //     token:
+            //     name:
+            //     intro:
+            //     cost:
+            //     online_times:
+            //     offline_times:
+            //     online:
+            //     offline:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'coach/service/add?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data).sid);
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        patchService: function(params) {
+            // var params = {
+            //     token:
+            //     name:
+            //     intro:
+            //     cost:
+            //     online_times:
+            //     offline_times:
+            //     online:
+            //     offline:
+            //     sid:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'coach/service/update?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve("success");
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
             });
             return defer.promise;
         }

@@ -1,15 +1,12 @@
 <div class="customtable">
-	<alert ng-if="addPublic" type="{{alert.type}}">{{alert.msg}}</alert>
+	<alert ng-if="alert.msg" type="{{alert.type}}" close="alert.msg=''">{{alert.msg}}</alert>
 	<div class="btn-group" ng-if="active === 'projects'">
 		<label class="btn btn-success" ng-model="radioModel" btn-radio="'model'" ng-change="loadTable()">模板</label>
 		<label class="btn btn-success" ng-model="radioModel" btn-radio="'public'" ng-change="loadTable()">公开</label>
 	</div>
-	<button ng-if="back" type="button" class="btn btn-success" ng-click="reload()">Back</button>
+	<button ng-if="back" type="button" class="btn btn-success" ng-click="handleBack()">Back</button>
 	<button ng-if="buttonText" type="button" id="addData" class="btn btn-success" ng-click="handleClickOnRightBtn()">{{buttonText}}</button>
-	<modal modaltitle="modaltitle" visible="showModal">
-        <optionsmodal modaldata="modalData" userid="userId"/>
-    </modal>
 	<br />
 	<br />
-	<div ui-grid="gridOptions" ui-grid-pagination ui-grid-edit ui-grid-selection ui-grid-cellNav class="grid"></div>
+	<div ui-grid="gridOptions" ui-grid-pagination ui-grid-edit ui-grid-cellNav ui-grid-importer class="grid"></div>
 </div>

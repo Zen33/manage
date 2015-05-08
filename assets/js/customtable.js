@@ -1,6 +1,6 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService) {
+MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService) {
 	return {
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
@@ -26,10 +26,19 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					case 'services':
 						scope.switchToService();
 						break;
+					case 'trainings':
+						scope.switchToTraining();
+						break;
+					case 'actions':
+						scope.switchToActions();
+						break;
 				}
 		    });
 
 		    scope.switchToUser = function() {
+		    	scope.alert = {
+		    		msg: ""
+		    	};
 		    	scope.buttonText = "";
 		    	scope.back = false;
 				scope.gridOptions.columnDefs = customtable.defaultColumnDefs(scope.active);
@@ -37,6 +46,9 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 		    };
 
 		    scope.switchToBill = function() {
+		    	scope.alert = {
+		    		msg: ""
+		    	};
 		    	scope.buttonText = "";
 		    	scope.back = false;
 		    	scope.gridOptions.columnDefs = customtable.defaultColumnDefs(scope.active);
@@ -44,129 +56,177 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 		    }
 
 			scope.switchToPublicProject = function() {
+				var columnDefs = customtable.defaultColumnDefs('projects');
+				scope.alert = {
+		    		msg: ""
+		    	};
 				scope.radioModel = "public";
 				scope.back = false;
-				scope.addPublic = false;
 				scope.buttonText = "添加公开计划";
-				var columnDefs = _.map(customtable.defaultColumnDefs(scope.active), function(columnDef) {
-					if (columnDef.displayName !== 'id') {
-						columnDef['enableCellEdit'] = false;
-						columnDef['allowCellFocus'] = false;
-						columnDef['cellEditableCondition'] = false;
-					}
-					return columnDef;
-				});
 				scope.gridOptions.columnDefs = columnDefs;
 				scope.gridOptions.data = scope.customdata[scope.radioModel];
 			};
 
 			scope.switchToProjectModel = function() {
+				scope.alert = {
+		    		msg: ""
+		    	};
 				scope.radioModel = "model";
 				scope.back = false;
-				scope.addPublic = false;
 				scope.buttonText = "添加模板计划";
 				scope.gridOptions.data = scope.customdata[scope.radioModel];
-				var columnDefs = _.map(customtable.defaultColumnDefs(scope.active), function(columnDef) {
-					if (columnDef.displayName !== 'id') {
-						columnDef['enableCellEdit'] = true;
-					}
-					return columnDef;
-				});
-				columnDefs.push({name: 'active', displayName: '公开', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.activeModel(row.entity)" >公开</button> '});
+				var columnDefs = customtable.defaultColumnDefs('projects');
 				columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 				scope.gridOptions.columnDefs = columnDefs;
 			};
 
 			scope.switchToService = function() {
-				var columnDefs = _.map(customtable.defaultColumnDefs('services'), function(columnDef) {
-					if (columnDef.displayName !== 'id') {
-						columnDef['enableCellEdit'] = true;
-					}
-					return columnDef;
-				});
+				scope.alert = {
+		    		msg: ""
+		    	};
+				var columnDefs = customtable.defaultColumnDefs('services');
+				scope.gridOptions.data = [];
 				if (scope.active === "services") {
+					scope.gridOptions.enableCellEdit = true;
 					columnDefs.push({name: 'add', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
 					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
-					scope.buttonText = "添加服务";
 					scope.gridOptions.data = scope.customdata;
+					scope.buttonText = "添加服务";
 				}
 				else {
 					scope.buttonText = "";
-					scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.user_services);
+					ServiceService.getUserServices({token: token, uid: scope.uid})
+					.then(function(data) {
+						scope.gridOptions.data = data;
+					})
 					scope.back = true;
+					scope.gridOptions.enableCellEdit = false;
 				}
 				scope.gridOptions.columnDefs = columnDefs;
 			};
 
 			scope.switchToTraining = function() {
+				scope.alert = {
+		    		msg: ""
+		    	};
+				var columnDefs = customtable.defaultColumnDefs('trainings');
+				scope.gridOptions.data = [];
 				if (scope.active === 'trainings') {
-					scope.gridOptions.data = scope.customdata[scope.radioModel];
-					scope.gridOptions.columnDefs = customtable.defaultColumnDefs('trainings');
+					scope.gridOptions.data = scope.customdata;
+					scope.gridOptions.enableCellEdit = true;
+					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
+					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
+					scope.back = false;
+					scope.buttonText = "添加训练模板";
 				}
 				else {
+					scope.gridOptions.enableCellEdit = false;
+					columnDefs.unshift({ field: 'rank', displayName: '第几天', type: 'number', cellTemplate: '<span>第{{row.entity.rank}}天</span>'});
 					if (scope.active === "users") {
-						// PlanService.getUserDoingPlan(token).then(function(data) {
-						// 	scope.gridOptions.data = customtable.getBodyFromResponse(data);
-						// 	scope.gridOptions.columnDefs = customtable.defaultColumnDefs('trainings');
-						// });
+						PlanService.getUserDoingPlan({token: token, uid: scope.uid}).then(function(data) {
+							scope.gridOptions.data = customtable.getBodyFromResponse(data);
+						});
+						scope.buttonText = "更换计划";
 					}
 					else {
-						// TrainService.getPlanTrains(scope.planId).then(function(data) {
-						// 	scope.gridOptions.data = customtable.getBodyFromResponse(data);
-						// 	scope.gridOptions.columnDefs = customtable.defaultColumnDefs('trainings');
-						// })
+						TrainService.getPlanTrains({id: scope.pid}).then(function(data) {
+							scope.gridOptions.data = customtable.getBodyFromResponse(data);
+						});
+						columnDefs.push({name: 'save', displayName: '添加训练', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
+						columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
+						// _.find(columnDefs, function(c) {
+						// 	return c.field === "rank";
+						// }).enableCellEdit = true;
+						scope.buttonText = "添加训练";
 					}
+					// scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.user_trainings).subplan;
+					scope.back = true;
 				}
-				scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.user_trainings);
-				scope.gridOptions.columnDefs = scope.active === 'users' || scope.radioModel === 'public' ? customtable.defaultColumnDefs('trainings') :
-				customtable.defaultColumnDefs('trainings').concat([{name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '},
-				{name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '}]);
-				scope.buttonText = scope.active === 'projects' ? "添加训练" : "更换计划";
-				scope.addPublic = false;
-				scope.back = true;
-				scope.gridOptions.enableCellEdit = true;
+				scope.gridOptions.columnDefs = columnDefs;
 			};
 
 			scope.switchToActions = function() {
+				scope.alert = {
+		    		msg: ""
+		    	};
+		    	scope.file = "";
+				var columnDefs = customtable.defaultColumnDefs('actions');
+				scope.gridOptions.data = [];
 				if (scope.active === 'actions') {
-					scope.gridOptions.data = scope.customdata[scope.radioModel];
-					scope.gridOptions.columnDefs = customtable.defaultColumnDefs('actions');
-					scope.gridOptions.columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '})
+					scope.back = false;
+					scope.gridOptions.enableCellEdit = true;
+					scope.buttonText = "添加动作模板";
+					scope.gridOptions.data = scope.customdata;
+					columnDefs.push({ field: 'url', displayName: '实例', type: 'file', enableCellEdit: false, cellTemplate: '<button ng-if="row.entity.url" id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTraining(row.entity)" >查看实例</button><input ng-if="!row.entity.url" type="file" ng-model="row.entity.url" ng-change="grid.appScope.storeMedia(row.entity)" ></input>'})
+					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
+					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 				}
 				else {
-					// ActionService.getActions(token).then(function(data) {
-					// 	scope.gridOptions.data = customtable.getBodyFromResponse(data);
-					// 	scope.gridOptions.columnDefs = customtable.defaultColumnDefs('train');
-					// });
+					ActionService.getSubplanActions({spid: scope.spid}).then(function(data) {
+						scope.gridOptions.data = data;
+					});
+					// scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.subplan_actions).subplan;
+					if (scope.active === "users") {
+						scope.gridOptions.enableCellEdit = false;
+						scope.back = true;
+						scope.buttonText = "";
+					}
+					else {
+						scope.gridOptions.enableCellEdit = false;
+						scope.back = true;
+						scope.buttonText = "添加动作";
+						columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '})
+					}
 				}
-				scope.gridOptions.columnDefs = customtable.defaultColumnDefs('actions');
-				scope.gridOptions.data = customtable.getBodyFromResponse(customtable.fixtures.subplan_actions);
-				scope.gridOptions.columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '})
-				scope.buttonText = "";
-				scope.back = true;
-				scope.addPublic = false;
-				scope.gridOptions.enableCellEdit = true;
+				scope.gridOptions.columnDefs = columnDefs;
 			};
 
 			scope.handleClickOnRightBtn = function() {
+				scope.alert = {
+		    		msg: ""
+		    	};
 				switch(scope.buttonText) {
 					case "更换计划":
-						scope.showModal = true;
-						scope.modaltitle = "更换计划";
-						// PlanService.getPlanModels(token).then(function(data) {
-						// 	return data;
-						// }, function(err) {
-						// 	return err;
-						// });
-		    			scope.modalData = customtable.getBodyFromResponse(customtable.fixtures.project_models);
+		    			// scope.modalData = customtable.getBodyFromResponse(customtable.fixtures.project_models).plan;
+						PlanService.getPlanModels({token: token}).then(function(data) {
+							var modaltitle = "更换计划";
+							var options = [];
+							for (var index in data) {
+								var option = {};
+								option.id = data[index].pid;
+								option.name = data[index].name;
+								option.duration = data[index].duration;
+								option.intro = data[index].intro;
+								options.push(option);
+							}
+							scope.open(data, options, modaltitle);
+						}, function(err) {
+							scope.alert = {
+					    		msg: "获取计划模板失败 " + err,
+					    		type: "danger"
+					    	};
+						});
 		    			break;
 		    		case "添加训练":
-		    			var columnDefs = scope.gridOptions.columnDefs;
-		    			var newRow = {};
-		    			for (var i in columnDefs) {
-							newRow[columnDefs[i].field] = '';
-						}
-		    			scope.gridOptions.data.push(newRow);
+		    			// scope.modalData = customtable.getBodyFromResponse(customtable.fixtures.project_models).plan;
+						TrainService.getTrainModels({token: token}).then(function(data) {
+							var modaltitle = "训练模板";
+							var options = [];
+							for (var index in data) {
+								var option = {};
+								option.id = data[index].id;
+								option.name = data[index].name;
+								option.duration = data[index].duration;
+								option.intro = data[index].intro;
+								options.push(option);
+							}
+							scope.open(data, options, modaltitle);
+						}, function(err) {
+							scope.alert = {
+					    		msg: "获取训练模板失败 " + err,
+					    		type: "danger"
+					    	};
+						});
 		    			break;
 		    		case "添加模板计划":
 		    			var columnDefs = scope.gridOptions.columnDefs;
@@ -177,12 +237,64 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 		    			scope.gridOptions.data.push(newRow);
 		    			break;
 		    		case "添加公开计划":
-		    			scope.showModal = true;
-						scope.modaltitle = "更换计划";
-						scope.modalData = scope.customdata['model'];
+		    			// scope.modalData = customtable.getBodyFromResponse(customtable.fixtures.project_models).plan;
+						PlanService.getPlanModels({token: token}).then(function(data) {
+							var modaltitle = "更换计划";
+							var options = [];
+							for (var index in data) {
+								var option = {};
+								option.id = data[index].pid;
+								option.name = data[index].name;
+								option.duration = data[index].duration;
+								option.intro = data[index].intro;
+								options.push(option);
+							}
+							scope.open(data, options, modaltitle);
+						}, function(err) {
+							scope.alert = {
+					    		msg: "获取计划模板失败 " + err,
+					    		type: "danger"
+					    	};
+						});
 						break;
 					case "添加服务":
 						var columnDefs = scope.gridOptions.columnDefs;
+		    			var newRow = {};
+		    			for (var i in columnDefs) {
+							newRow[columnDefs[i].field] = '';
+						}
+		    			scope.gridOptions.data.push(newRow);
+		    			break;
+		    		case "添加动作":
+		    			ActionService.getActionModels({token: token}).then(function(data) {
+		    				var modaltitle = "动作模板";
+							var options = [];
+							for (var index in data) {
+								var option = {};
+								option.id = data[index].id;
+								option.name = data[index].name;
+								option.duration = data[index].duration;
+								option.intro = data[index].intro;
+								options.push(option);
+							}
+							scope.open(data, options, modaltitle);
+		    			}, function(err) {
+							scope.alert = {
+					    		msg: "获取动作模板失败 " + err,
+					    		type: "danger"
+					    	};
+						});
+						break;
+					case "添加训练模板":
+						var columnDefs = scope.gridOptions.columnDefs;
+		    			var newRow = {};
+		    			for (var i in columnDefs) {
+							newRow[columnDefs[i].field] = '';
+						}
+		    			scope.gridOptions.data.push(newRow);
+		    			break;
+		    		case "添加动作模板":
+		    			var columnDefs = scope.gridOptions.columnDefs;
 		    			var newRow = {};
 		    			for (var i in columnDefs) {
 							newRow[columnDefs[i].field] = '';
@@ -193,128 +305,372 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 			}
 
 			scope.rmData = function(rowEntity) {
-				var id = customtable.getId(rowEntity);
-				if (id == '') {
-					switch(scope.buttonText) {
-						case "添加模板计划":
+				scope.alert = {
+		    		msg: ""
+		    	};
+	    		switch(scope.buttonText) {
+					case "添加模板计划":
+						if (rowEntity.pid === '') {
 							scope.gridOptions.data.pop();
-							break;
-						case "添加训练":
-							scope.gridOptions.data.pop();
-							break;
-						case "添加服务":
-							scope.gridOptions.data.pop();
-							break;
-					}
-				}
-				else {
-					switch(scope.buttonText) {
-						case "添加模板计划":
-							PlanService.deletePlanModel({id: id, token: token})
-							.then(function(resp) {
+						}
+						else {
+							PlanService.deletePlanModel({id: rowEntity.pid, token: token})
+							.then(function(data) {
 								scope.customdata['model'] = data;
 								scope.gridOptions.data = scope.customdata['model'];
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
 							});
-							break;
-						case "添加训练":
-							break;
-						case "添加服务":
-							break;
-					}
+						}
+						break;
+					case "添加训练":
+						if (rowEntity.id === '') {
+							scope.gridOptions.data.pop();
+						}
+						else {
+							var params = {
+								rid: rowEntity.rid,
+								token: token
+							}
+							TrainService.deletePlanTrain(params)
+							.then(function(data) {
+								scope.gridOptions.data = data;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						break;
+					case "添加服务":
+						if (rowEntity.id) {
+							var params = {
+								token: token,
+								sid: rowEntity.sid
+							}
+							ServiceService.deleteService(params)
+							.then(function(data) {
+								scope.customdata = data;
+								scope.gridOptions.data = scope.customdata;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						else {
+							var data = scope.gridOptions.data;
+							for (var index in data) {
+								if (data[index].$$hashKey === rowEntity.$$hashKey) {
+									data.splice(index, 1);
+								}
+							}
+							scope.gridOptions.data = data;
+						}
+						break;
+					case "添加公开计划":
+						PlanService.deletePublicPlan({pid: rowEntity.pid, token: token})
+						.then(function(data) {
+							scope.customdata['public'] = data;
+							scope.gridOptions.data = scope.customdata['public'];
+						}, function(err) {
+							scope.alert = {
+								msg: err,
+								type: 'danger'
+							}
+						});
+						break;
+					case "添加训练模板":
+						if (rowEntity.id) {
+							var params = {
+								token: token,
+								id: rowEntity.id
+							}
+							TrainService.deleteTrainModel(params)
+							.then(function(data) {
+								scope.customdata = data;
+								scope.gridOptions.data = scope.customdata;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						else {
+							var data = scope.gridOptions.data;
+							for (var index in data) {
+								if (data[index].$$hashKey === rowEntity.$$hashKey) {
+									data.splice(index, 1);
+								}
+							}
+							scope.gridOptions.data = data;
+						}
 				}
 			}
 
+			scope.saveData = function( rowEntity ) {
+				scope.alert = {
+		    		msg: ""
+		    	};
+				switch(scope.buttonText) {
+					case "添加模板计划":
+						if (rowEntity.pid === '') {
+							PlanService.postPlanModel({'name': rowEntity.name, 'intro': rowEntity.intro, 'duration': rowEntity.duration || 0, 'token': token})
+							.then(function(resp) {
+								return PlanService.getPlanModels({token: token});
+							})
+							.then(function(data) {
+								scope.customdata['model'] = data;
+								scope.gridOptions.data = scope.customdata['model'];
+							});
+						}
+						else {
+							var params = {
+								name: rowEntity.name, 
+								intro: rowEntity.intro, 
+								duration: rowEntity.duration || 0, 
+								token: token, 
+								id: rowEntity.pid
+							}
+							PlanService.patchPlanModel(params)
+							.then(function(resp) {
+								return PlanService.getPlanModels({token: token});
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							})
+							.then(function(data) {
+								scope.customdata['model'] = data;
+								scope.gridOptions.data = scope.customdata['model'];
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						break;
+					case "添加训练模板":
+						if (!rowEntity.id) {
+							TrainService.postTrainModel({'name': rowEntity.name, 'intro': rowEntity.intro, 'duration': rowEntity.duration || 0, 'token': token})
+							.then(function(resp) {
+								return TrainService.getTrainModels({token: token});
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							})
+							.then(function(data) {
+								scope.customdata = data;
+								scope.gridOptions.data = scope.customdata;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						else {
+							var params = {
+								name: rowEntity.name, 
+								intro: rowEntity.intro, 
+								duration: rowEntity.duration || 0, 
+								token: token, 
+								id: rowEntity.id
+							}
+							TrainService.patchTrainModel(params)
+							.then(function(resp) {
+								return TrainService.getTrainModels({token: token});
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							})
+							.then(function(data) {
+								scope.customdata = data;
+								scope.gridOptions.data = scope.customdata;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						break;
+					case "添加动作模板":
+						// var params = {
+						// 	name	
+						// 	intro
+						// 	pic: ''
+						// 	picType: 'jpg',
+						// 	media: ''
+						// 	mediaType: ''
+						// 	category  视频1 或 图片0 int
+						// 	quantiry 数量
+						// 	units 单位 次数/时长 传汉字即可
+						// 	duration 时长
+						// };
+						// ActionService.postActionModel()
+						break;
+					case "添加服务":
+						// var params = rowEntity;
+						// delete params.sid;
+						// params.token = token;
+						if (rowEntity.sid === '') {
+							var params = {
+								token: token,
+				                name: rowEntity.name,
+				                intro: rowEntity.intro,
+				                cost: rowEntity.cost || 0,
+				                online_times: rowEntity.online_times || 0,
+				                offline_times: rowEntity.offline_times || 0,
+				                online: rowEntity.online || 0,
+				                offline: rowEntity.offline || 0
+							}
+							ServiceService.postService(params).then(function(resp) {
+								return ServiceService.getServices({token: token});
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							})
+							.then(function(data) {
+								scope.customdata = data;
+								scope.gridOptions.data = scope.customdata;
+							}, function(err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						}
+						else {
+							var params = {
+								token: token,
+								name: rowEntity.name,
+								intro: rowEntity.intro,
+								cost: rowEntity.cost,
+								online_times: rowEntity.online_times,
+								offline_times: rowEntity.offline_times,
+								online: rowEntity.online,
+								offline: rowEntity.offline,
+								sid: rowEntity.sid
+							}
+							ServiceService.patchService(params).then(function(resp) {
+								
+							}, function(err) {
+								scope.alert = {
+									type: 'danger',
+									msg: err
+								}
+							});
+						}
+						break;
+					case "添加训练":
+
+						TrainService.postPublicTrain({token: token, pid: scope.pid, spid: scope.spid, rank: rowEntity.rank}).then(function(data) {
+							scope.gridOptions.data = data;
+						}, function(err) {
+							scope.alert = {
+								msg: err,
+								type: "danger"
+							}
+						});
+						break;
+				}
+			};
+
 			scope.viewPlan = function(rowEntity) {
-				scope.active === "users" ? scope.userId = rowEntity.uid : scope.planId = rowEntity.pid;
+				scope.alert = {
+		    		msg: ""
+		    	};
+				scope.active === "users" ? scope.uid = rowEntity.uid : scope.pid = rowEntity.pid;
 				scope.switchToTraining();
 			}
 
 			scope.viewTraining = function(rowEntity) {
+				scope.alert = {
+		    		msg: ""
+		    	};
+				scope.spid = customtable.getId(rowEntity);
 				scope.switchToActions();
 			}
 
-			scope.switchProject = function() {
-				// get user's token and admin's project models
-				scope.table.columnDefs = customtable.defaultColumnDefs('projects');
-				// scope.table.data = {
-				// 	'public': 
-				// 	'model': 
-				// }
+			scope.storeMedia = function(rowEntity) {
+				console.log("storeMedia", rowEntity.url)
 			}
 
-			scope.reload = function() {
+			// when back button pressed
+			scope.handleBack = function() {
+				scope.alert = {
+		    		msg: ""
+		    	};
 				switch(scope.active) {
-					case 'users': 
-						scope.switchToUser();
+					case 'users':
+						if (scope.gridOptions.columnDefs[1].displayName === "动作名称") {
+							scope.switchToTraining();
+						}
+						else {
+							scope.switchToUser();
+						}
 						break;
 					case 'projects':
-						scope.switchToProjectModel();
+						if (scope.buttonText === "添加训练") {
+							scope.radioModel === 'public' ? scope.switchToPublicProject() : scope.switchToProjectModel();
+						}
+						else {
+							scope.switchToTraining();
+						}
+						break;
+					case 'trainings':
+						scope.switchToTraining();
+						break;
+					case 'actions':
+						scope.switchToActions();
 				}
 					
 			}
 
-			scope.activeModel = function( rowEntity) {
-				var id = customtable.getId(rowEntity);
-				// PlanService.postPublicPlan(token).then(function(data) {
-				// 	scope.customdata['public'] = data;
-				// })
-			}
-
 			scope.viewService = function(rowEntity) {
+				scope.alert = {
+		    		msg: ""
+		    	};
+				scope.uid = customtable.getId(rowEntity);
 				scope.switchToService();
-			}
-
-			scope.saveData = function( rowEntity ) {
-				var id = customtable.getId(rowEntity);
-				if (id == '') {
-					switch(scope.buttonText) {
-						case "添加模板计划":
-							PlanService.postPlanModel({name: rowEntity.name, intro: rowEntity.intro, duration: rowEntity.duration, token: token})
-							.then(function(resp) {
-								return PlanService.getPlanModels({token: token});
-							})
-							.then(function(data) {
-								scope.customdata['model'] = data;
-								scope.gridOptions.data = scope.customdata['model'];
-							});
-							break;
-						case "添加训练":
-							break;
-					}
-				}
-				else {
-					switch(scope.buttonText) {
-						case "添加模板计划":
-							PlanService.patchPlanModel({name: rowEntity.name, intro: rowEntity.intro, duration: rowEntity.duration, token: token})
-							.then(function(resp) {
-								return PlanService.getPlanModels({token: token});
-							})
-							.then(function(data) {
-								scope.customdata['model'] = data;
-								scope.gridOptions.data = scope.customdata['model'];
-							});
-							break;
-						case "添加训练":
-							break;
-					}
-				}
-			}; 
+			} 
 		},
-		controller: function($scope) {
+		controller: function($scope, $modal) {
 			var initialSettings = function() {
 		    	$scope.gridOptions = {
-					enableRowSelection: true,
 	    			paginationPageSizes: [50, 100, 200],
 	    			paginationPageSize: 20,
 	    			multiSelect: false,
-	    			enableRowHeaderSelection: false
+	    			enableRowHeaderSelection: false,
+	    			importerDataAddCallback: function ( grid, newObjects ) {
+						$scope.data = $scope.data.concat( newObjects );
+						console.log("importerDataAddCallback", $scope.data)
+					},
+					onRegisterApi: function(gridApi){ 
+				      $scope.gridApi = gridApi;
+				    }
 				};
 		    	$scope.radioModel = 'model';
 		    	$scope.alert = {
-		    		msg: "从下列计划模板中选择一个作为公开模板发布"
+		    		msg: ""
 		    	};
 		    	$scope.back = false;
-		    	$scope.addPublic = false;
+		    	token = UserService.getToken();
 			}
 			initialSettings();
 
@@ -330,7 +686,71 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					$scope.radioModel = "public"
 				}
 		    	$scope.radioModel === 'public' ? $scope.switchToPublicProject() : $scope.switchToProjectModel();
-		    }
+		    };
+
+		    $scope.open = function (originalData, options, title) {
+		    	$scope.alert = {
+		    		msg: ""
+		    	};
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'assets/templates/optionsmodal.html',
+					controller: 'OptionsModalInstanceCtrl',
+					resolve: {
+						options: function() {
+							return options;
+						},
+						title: function() {
+							return title;
+						} 
+					}
+				});
+
+				modalInstance.result.then(function (id) {
+					switch($scope.buttonText) {
+						case "更换计划":
+							PlanService.postUserPlan({token: token, uid: $scope.uid, pid: id}).then(function(data) {
+								$scope.gridOptions.data = data;
+							}, function(err) {
+								$scope.alert = {
+									msg: err,
+									type: "danger"
+								}
+							});
+							break;
+						case "添加训练":
+							var selectedOption = _.find(originalData, function(option) {
+								return option.id === parseInt(id);
+							});
+							selectedOption ? $scope.gridOptions.data.push(selectedOption) : $scope.alert = {msg: "找不到此训练", type: 'danger'};
+							$scope.spid = id;
+							break;
+						case "添加公开计划":
+							PlanService.postPublicPlan({token: token, pid: id}).then(function(data) {
+								$scope.gridOptions.data = data;
+							}, function(err) {
+								$scope.alert = {
+									msg: err,
+									type: "danger"
+								}
+							});
+							break;
+						case "添加动作":
+							ActionService.postSubplanAction({token: token, spid: $scope.spid, did: id}).then(function(data) {
+								$scope.gridOptions.data = data;
+							}, function(err) {
+								$scope.alert = {
+									msg: err,
+									type: "danger"
+								}
+							});
+							break;
+					}
+				}, function () {
+					
+				});
+			};
+
 		}
 	}
 });
