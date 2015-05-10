@@ -12,7 +12,7 @@ MisApp.directive('comfirm', function($state, UserService, customtable) {
 			$scope.login = function() {
 					var data = customtable.getBodyFromResponse(customtable.fixtures.coach_info);
 				    UserService.auth($scope.loginObj).then(function (data) {
-				    	$state.go('main', {active: 'users', userinfo: data, tableVisible: true});
+				    	$state.go('main', {active: 'calendar', userinfo: data, tableVisible: true});
 				    }, function(error) {
 
 	            	})

@@ -6,12 +6,14 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
         restrict: 'E',
         controller: function($scope, $modal) {
         	var token = UserService.getToken();
+            $scope.isLoading = true;
             $scope.nextP = function() {
                 // raw = customtable.getBodyFromResponse(customtable.fixtures.next_course_schedules).calendar;
                 // $scope.rows = customtable.formatCalendar(raw);
                 CalendarService.getCalendar({token: token, page: 1}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
             };
             $scope.prevP = function() {
@@ -20,12 +22,14 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
                 CalendarService.getCalendar({token: token, page: -1}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
             };
             $scope.currentP = function() {
             	CalendarService.getCalendar({token: token, page: 0}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
                 // customtable.getBodyFromResponse(customtable.fixtures.current_course_schedules).calendar;
             };
