@@ -1,6 +1,6 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state) {
+MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state, CalendarService) {
 	return {
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
@@ -441,7 +441,20 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							}
 							scope.gridOptions.data = data;
-						}
+						};
+						break;
+					default: 
+						CalendarService.deleteCourse({token: token, id: rowEntity.calendar.id}).then(function(data) {
+							var index = _.findIndex(scope.gridOptions.data, function(datum) {
+								return datum.calendar.id === rowEntity.calendar.id;
+							});
+							scope.gridOptions.data.splice(index, 1);
+						}, function(err) {
+							scope.alert = {
+								msg: err,
+								type: 'danger'
+							}
+						})
 				}
 			}
 
@@ -685,7 +698,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.switchToService();
 			} 
 		},
-		controller: function($scope, $modal, CalendarService) {
+		controller: function($scope, $modal) {
 			var initialSettings = function() {
 		    	$scope.gridOptions = {
 	    			paginationPageSizes: [50, 100, 200],
