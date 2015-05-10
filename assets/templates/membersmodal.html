@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+    可选用户:
+    <div ng-repeat="option in options">
+        <input type="checkbox" ng-model="added[option.uid]">
+        <label>id</label>
+        <span>{{option.uid}}</span>
+        <label> | 名字</label>
+        <span>{{option.username}}</span>
+    </div>
+    已参与用户:
+    <div ng-repeat="option in members">
+        <input type="checkbox" ng-model="removed[option.uid]">
+        <label>id</label>
+        <span>{{option.uid}}</span>
+        <label> | 名字</label>
+        <span>{{option.username}}</span>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

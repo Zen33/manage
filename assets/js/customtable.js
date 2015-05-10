@@ -1,6 +1,6 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService) {
+MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state) {
 	return {
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
@@ -31,6 +31,9 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						break;
 					case 'actions':
 						scope.switchToActions();
+						break;
+					case 'calendar':
+						scope.switchToCalendar();
 						break;
 				}
 		    });
@@ -179,6 +182,34 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					}
 				}
 				scope.gridOptions.columnDefs = columnDefs;
+			};
+
+			scope.switchToCalendar = function() {
+            	// customdata = {
+            	// 	course: [{
+            	// 		service: 
+            	// 		calendar: {
+            	// 			id:
+            	// 			stype: 
+            	// 			cdate:
+            	// 			minutes: 
+            	// 			maxLimit: 
+            	// 			sign:
+            	// 			intro:
+            	// 		},
+            	// 		members: {
+            	// 			member:
+            	// 			candidate: 
+            	// 		}
+            	// 	}],
+            	// 	service: []
+            	// }
+            	scope.gridOptions.enableCellEdit = false;
+				scope.services = scope.customdata.service;
+				scope.gridOptions.data = scope.customdata.course;
+				var columnDefs = customtable.defaultColumnDefs('calendar');
+				scope.gridOptions.columnDefs = columnDefs;
+				scope.back = true;
 			};
 
 			scope.handleClickOnRightBtn = function() {
@@ -638,6 +669,10 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						break;
 					case 'actions':
 						scope.switchToActions();
+						break;
+					case 'calendar':
+						$state.go('main', {active: 'courses'});
+						break;
 				}
 					
 			}
@@ -650,7 +685,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.switchToService();
 			} 
 		},
-		controller: function($scope, $modal) {
+		controller: function($scope, $modal, CalendarService) {
 			var initialSettings = function() {
 		    	$scope.gridOptions = {
 	    			paginationPageSizes: [50, 100, 200],
@@ -687,6 +722,40 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				}
 		    	$scope.radioModel === 'public' ? $scope.switchToPublicProject() : $scope.switchToProjectModel();
 		    };
+
+			$scope.handleMembers = function(rowEntity) {
+				$scope.alert = {
+		    		msg: ""
+		    	};
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'assets/templates/membersmodal.html',
+					controller: 'MembersModalInstanceCtrl',
+					resolve: {
+						candidate: function() {
+							return rowEntity.members.candidate;
+						},
+						member: function() {
+							return rowEntity.members.member;
+						}
+					}
+				});
+
+				modalInstance.result.then(function (params) {
+					params.token = token;
+					params.id = rowEntity.calendar.cid;
+					CalendarService.patchParticipates(params).then(function(data) {
+						rowEntity.members = data;
+					}, function(err) {
+						$scope.alert = {
+							msg: err || "出错",
+							type: 'danger'
+						}
+					});
+				}, function(err) {
+					console.log(err)
+				})
+			};
 
 		    $scope.open = function (originalData, options, title) {
 		    	$scope.alert = {

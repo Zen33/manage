@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h3 class="modal-title">新添课程</h3>
+</div>
+<div class="modal-body">
+    <form role="form" >
+        <div class="form-group">
+            <label>课程时间</label>
+            <span>{{newCourse.cdate}}</span>
+            <timepicker ng-model="mytime" ng-change="changed()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+        </div>
+        <div class="form-group">
+            <label>服务</label>
+            <select ng-model="newCourse.sid" ng-options="item.name for item in services"><option value="">-- choose service --</option></select>
+        </div>
+        <div class="form-group">
+            <label>人数上限</label>
+            <input type="number" ng-model="newCourse.maxlimit"/>
+        </div>
+        <div class="form-group">
+            <label>课程形式</label>
+            <select ng-model="newCourse.stype"><option value="1">线上</option><option value="2">线下</option></select>
+        </div>
+        <div class="form-group">
+            <label>课程简介</label>
+            <input type="text" ng-model="newCourse.intro"/>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
