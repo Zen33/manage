@@ -10,9 +10,9 @@ MisApp.directive('comfirm', function($state, UserService, customtable) {
 				pw: "123456"
 			};
 			$scope.login = function() {
-					// var data = customtable.getBodyFromResponse(customtable.fixtures.coach_info);
+					var data = customtable.getBodyFromResponse(customtable.fixtures.coach_info);
 				    UserService.auth($scope.loginObj).then(function (data) {
-				    	$state.go('main', {active: 'courses', userinfo: data, tableVisible: true});
+				    	$state.go('main', {active: 'users', userinfo: data, tableVisible: true});
 				    }, function(error) {
 
 	            	})
@@ -57,7 +57,7 @@ MisApp.directive('profile', function($state) {
 	}
 });
 
-MisApp.directive('nav', function($state) {
+MisApp.directive('nav', function($state, PlanService, customtable, UserService, $q, ServiceService, TrainService, ActionService, CalendarService) {
 	return {
 		templateUrl: 'assets/templates/nav.html',
 		restrict: 'E',
@@ -66,9 +66,10 @@ MisApp.directive('nav', function($state) {
 		},
 		link: function(scope, elem, attrs) {
 			scope.active = scope.$parent.active;
-			scope.switchTab = function(nextTab) {
-				$state.go('main', {active: 'projects'});
-				// scope.active = nextTab;
+		},
+		controller: function($scope) {
+			$scope.switchTab = function(nextTab) {
+				$scope.active = nextTab;
 			};
 		}
 	}

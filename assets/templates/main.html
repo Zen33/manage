@@ -4,8 +4,8 @@
 		<nav active="active"/>
 	</div>
 	<div class="section">
-		<customtable customdata="tableData" active="active" ng-show="tableVisible"></customtable>
-		<chatbox ng-show="chatboxVisible" messages="messages"></chatbox>
-		<calendar ng-show="calendarVisible" schedule="tableData"></calendar>
+		<customtable active="active" ng-show="active !== 'courses' && active !== 'messages'"></customtable>
+		<chatbox ng-show="active === 'messages'"></chatbox>
+		<calendar ng-show="active === 'calendar'"></calendar>
 	</div>
 </div>

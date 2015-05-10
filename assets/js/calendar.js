@@ -1,15 +1,11 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('calendar', function($state, customtable, CalendarService, UserService, $q) {
+MisApp.directive('calendar', function(customtable, CalendarService, UserService, $q) {
     return {
         templateUrl: 'assets/templates/calendar.html',
         restrict: 'E',
-        scope: {
-        	schedule: '='
-        },
         controller: function($scope, $modal) {
         	var token = UserService.getToken();
-        	$scope.rows = $scope.schedule;
             $scope.nextP = function() {
                 // raw = customtable.getBodyFromResponse(customtable.fixtures.next_course_schedules).calendar;
                 // $scope.rows = customtable.formatCalendar(raw);
@@ -33,6 +29,7 @@ MisApp.directive('calendar', function($state, customtable, CalendarService, User
             	});
                 // customtable.getBodyFromResponse(customtable.fixtures.current_course_schedules).calendar;
             };
+            $scope.currentP();
             $scope.viewDetail = function(day) {
                 if (day.num === 0) {
                     $scope.alert = {
