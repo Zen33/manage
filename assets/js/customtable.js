@@ -1,11 +1,10 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService) {
+MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state, CalendarService) {
 	return {
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
 		scope: {
-			customdata: '=',
 			active: '='
 		},
 		link: function(scope, elm, attrs) {
@@ -32,6 +31,9 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					case 'actions':
 						scope.switchToActions();
 						break;
+					case 'calendar':
+						scope.switchToCalendar();
+						break;
 				}
 		    });
 
@@ -39,10 +41,20 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 		    	scope.alert = {
 		    		msg: ""
 		    	};
+	    		UserService.getUsers({token: token}).then(function(data) {
+	    			scope.gridOptions.columnDefs = customtable.defaultColumnDefs('users');
+					scope.gridOptions.data = data;
+					scope.customtable = data;
+				}, function(err) {
+					scope.alert = {
+			    		msg: err,
+			    		type: 'danger'
+			    	};
+				});
+				// return customtable.getBodyFromResponse(customtable.fixtures.users).users;
+		    	
 		    	scope.buttonText = "";
 		    	scope.back = false;
-				scope.gridOptions.columnDefs = customtable.defaultColumnDefs(scope.active);
-				scope.gridOptions.data = scope.customdata;
 		    };
 
 		    scope.switchToBill = function() {
@@ -68,13 +80,27 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 			};
 
 			scope.switchToProjectModel = function() {
+				scope.radioModel = "model";
+				var projects = {
+					'model': [],
+					'public': []
+				};
+				PlanService.getPlanModels({token: token})
+				.then(function(data) {
+					projects['model'] = data;
+					return PlanService.getPublicPlans({token: token});
+				})
+				.then(function(data) {
+					projects['public'] = data;
+					scope.customdata = projects;
+					scope.gridOptions.data = scope.customdata[scope.radioModel];
+					return projects;
+				})
 				scope.alert = {
 		    		msg: ""
 		    	};
-				scope.radioModel = "model";
 				scope.back = false;
 				scope.buttonText = "添加模板计划";
-				scope.gridOptions.data = scope.customdata[scope.radioModel];
 				var columnDefs = customtable.defaultColumnDefs('projects');
 				columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 				scope.gridOptions.columnDefs = columnDefs;
@@ -87,10 +113,16 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				var columnDefs = customtable.defaultColumnDefs('services');
 				scope.gridOptions.data = [];
 				if (scope.active === "services") {
+					ServiceService.getServices({token: token}).then(function(data) {
+						scope.customdata = data;
+						scope.gridOptions.data = scope.customdata;
+						return data;
+					}, function(err) {
+						return err;
+					})
 					scope.gridOptions.enableCellEdit = true;
 					columnDefs.push({name: 'add', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
 					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
-					scope.gridOptions.data = scope.customdata;
 					scope.buttonText = "添加服务";
 				}
 				else {
@@ -112,7 +144,13 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				var columnDefs = customtable.defaultColumnDefs('trainings');
 				scope.gridOptions.data = [];
 				if (scope.active === 'trainings') {
-					scope.gridOptions.data = scope.customdata;
+					TrainService.getTrainModels({token: token}).then(function(data) {
+						scope.customdata = data;
+						scope.gridOptions.data = scope.customdata;
+						return data;
+					}, function(err) {
+						return err;
+					})
 					scope.gridOptions.enableCellEdit = true;
 					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
@@ -153,10 +191,16 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				var columnDefs = customtable.defaultColumnDefs('actions');
 				scope.gridOptions.data = [];
 				if (scope.active === 'actions') {
+					ActionService.getActionModels({token: token}).then(function(data) {
+						scope.customdata = data;
+						scope.gridOptions.data = scope.customdata;
+						return data;
+					}, function(err) {
+						return err;
+					});
 					scope.back = false;
 					scope.gridOptions.enableCellEdit = true;
 					scope.buttonText = "添加动作模板";
-					scope.gridOptions.data = scope.customdata;
 					columnDefs.push({ field: 'url', displayName: '实例', type: 'file', enableCellEdit: false, cellTemplate: '<button ng-if="row.entity.url" id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTraining(row.entity)" >查看实例</button><input ng-if="!row.entity.url" type="file" ng-model="row.entity.url" ng-change="grid.appScope.storeMedia(row.entity)" ></input>'})
 					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
 					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
@@ -179,6 +223,34 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					}
 				}
 				scope.gridOptions.columnDefs = columnDefs;
+			};
+
+			scope.switchToCalendar = function() {
+            	// customdata = {
+            	// 	course: [{
+            	// 		service: 
+            	// 		calendar: {
+            	// 			id:
+            	// 			stype: 
+            	// 			cdate:
+            	// 			minutes: 
+            	// 			maxLimit: 
+            	// 			sign:
+            	// 			intro:
+            	// 		},
+            	// 		members: {
+            	// 			member:
+            	// 			candidate: 
+            	// 		}
+            	// 	}],
+            	// 	service: []
+            	// }
+            	scope.gridOptions.enableCellEdit = false;
+				scope.services = scope.customdata.service;
+				scope.gridOptions.data = scope.customdata.course;
+				var columnDefs = customtable.defaultColumnDefs('calendar');
+				scope.gridOptions.columnDefs = columnDefs;
+				scope.back = true;
 			};
 
 			scope.handleClickOnRightBtn = function() {
@@ -410,7 +482,20 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							}
 							scope.gridOptions.data = data;
-						}
+						};
+						break;
+					default: 
+						CalendarService.deleteCourse({token: token, id: rowEntity.calendar.id}).then(function(data) {
+							var index = _.findIndex(scope.gridOptions.data, function(datum) {
+								return datum.calendar.id === rowEntity.calendar.id;
+							});
+							scope.gridOptions.data.splice(index, 1);
+						}, function(err) {
+							scope.alert = {
+								msg: err,
+								type: 'danger'
+							}
+						})
 				}
 			}
 
@@ -638,6 +723,10 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						break;
 					case 'actions':
 						scope.switchToActions();
+						break;
+					case 'calendar':
+						$state.go('main', {active: 'courses'});
+						break;
 				}
 					
 			}
@@ -687,6 +776,40 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				}
 		    	$scope.radioModel === 'public' ? $scope.switchToPublicProject() : $scope.switchToProjectModel();
 		    };
+
+			$scope.handleMembers = function(rowEntity) {
+				$scope.alert = {
+		    		msg: ""
+		    	};
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'assets/templates/membersmodal.html',
+					controller: 'MembersModalInstanceCtrl',
+					resolve: {
+						candidate: function() {
+							return rowEntity.members.candidate;
+						},
+						member: function() {
+							return rowEntity.members.member;
+						}
+					}
+				});
+
+				modalInstance.result.then(function (params) {
+					params.token = token;
+					params.id = rowEntity.calendar.cid;
+					CalendarService.patchParticipates(params).then(function(data) {
+						rowEntity.members = data;
+					}, function(err) {
+						$scope.alert = {
+							msg: err || "出错",
+							type: 'danger'
+						}
+					});
+				}, function(err) {
+					console.log(err)
+				})
+			};
 
 		    $scope.open = function (originalData, options, title) {
 		    	$scope.alert = {

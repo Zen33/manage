@@ -769,3 +769,153 @@ MisApp.factory('MessageService', function ($http, $q) {
         }
     };
 });
+
+MisApp.factory('CalendarService', function($http, $q, customtable) {
+    return {
+        getCourses: function(params) {
+            // params = {
+            //     token:
+            //     cid:
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/course/detail?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data));
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        getCalendar: function(params) {
+            // params = {
+            //     token:
+            //     page:
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/course?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data).calendar);
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        getParticipates: function(params) {
+            // params = {
+            //     token:
+            //     id:
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/member?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data));
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        patchParticipates: function(params) {
+            // params = {
+            //     token:
+            //     id:
+            //     assign: [id]
+            //     unassign: [id]
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/member/operation?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data));
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        postCourse: function(params) {
+            // params = {
+            //     token
+                // cid  
+                // cdate
+                // sid
+                // maxlimit
+                // stype
+                // intro
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/course/add?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data));
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        },
+        deleteCourse: function(params) {
+            // params = {
+            //     token:
+            //     id:
+            // }  
+            var defer = $q.defer();
+            $http.jsonp(resource + 'calendar/course/remove?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve(customtable.getBodyFromResponse(response.data));
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
+            });
+            return defer.promise;
+        }
+    }
+})

@@ -67,7 +67,19 @@ angular.module('misapp')
 				{ field: 'offline', displayName: '线下指导次数', type: 'number'},
 				{ field: 'online_times', displayName: '视频时长', type: 'number'},
 				{ field: 'offline_times', displayName: '线下时长', type: 'number'},
-			]
+			];
+		case "calendar":
+			return [
+				{ field: 'calendar.id', displayName: 'id', enableCellEdit: false},
+				{ field: 'calendar.cdate', displayName: '教学实践'},
+				{ field: 'calendar.minutes', displayName: '授课时长', type: 'number'},
+				{ field: 'calendar.maxlimit', displayName: '人数上限', type: 'number'},
+				{ field: 'calendar.sign', displayName: '报名人数', type: 'number'},
+				{ field: 'calendar.intro', displayName: '课程简介', type: 'number'},
+				{ field: 'service.name', displayName: '服务'},
+				{ field: 'calendar.members.member', displayName: '参与者', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.handleMembers(row.entity)" >查看参与者</button>'},
+				{name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '}
+			];
 		}
 	},
 	getBodyFromResponse: function(resp) {
@@ -76,6 +88,79 @@ angular.module('misapp')
 	},
 	getId: function(row) {
 		return _.find(row, function(value, key) { return key.indexOf('id') !== -1; });
+	},
+	formatCalendar: function(calendar) {
+		var rows = [];
+		var row = [];
+		for (var index in calendar) {
+			if (parseInt(index) % 7 != 0 || parseInt(index) == 0) {
+				row.push(calendar[index])
+			}
+			else {
+				rows.push(row);
+				row = [];
+				row.push(calendar[index]);
+			}
+		}
+		rows.push(row)
+		return rows;
+	},
+	getTableData: function() {
+		var token = UserService.getToken();
+		var deferred = $q.defer();
+		switch(active) {
+			case 'users': 
+				// return UserService.getUsers({token: token}).then(function(data) {
+				// 	return data;
+				// }, function(err) {
+				// 	return err;
+				// });
+				return customtable.getBodyFromResponse(customtable.fixtures.users).users;
+			case 'projects':
+				var projects = {
+					'model': [],
+					'public': []
+				};
+				// return PlanService.getPlanModels({token: token})
+				// .then(function(data) {
+				// 	projects['model'] = data;
+				// 	return PlanService.getPublicPlans({token: token});
+				// })
+				// .then(function(data) {
+				// 	projects['public'] = data;
+				// 	return projects;
+				// })
+				projects['model'] = customtable.getBodyFromResponse(customtable.fixtures.project_models).plan;
+				projects['public'] = customtable.getBodyFromResponse(customtable.fixtures.public_projects).plan;
+				return projects;
+			case 'services':
+				return customtable.getBodyFromResponse(customtable.fixtures.coach_services).services;
+				// return ServiceService.getServices({token: token}).then(function(data) {
+				// 	return data;
+				// }, function(err) {
+				// 	return err;
+				// })
+			case 'trainings':
+				return customtable.getBodyFromResponse(customtable.fixtures.training_models).subplan;
+				// return TrainService.getTrainModels({token: token}).then(function(data) {
+				// 	return data;
+				// }, function(err) {
+				// 	return err;
+				// })
+			case 'actions':
+				return customtable.getBodyFromResponse(customtable.fixtures.action_models).desc;
+				// return ActionService.getActionModels({token: token}).then(function(data) {
+				// 	return data;
+				// }, function(err) {
+				// 	return err;
+				// });
+			case 'courses':
+				// return customtable.getBodyFromResponse(customtable.fixtures.current_course_schedules).calendar;
+				return CalendarService.getCalendar({token: token, page: 0}).then(function(data) {
+	        		var raw = data;
+	        		return customtable.formatCalendar(raw);
+	        	});
+		}
 	},
 	fixtures: {
 		coach_info: {
@@ -328,9 +413,6 @@ angular.module('misapp')
 		},
 		current_course_schedules: {
 		    "calendar": [{
-		        "start": "2015-04-20",
-		        "title": 1
-		    }, {
 		        "cdate": 20150421,
 		        "cid": 2,
 		        "holiday": "",
@@ -501,7 +583,7 @@ angular.module('misapp')
 		    }],
 		    "status": 200
 		},
-		last_course_schedules: {
+		next_course_schedules: {
 		    "calendar": [{
 		        "cdate": 20150518,
 		        "cid": 29,
@@ -523,7 +605,7 @@ angular.module('misapp')
 		    }],
 		    "status": 200
 		},
-		next_course_schedules: {
+		last_course_schedules: {
 		    "calendar": [{
 		        "cdate": 20150420,
 		        "cid": 1,
@@ -534,7 +616,18 @@ angular.module('misapp')
 		    "status": 200
 		},
 		participators: {
-		    "member": [],
+		    "member": [{
+		        "brithday": 20100606,
+		        "category": 0,
+		        "city": "",
+		        "dist": "",
+		        "height": 155,
+		        "icon": "http://112.124.52.165:8080/resources/HeaderPicture/13301064_833.png",
+		        "sex": "1",
+		        "uid": "13301064",
+		        "username": "No",
+		        "weight": 58
+		    }],
 		    "candidate": [{
 		        "brithday": 20100606,
 		        "category": 0,
@@ -550,7 +643,33 @@ angular.module('misapp')
 		    "status": 200
 		}, 
 		day_course_schedule: {
-		    "course": [],
+		    "course": [{
+				"service": {
+					"sid": 1,
+					"name": "online service",
+					"intro": "service1",
+				},
+				calendar: {
+					id: 1,
+					stype: 1,
+					cdate: 201505180100,
+					minutes: 100,
+					maxlimit: 100,
+					sign: 10,
+					intro: "20150518"
+				}
+			}, {
+				"service": {},
+				calendar: {
+					id: 1,
+					stype: 1,
+					cdate: 201505180100,
+					minutes: 100,
+					maxlimit: 100,
+					sign: 10,
+					intro: "20150518"
+				}	
+			}],
 		    "service": [{
 		        "cid": "17088099",
 		        "cost": 1000,

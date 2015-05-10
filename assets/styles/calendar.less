@@ -1,0 +1,27 @@
+.calendar {
+	.calendar-row {
+		.calendar-item {
+			border: 1px solid #e1e1e1;
+			width: 130px;
+			height: 100px;
+			display: inline-block;
+			border-right: 0;
+			border-top: 0;
+			&:hover {
+				background: #eeeeee;
+			}
+
+		}
+		.today {
+			background: #fcf8e3;
+		}
+		.calendar-item:last-child {
+			border-right: 1px solid #e1e1e1;
+		}
+	}
+	.calendar-row:first-child {
+		.calendar-item {
+			border-top: 1px solid #e1e1e1;
+		}
+	}
+}
