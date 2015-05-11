@@ -1,6 +1,6 @@
 var MisApp = angular.module('misapp');
 
-MisApp.directive('customtable', function($compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state, CalendarService) {
+MisApp.directive('customtable', function($modal, $compile, customtable, PlanService, UserService, TrainService, ActionService, ServiceService, $state, CalendarService) {
 	return {
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
@@ -233,10 +233,11 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
             	// 		service: 
             	// 		calendar: {
             	// 			id:
+            	//			cid:
             	// 			stype: 
             	// 			cdate:
             	// 			minutes: 
-            	// 			maxLimit: 
+            	// 			maxlimit: 
             	// 			sign:
             	// 			intro:
             	// 		},
@@ -254,6 +255,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					var columnDefs = customtable.defaultColumnDefs('calendar');
 					scope.gridOptions.columnDefs = columnDefs;
 					scope.back = true;
+					scope.buttonText = "添加课程";
 				}
 			};
 
@@ -377,6 +379,36 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						}
 		    			scope.gridOptions.data.push(newRow);
 		    			break;
+		    		case "添加课程":
+						var modalInstance = $modal.open({
+							animation: true,
+							templateUrl: 'assets/templates/coursemodal.html',
+							controller: 'CourseModalInstanceCtrl',
+							resolve: {
+								calendar: function() {
+									var calendar = {};
+									calendar.cid = scope.customdata.course[0].calendar.cid;
+									calendar.cdate = parseInt(scope.customdata.course[0].calendar.cdate / 10000);
+									return calendar;
+								},
+								services: function() {
+									return scope.customdata.service;
+								}
+							}
+						});
+						modalInstance.result.then(function (newCourse) {
+							newCourse.token = token;
+							CalendarService.postCourse(newCourse).then(function(data) {
+								scope.customdata = data;
+								scope.switchToCalendar();
+							}, function (err) {
+								scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							});
+						});
+						break;
 				}
 			}
 
@@ -488,7 +520,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 							scope.gridOptions.data = data;
 						};
 						break;
-					default: 
+					case "添加课程": 
 						CalendarService.deleteCourse({token: token, id: rowEntity.calendar.id}).then(function(data) {
 							var index = _.findIndex(scope.gridOptions.data, function(datum) {
 								return datum.calendar.id === rowEntity.calendar.id;
@@ -499,7 +531,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								msg: err,
 								type: 'danger'
 							}
-						})
+						});
+						break;
 				}
 			}
 
@@ -790,11 +823,15 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					templateUrl: 'assets/templates/membersmodal.html',
 					controller: 'MembersModalInstanceCtrl',
 					resolve: {
-						candidate: function() {
-							return rowEntity.members.candidate;
-						},
-						member: function() {
-							return rowEntity.members.member;
+						members: function() {
+							return CalendarService.getParticipates({token: token, id: rowEntity.calendar.id}).then(function(data) {
+								return data;
+							}, function(err) {
+								$scope.alert = {
+									msg: err,
+									type: 'danger'
+								}
+							})
 						}
 					}
 				});

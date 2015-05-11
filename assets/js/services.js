@@ -8,7 +8,7 @@ angular.module('misapp')
 				{ field: 'pid', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '计划名称'},
 				{ field: 'intro', displayName: '计划介绍'},
-				{ field: 'duration', displayName: '时长'},
+				{ field: 'duration', displayName: '时长', type: 'number'},
 				{ name: 'plan', displayName: '查看计划', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewPlan(row.entity)" >查看计划</button> '},
 				{name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '}
 			];

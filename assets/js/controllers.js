@@ -72,9 +72,9 @@ MisApp.controller('CourseModalInstanceCtrl', function ($scope, $modalInstance, c
 	};
 });
 
-MisApp.controller('MembersModalInstanceCtrl', function ($scope, $modalInstance, candidate, member) {
-	$scope.options = candidate;
-	$scope.members = member;
+MisApp.controller('MembersModalInstanceCtrl', function ($scope, $modalInstance, members) {
+	$scope.options = members.candidate;
+	$scope.members = members.member;
 	$scope.added = {};
 	$scope.removed = {};
 

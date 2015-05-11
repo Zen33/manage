@@ -72,16 +72,9 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
                 }
                 else {
                 	return CalendarService.getCourses({token: token, cid: day.cid}).then(function(data) {
-                		$q.all(_.map(data.course, function(datum) {
-                			return CalendarService.getParticipates({token: token, id: datum.calendar.id}).then(function(ps) {
-                				datum.members = ps;
-                			});
-                		}))
-                		.then(function() {
 	                    	$scope.active = "calendar";
 	                    	$scope.visible = true;
                             $scope.tableData = data;
-	                	})
                 	})
                 }
             }
