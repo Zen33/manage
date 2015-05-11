@@ -82,6 +82,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 			};
 
 			scope.switchToProjectModel = function() {
+				scope.gridOptions.enableCellEdit = true;
 				scope.radioModel = "model";
 				var projects = {
 					'model': [],
@@ -172,7 +173,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						TrainService.getPlanTrains({id: scope.pid}).then(function(data) {
 							scope.gridOptions.data = customtable.getBodyFromResponse(data);
 						});
-						columnDefs.push({name: 'save', displayName: '添加训练', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 						columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
 						// _.find(columnDefs, function(c) {
 						// 	return c.field === "rank";
@@ -189,7 +189,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				scope.alert = {
 		    		msg: ""
 		    	};
-		    	scope.file = "";
 				var columnDefs = customtable.defaultColumnDefs('actions');
 				scope.gridOptions.data = [];
 				if (scope.active === 'actions') {
@@ -203,9 +202,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 					scope.back = false;
 					scope.gridOptions.enableCellEdit = true;
 					scope.buttonText = "添加动作模板";
-					columnDefs.push({ field: 'url', displayName: '实例', type: 'file', enableCellEdit: false, cellTemplate: '<button ng-if="row.entity.url" id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTraining(row.entity)" >查看实例</button><input ng-if="!row.entity.url" type="file" ng-model="row.entity.url" ng-change="grid.appScope.storeMedia(row.entity)" ></input>'})
 					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
-					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 				}
 				else {
 					ActionService.getSubplanActions({spid: scope.spid}).then(function(data) {
@@ -317,7 +314,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    		case "添加公开计划":
 		    			// scope.modalData = customtable.getBodyFromResponse(customtable.fixtures.project_models).plan;
 						PlanService.getPlanModels({token: token}).then(function(data) {
-							var modaltitle = "更换计划";
+							var modaltitle = "选择一个计划模板";
 							var options = [];
 							for (var index in data) {
 								var option = {};
@@ -372,12 +369,20 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    			scope.gridOptions.data.push(newRow);
 		    			break;
 		    		case "添加动作模板":
-		    			var columnDefs = scope.gridOptions.columnDefs;
-		    			var newRow = {};
-		    			for (var i in columnDefs) {
-							newRow[columnDefs[i].field] = '';
+		    			var newAction = {
+							id: "",
+							name: "",	
+							intro: "",
+							pic: "",
+							picType: "",
+							url: null,
+							mediaType: "",
+							category: 0,
+							quantiry: 0,
+							units: "次数",
+							duration: 0
 						}
-		    			scope.gridOptions.data.push(newRow);
+		    			scope.viewAction(newAction);
 		    			break;
 		    		case "添加课程":
 						var modalInstance = $modal.open({
@@ -387,8 +392,8 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 							resolve: {
 								calendar: function() {
 									var calendar = {};
-									calendar.cid = scope.customdata.course[0].calendar.cid;
-									calendar.cdate = parseInt(scope.customdata.course[0].calendar.cdate / 10000);
+									calendar.cid = scope.customdata.calendarId;;
+									calendar.cdate = scope.customdata.cdate;
 									return calendar;
 								},
 								services: function() {
@@ -630,6 +635,11 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						}
 						break;
 					case "添加动作模板":
+						console.log("添加动作模板", rowEntity, scope.file)
+						if (scope.file) {
+							var type = scope.file.type.match(/(\w*)\/(\w*)/);
+
+						}
 						// var params = {
 						// 	name	
 						// 	intro
@@ -654,8 +664,8 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				                name: rowEntity.name,
 				                intro: rowEntity.intro,
 				                cost: rowEntity.cost || 0,
-				                online_times: rowEntity.online_times || 0,
-				                offline_times: rowEntity.offline_times || 0,
+				                online_times: rowEntity.online_times || 1,
+				                offline_times: rowEntity.offline_times || 1,
 				                online: rowEntity.online || 0,
 				                offline: rowEntity.offline || 0
 							}
@@ -682,11 +692,11 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 								token: token,
 								name: rowEntity.name,
 								intro: rowEntity.intro,
-								cost: rowEntity.cost,
-								online_times: rowEntity.online_times,
-								offline_times: rowEntity.offline_times,
-								online: rowEntity.online,
-								offline: rowEntity.offline,
+								cost: rowEntity.cost || 0,
+				                online_times: rowEntity.online_times || 1,
+				                offline_times: rowEntity.offline_times || 1,
+				                online: rowEntity.online || 0,
+				                offline: rowEntity.offline || 0,
 								sid: rowEntity.sid
 							}
 							ServiceService.patchService(params).then(function(resp) {
@@ -698,17 +708,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 								}
 							});
 						}
-						break;
-					case "添加训练":
-
-						TrainService.postPublicTrain({token: token, pid: scope.pid, spid: scope.spid, rank: rowEntity.rank}).then(function(data) {
-							scope.gridOptions.data = data;
-						}, function(err) {
-							scope.alert = {
-								msg: err,
-								type: "danger"
-							}
-						});
 						break;
 				}
 			};
@@ -727,10 +726,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    	};
 				scope.spid = customtable.getId(rowEntity);
 				scope.switchToActions();
-			}
-
-			scope.storeMedia = function(rowEntity) {
-				console.log("storeMedia", rowEntity.url)
 			}
 
 			// when back button pressed
@@ -774,7 +769,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    	};
 				scope.uid = customtable.getId(rowEntity);
 				scope.switchToService();
-			} 
+			}
 		},
 		controller: function($scope, $modal) {
 			var initialSettings = function() {
@@ -793,7 +788,8 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				};
 		    	$scope.radioModel = 'model';
 		    	$scope.alert = {
-		    		msg: ""
+		    		msg: "",
+		    		type: 'danger'
 		    	};
 		    	$scope.back = false;
 		    	token = UserService.getToken();
@@ -852,6 +848,53 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				})
 			};
 
+			$scope.viewAction = function(rowEntity) {
+				$scope.alert.msg = "";
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'assets/templates/uploadmodal.html',
+					controller: 'UploadModalInstanceCtrl',
+					resolve: {
+						editable: function() {
+							if ($scope.active === "actions") {
+								return true;
+							}
+							else {
+								return false;
+							}
+						},
+						action: function() {
+							return rowEntity;
+						}
+					}
+				});
+
+				modalInstance.result.then(function (action) {
+					if (action.id) {
+						action.token = token;
+						ActionService.patchActionModel(action).then(function(data) {
+
+						}, function(err) {
+							$scope.alert.msg = err;
+						})
+					}
+					else {
+						delete action.id;
+						action.token = token;
+						ActionService.postActionModel(action).then(function(data) {
+							return ActionService.getActionModels({token: token});
+						}, function(err) {
+							$scope.alert.msg = err;
+						})
+						.then(function(data) {
+							$scope.gridOptions.data = data;
+						})
+					}
+				}, function () {
+					
+				});
+			};
+
 		    $scope.open = function (originalData, options, title) {
 		    	$scope.alert = {
 		    		msg: ""
@@ -883,11 +926,14 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 							});
 							break;
 						case "添加训练":
-							var selectedOption = _.find(originalData, function(option) {
-								return option.id === parseInt(id);
+							TrainService.postPublicTrain({token: token, pid: $scope.pid, spid: id.spid, rank: id.rank}).then(function(data) {
+								$scope.gridOptions.data = data;
+							}, function(err) {
+								$scope.alert = {
+									msg: err,
+									type: "danger"
+								}
 							});
-							selectedOption ? $scope.gridOptions.data.push(selectedOption) : $scope.alert = {msg: "找不到此训练", type: 'danger'};
-							$scope.spid = id;
 							break;
 						case "添加公开计划":
 							PlanService.postPublicPlan({token: token, pid: id}).then(function(data) {

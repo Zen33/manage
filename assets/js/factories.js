@@ -56,18 +56,18 @@ MisApp.factory('UserService', function ($http, $q, customtable) {
             //     ...
             // }
             var deferred = $q.defer();
-            $http.jsonp(resource + 'user/coach/profile' + '?callback=JSON_CALLBACK', {params: params})
+            $http.jsonp(resource + 'user/coach/profile?callback=JSON_CALLBACK', {params: params})
             .then(function (resp) {
-                if (resp.status === 200) {
-                    deferred.resolve(resp);
+                if (resp.data.status === 200) {
+                    deferred.resolve('');
                 }
                 else {
                     // invalid response
-                    deferred.reject(resp);
+                    deferred.reject(resp.data.message);
                 }
             }, function(response) {
                 // something went wrong
-                deferred.reject(response);
+                deferred.reject(response.statusText);
             });
             return deferred.promise;
         }
@@ -528,6 +528,38 @@ MisApp.factory('ActionService', function ($http, $q, customtable) {
             }, function(response) {
                 // something went wrong
                 defer.reject(response.error);
+            });
+            return defer.promise;
+        },
+        patchActionModel: function(params) {
+            // params = {
+            //     token:
+            //     name:    
+            //     intro:
+            //     pic:
+            //     picType:
+            //     media:
+            //     mediaType:
+            //     category:
+            //     quantiry:
+            //     units:
+            //     duration:
+            // }
+            var defer = $q.defer();
+            $http.jsonp(resource + 'plan/coach/plandesc/update?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.data.status === 200) {
+                    // return messages
+                    defer.resolve("success!");
+                } else {
+                    // invalid response
+                    defer.reject(response.data.message);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.statusText);
             });
             return defer.promise;
         },

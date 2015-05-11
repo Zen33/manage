@@ -9,13 +9,29 @@ MisApp.directive('comfirm', function($state, UserService, customtable) {
 				tel: "18012345678",
 				pw: "123456"
 			};
+			$scope.alert = {msg: ''};
+			$scope.isLogining = false;
 			$scope.login = function() {
+				if (!$scope.isLogining) {
+					$scope.isLogining = true;
 					var data = customtable.getBodyFromResponse(customtable.fixtures.coach_info);
 				    UserService.auth($scope.loginObj).then(function (data) {
-				    	$state.go('main', {active: 'calendar', userinfo: data, tableVisible: true});
+				    	$scope.isLogining = false;
+				    	$state.go('main', {active: 'home', userinfo: data, tableVisible: true});
 				    }, function(error) {
-
+				    	$scope.alert = {
+				    		msg: "参数输入异常！" ? "用户名或密码有误" : error,
+				    		type: 'danger'
+				    	}
+				    	$scope.isLogining = false;
 	            	})
+				}
+				else {
+					$scope.alert = {
+						msg: "正在登陆，请耐心等待",
+						type: 'success'
+					}
+				}
 			};
 			$scope.onTextClick = function($event) {
 				$event.target.select();
@@ -31,14 +47,12 @@ MisApp.directive('profile', function($state) {
 		scope: {
 			userinfo: '='
 		},
-		controller: function($scope) {
+		controller: function($scope, $modal) {
 			$scope.userinfo = $scope.$parent.userinfo.user_info;
 			$scope.userinfo['intro'] = $scope.$parent.userinfo.coach_info.intro;
 			$scope.userinfo['exp'] = $scope.$parent.userinfo.coach_info.exp;
 			$scope.userinfo['ads'] = $scope.$parent.userinfo.coach_ad;
 			$scope.myInterval = 5000;
-			$scope.showModal = false;
-			$scope.modaltitle = "编辑教练信息";
 			var slides = $scope.slides = [];
 			$scope.addSlide = function() {
 				slides.push({
@@ -51,7 +65,20 @@ MisApp.directive('profile', function($state) {
 				$scope.addSlide();
 			}
 			$scope.editProfile = function() {
-				$scope.showModal = true;
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'assets/templates/profilemodal.html',
+					controller: 'ProfileModalInstanceCtrl',
+					resolve: {
+						userinfo: function() {
+							return $scope.userinfo;
+						}
+					}
+				});
+
+				modalInstance.result.then(function (updatedUser) {
+					
+				});
 			}
 		}
 	}
@@ -75,50 +102,22 @@ MisApp.directive('nav', function($state, PlanService, customtable, UserService, 
 	}
 });
 
-MisApp.directive('modal', function($state) {
-	return {
-		templateUrl: 'assets/templates/modal.html',
-		restrict: 'E',
-		transclude: true,
-		replace:true,
-		scope:true,
-		link: function(scope, element, attrs) {
-			scope.$watch(attrs.modaltitle, function(value) {
-				scope.title = value;
-			});
-			scope.$watch(attrs.visible, function(value) {
-				value ? $(element).modal('show') : $(element).modal('hide');
-			});
-			$(element).on('shown.bs.modal', function(){
-				scope.$apply(function(){
-					scope.$parent[attrs.visible] = true;
-				});
-			});
+MisApp.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
 
-			$(element).on('hidden.bs.modal', function(){
-				scope.$apply(function(){
-					scope.$parent[attrs.visible] = false;
-				});
-			});
-		}
-	}
-});
-
-MisApp.directive('profilemodal', function($state) {
-	return {
-		templateUrl: 'assets/templates/profilemodal.html',
-		restrict: 'E',
-		scope: {
-			userinfo: '='
-		},
-		link: function(scope, elem, attrs) {
-			scope.userinfo = Object.create(scope.$parent.userinfo);
-			scope.save = function() {
-				$(elem).parent().parent().parent().parent().modal('hide')
-			};
-		}
-	}
-});
 
 MisApp.directive('chatbox', function($state, $q, MessageService) {
 	return {

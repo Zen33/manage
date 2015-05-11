@@ -39,12 +39,16 @@ angular.module('misapp')
 			];
 		case "actions":
 			return [
+				{ field: 'pic', displayName: '缩略图', type: 'file', enableCellEdit: false, cellTemplate: '<label for="icon-upload"><img src="{{row.entity.pic}}" width="30px" height="30px"></label><input type="file" id="icon-upload" file-model="row.entity.pic" style="display:none"/>'},
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '动作名称'},
 				{ field: 'intro', displayName: '动作介绍'},
 				{ field: 'duration', displayName: '时长'},
+				{ field: 'url', displayName: '示例', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewAction(row.entity)">查看示例</button>'},
 				{ field: 'quantity', displayName: '数量', type: 'number'},
-				{ field: 'units', displayName: '单位', type: 'string'}
+				{ field: 'units', displayName: '单位', type: 'string'},
+				{ field: 'weight', displayName: '体重', enableCellEdit: false},
+				{ name: 'action', displayName: '查看动作', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewAction(row.entity)" >查看此动作</button> '},
 			];
 		case "home":
 			return [

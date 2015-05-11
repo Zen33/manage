@@ -1,0 +1,41 @@
+<div class="modal-header">
+    <h3 class="modal-title">编辑动作</h3>
+</div>
+<div class="modal-body">
+    <form role="form" >
+        <alert ng-if="alert.msg" type="{{alert.type}}" close="alert.msg=''">{{alert.msg}}</alert>
+        <div class="form-group">
+            <label for="upload-icon"><img src="{{action.pic}}" width="50px" height="50px"/></label>
+            <input type="file" file-model="action.pic" id="upload-icon" style="display:none"/>
+        </div>
+        <div class="form-group">
+            <label>动作名称</label>
+            <input type="text" ng-model="action.name"/>
+        </div>
+        <div class="form-group">
+            <label>数量</label>
+            <input type="number" ng-model="action.quantiry"/>
+        </div>
+        <div class="form-group">
+            <label>动作单位</label>
+            <select ng-model="action.units"><option value="次数">次数</option><option value="时长">时长</option></select>
+        </div>
+        <div class="form-group">
+            <label>时长</label>
+            <input type="number" ng-model="action.duration" minvalue="0"/>
+        </div>
+        <div class="form-group">
+            <label>简介</label>
+            <input type="text" ng-model="action.intro"/>
+        </div>
+        <div class="form-group">
+            <label>示例</label>
+            <img src="{{action.url}}">
+            <input type="file" file-model="action.url"/>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
