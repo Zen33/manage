@@ -167,42 +167,47 @@ MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, a
 		}
 	};
 	$scope.ok = function () {
-		if ($scope.action.pic) {
-			if (typeof $scope.action.pic === 'string') {
-				$scope.action.pic = null;
-				$scope.action.picType = null;
+		if (editable) {
+			if ($scope.action.pic) {
+				if (typeof $scope.action.pic === 'string') {
+					$scope.action.pic = null;
+					$scope.action.picType = null;
+				}
+				else {
+					var file = parseMedia($scope.action.pic);
+					$scope.action.pic = file.file;
+					$scope.action.picType = file.postfix;
+				}
 			}
 			else {
-				var file = parseMedia($scope.action.pic);
-				$scope.action.pic = file.file;
-				$scope.action.picType = file.postfix;
+				$scope.alert.msg = "请上传一张此动作缩略图";
+				return;
 			}
-		}
-		else {
-			$scope.alert.msg = "请上传一张此动作缩略图";
-			return;
-		}
-		if ($scope.action.url) {
-			if (typeof $scope.action.url === 'string') {
+			if ($scope.action.url) {
+				if (typeof $scope.action.url === 'string') {
+					$scope.action.media = null;
+					$scope.action.mediaType = null;
+					delete $scope.action.url;
+					$modalInstance.close($scope.action);
+				}
+				else {
+					var file = parseMedia($scope.action.url);
+					$scope.action.media = file.file;
+					$scope.action.mediaType = file.postfix;
+					$scope.action.category = file.type;
+					delete $scope.action.url;
+					$modalInstance.close($scope.action);
+				}
+			}
+			else {
 				$scope.action.media = null;
 				$scope.action.mediaType = null;
 				delete $scope.action.url;
 				$modalInstance.close($scope.action);
 			}
-			else {
-				var file = parseMedia($scope.action.url);
-				$scope.action.media = file.file;
-				$scope.action.mediaType = file.postfix;
-				$scope.action.category = file.type;
-				delete $scope.action.url;
-				$modalInstance.close($scope.action);
-			}
 		}
 		else {
-			$scope.action.media = null;
-			$scope.action.mediaType = null;
-			delete $scope.action.url;
-			$modalInstance.close($scope.action);
+			$modalInstance.dismiss('cancel');
 		}
 	};
 
