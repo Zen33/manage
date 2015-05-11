@@ -7,6 +7,9 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
         controller: function($scope, $modal) {
         	var token = UserService.getToken();
             $scope.isLoading = true;
+            $scope.tableData = [];
+            var today = new Date();
+            $scope.today = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
             $scope.nextP = function() {
                 // raw = customtable.getBodyFromResponse(customtable.fixtures.next_course_schedules).calendar;
                 // $scope.rows = customtable.formatCalendar(raw);
@@ -75,9 +78,9 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
                 			});
                 		}))
                 		.then(function() {
-	                		$scope.tableData = data;
 	                    	$scope.active = "calendar";
 	                    	$scope.visible = true;
+                            $scope.tableData = data;
 	                	})
                 	})
                 }

@@ -4,11 +4,11 @@
 	<button ng-click="currentP()">Current</button>
 	<button ng-click="nextP()">Next</button>
 	<div class="calendar-row" ng-repeat="row in rows">
-		<div ng-repeat="item in row" ng-class="item.cdate === 20150510 ? 'calendar-item today' : 'calendar-item'" ng-click="viewDetail(item)">
+		<div ng-repeat="item in row" ng-class="item.cdate === today? 'calendar-item today' : 'calendar-item'" ng-click="viewDetail(item)">
 			{{item.cdate}}
 			<span class="hint">{{item.holiday}}</span>
 			<div>课程数: {{item.num}}</div>
 		</div>
 	</div>
 </div>
-<customtable customdata="tableData" active="active" ng-show="visible"></customtable>
+<customtable customdata="tableData" active="active" ng-show="visible" ng-if="visible"></customtable>

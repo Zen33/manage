@@ -5,11 +5,13 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 		templateUrl: 'assets/templates/customtable.html',
 		restrict: 'E',
 		scope: {
-			active: '='
+			active: '=',
+			customdata: '='
 		},
 		link: function(scope, elm, attrs) {
 			/* get public and models from main page */
 			var token = UserService.getToken();
+			var customdata = {};
 		    scope.$watch(attrs.active, function(value) {
 				scope.active = value;
 				switch(value) {
@@ -44,7 +46,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 	    		UserService.getUsers({token: token}).then(function(data) {
 	    			scope.gridOptions.columnDefs = customtable.defaultColumnDefs('users');
 					scope.gridOptions.data = data;
-					scope.customtable = data;
+					customdata = data;
 				}, function(err) {
 					scope.alert = {
 			    		msg: err,
@@ -76,7 +78,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.back = false;
 				scope.buttonText = "添加公开计划";
 				scope.gridOptions.columnDefs = columnDefs;
-				scope.gridOptions.data = scope.customdata[scope.radioModel];
+				scope.gridOptions.data = customdata[scope.radioModel];
 			};
 
 			scope.switchToProjectModel = function() {
@@ -92,8 +94,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				})
 				.then(function(data) {
 					projects['public'] = data;
-					scope.customdata = projects;
-					scope.gridOptions.data = scope.customdata[scope.radioModel];
+					customdata = projects;
+					scope.gridOptions.data = customdata[scope.radioModel];
 					return projects;
 				})
 				scope.alert = {
@@ -114,8 +116,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.gridOptions.data = [];
 				if (scope.active === "services") {
 					ServiceService.getServices({token: token}).then(function(data) {
-						scope.customdata = data;
-						scope.gridOptions.data = scope.customdata;
+						customdata = data;
+						scope.gridOptions.data = customdata;
 						return data;
 					}, function(err) {
 						return err;
@@ -145,8 +147,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.gridOptions.data = [];
 				if (scope.active === 'trainings') {
 					TrainService.getTrainModels({token: token}).then(function(data) {
-						scope.customdata = data;
-						scope.gridOptions.data = scope.customdata;
+						customdata = data;
+						scope.gridOptions.data = customdata;
 						return data;
 					}, function(err) {
 						return err;
@@ -192,8 +194,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 				scope.gridOptions.data = [];
 				if (scope.active === 'actions') {
 					ActionService.getActionModels({token: token}).then(function(data) {
-						scope.customdata = data;
-						scope.gridOptions.data = scope.customdata;
+						customdata = data;
+						scope.gridOptions.data = customdata;
 						return data;
 					}, function(err) {
 						return err;
@@ -245,12 +247,14 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
             	// 	}],
             	// 	service: []
             	// }
-            	scope.gridOptions.enableCellEdit = false;
-				scope.services = scope.customdata.service;
-				scope.gridOptions.data = scope.customdata.course;
-				var columnDefs = customtable.defaultColumnDefs('calendar');
-				scope.gridOptions.columnDefs = columnDefs;
-				scope.back = true;
+				if (scope.customdata) {
+					scope.services = scope.customdata.service;
+					scope.gridOptions.data = scope.customdata.course;
+	            	scope.gridOptions.enableCellEdit = false;
+					var columnDefs = customtable.defaultColumnDefs('calendar');
+					scope.gridOptions.columnDefs = columnDefs;
+					scope.back = true;
+				}
 			};
 
 			scope.handleClickOnRightBtn = function() {
@@ -388,8 +392,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						else {
 							PlanService.deletePlanModel({id: rowEntity.pid, token: token})
 							.then(function(data) {
-								scope.customdata['model'] = data;
-								scope.gridOptions.data = scope.customdata['model'];
+								customdata['model'] = data;
+								scope.gridOptions.data = customdata['model'];
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -426,8 +430,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 							}
 							ServiceService.deleteService(params)
 							.then(function(data) {
-								scope.customdata = data;
-								scope.gridOptions.data = scope.customdata;
+								customdata = data;
+								scope.gridOptions.data = customdata;
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -448,8 +452,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 					case "添加公开计划":
 						PlanService.deletePublicPlan({pid: rowEntity.pid, token: token})
 						.then(function(data) {
-							scope.customdata['public'] = data;
-							scope.gridOptions.data = scope.customdata['public'];
+							customdata['public'] = data;
+							scope.gridOptions.data = customdata['public'];
 						}, function(err) {
 							scope.alert = {
 								msg: err,
@@ -465,8 +469,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 							}
 							TrainService.deleteTrainModel(params)
 							.then(function(data) {
-								scope.customdata = data;
-								scope.gridOptions.data = scope.customdata;
+								customdata = data;
+								scope.gridOptions.data = customdata;
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -511,8 +515,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								return PlanService.getPlanModels({token: token});
 							})
 							.then(function(data) {
-								scope.customdata['model'] = data;
-								scope.gridOptions.data = scope.customdata['model'];
+								customdata['model'] = data;
+								scope.gridOptions.data = customdata['model'];
 							});
 						}
 						else {
@@ -533,8 +537,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							})
 							.then(function(data) {
-								scope.customdata['model'] = data;
-								scope.gridOptions.data = scope.customdata['model'];
+								customdata['model'] = data;
+								scope.gridOptions.data = customdata['model'];
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -555,8 +559,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							})
 							.then(function(data) {
-								scope.customdata = data;
-								scope.gridOptions.data = scope.customdata;
+								customdata = data;
+								scope.gridOptions.data = customdata;
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -582,8 +586,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							})
 							.then(function(data) {
-								scope.customdata = data;
-								scope.gridOptions.data = scope.customdata;
+								customdata = data;
+								scope.gridOptions.data = customdata;
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -631,8 +635,8 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 								}
 							})
 							.then(function(data) {
-								scope.customdata = data;
-								scope.gridOptions.data = scope.customdata;
+								customdata = data;
+								scope.gridOptions.data = customdata;
 							}, function(err) {
 								scope.alert = {
 									msg: err,
@@ -725,7 +729,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 						scope.switchToActions();
 						break;
 					case 'calendar':
-						$state.go('main', {active: 'courses'});
+						$state.go('main', {active: 'calendar'});
 						break;
 				}
 					
@@ -797,7 +801,7 @@ MisApp.directive('customtable', function($compile, customtable, PlanService, Use
 
 				modalInstance.result.then(function (params) {
 					params.token = token;
-					params.id = rowEntity.calendar.cid;
+					params.id = rowEntity.calendar.id;
 					CalendarService.patchParticipates(params).then(function(data) {
 						rowEntity.members = data;
 					}, function(err) {
