@@ -2,6 +2,7 @@
     <h3 class="modal-title">{{title}}</h3>
 </div>
 <div class="modal-body">
+    <span ng-show="title === '训练模板'">第<input type="number" ng-model="rank"></input>天</span>
     <div ng-repeat="option in options">
         <input type="checkbox" ng-model="optionsChecked[option.id]" ng-change="onChange(option.id)">
         <label>id</label>

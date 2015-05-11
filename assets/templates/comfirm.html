@@ -18,20 +18,17 @@
 		</div><!--.signup-tab-content-->
 
 		 <div id="login-tab-content" ng-class="{active:login}" >
-			<form class="login-form" method="post" name="loginForm">
+			<form class="login-form" method="post" name="loginForm" autocomplete="on">
 				<input type="text" ng-model="loginObj.tel" class="input" name="username" id="user_name" autocomplete="off" placeholder="用户名">
 				<p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block">Your name is required.</p>
 				<input type="password" ng-model="loginObj.pw" class="input" name="username" id="user_pass" autocomplete="off" placeholder="密码">
 				<p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block">Password is required.</p>
 				<input type="checkbox" class="checkbox" id="remember_me" ng-model="loginObj.rememberMe">
-				<!-- <label for="remember_me" >Remember me</label> -->
+				
+				<alert ng-if="alert.msg" type="{{alert.type}}" close="alert.msg=''">{{alert.msg}}</alert>
 
 				<input type="button" class="button" value="登陆" ng-click="login()">
 			</form>
-			<!--<div class="help-text"> 
-				<p>By signing up, you agree to our</p>
-				<p><a href="#">Terms of service</a></p>
-			</div>.help-text-->
 		</div><!--.login-tab-content-->
 	</div><!--.tabs-content-->
 </div><!--.form-wrap-->

@@ -16,9 +16,6 @@ MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 		controller: function($scope, $http, $stateParams) {
 			$scope.active = $stateParams.active;
 			$scope.userinfo = $stateParams.userinfo;
-			$scope.tableVisible = ($stateParams.active !== "courses" && $stateParams.active !== "messages");
-			$scope.chatboxVisible = ($stateParams.active === "messages");
-			$scope.calendarVisible = ($stateParams.active === "courses");
 	    }
 	})
 });

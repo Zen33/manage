@@ -6,12 +6,17 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
         restrict: 'E',
         controller: function($scope, $modal) {
         	var token = UserService.getToken();
+            $scope.isLoading = true;
+            $scope.tableData = [];
+            var today = new Date();
+            $scope.today = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
             $scope.nextP = function() {
                 // raw = customtable.getBodyFromResponse(customtable.fixtures.next_course_schedules).calendar;
                 // $scope.rows = customtable.formatCalendar(raw);
                 CalendarService.getCalendar({token: token, page: 1}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
             };
             $scope.prevP = function() {
@@ -20,12 +25,14 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
                 CalendarService.getCalendar({token: token, page: -1}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
             };
             $scope.currentP = function() {
             	CalendarService.getCalendar({token: token, page: 0}).then(function(data) {
             		var raw = data;
             		$scope.rows = customtable.formatCalendar(raw);
+                    $scope.isLoading = false;
             	});
                 // customtable.getBodyFromResponse(customtable.fixtures.current_course_schedules).calendar;
             };
@@ -65,16 +72,11 @@ MisApp.directive('calendar', function(customtable, CalendarService, UserService,
                 }
                 else {
                 	return CalendarService.getCourses({token: token, cid: day.cid}).then(function(data) {
-                		$q.all(_.map(data.course, function(datum) {
-                			return CalendarService.getParticipates({token: token, id: datum.calendar.id}).then(function(ps) {
-                				datum.members = ps;
-                			});
-                		}))
-                		.then(function() {
-	                		$scope.tableData = data;
 	                    	$scope.active = "calendar";
 	                    	$scope.visible = true;
-	                	})
+                            data.calendarId = day.cid;
+                            data.cdate = day.cdate;
+                            $scope.tableData = data;
                 	})
                 }
             }
