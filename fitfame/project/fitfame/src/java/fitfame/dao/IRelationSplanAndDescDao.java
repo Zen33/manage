@@ -22,4 +22,6 @@ public interface IRelationSplanAndDescDao {
 	public int updateRelationSplanAndDescRank(int rank, long spid);
 	
 	public RelationSplanAndDesc getRelationSplanAndDesc(long id);
+	
+	public RelationSplanAndDesc getRelationSplanAndDescByDid(long did);
 }

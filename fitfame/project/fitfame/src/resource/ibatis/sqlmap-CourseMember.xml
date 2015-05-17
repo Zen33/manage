@@ -11,7 +11,7 @@
 	
 	<select id="getCourseMember" parameterClass="CourseMember" resultClass="CourseMember">
 		select * from
-		course_member where where cid = #cid# and uid = #uid#
+		course_member where cid = #cid# and uid = #uid#
 	</select>
 	
 	<select id="getCourseMembers" resultClass="fitfame.po.CourseCalendar">

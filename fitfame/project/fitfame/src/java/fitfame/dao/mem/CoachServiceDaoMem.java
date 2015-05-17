@@ -36,7 +36,7 @@ public class CoachServiceDaoMem implements ICoachServiceDao {
 	 * @see fitfame.dao.ICoachServiceDao#insertCoachService(fitfame.po.CoachService)
 	 */
 	@Override
-	public int insertCoachService(CoachService service) {
+	public long insertCoachService(CoachService service) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

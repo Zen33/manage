@@ -95,6 +95,8 @@ public class ExceptionIdUtil {
 	
 	public static final String NoPlan = "没有该计划！";
 	
+	public static final String PlanUsed = "该计划正在被用户使用，不得更改！";
+	
 	public static final String PlanExsits = "只能选择一个计划训练，需删除原计划才可重新选择！";
 	
 	public static final String ServeRepeat = "服务已经购买！";

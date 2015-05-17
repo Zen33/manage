@@ -115,4 +115,17 @@ public class RelationPlanAndSplanDaoImpl extends BaseDAO<RelationPlanAndSplan> i
 		return result;
 	}
 
+	@Override
+	public RelationPlanAndSplan getRelationPlanAndSplanBySpid(long spid) {
+		RelationPlanAndSplan result = null;
+		try{
+			result = (RelationPlanAndSplan) this.getSqlMapClientTemplate().queryForObject("RelationPlanAndSplan.getRelationPlanAndSplanBySpid", spid);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getSplanId error"+spid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }

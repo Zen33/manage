@@ -61,11 +61,11 @@ public class CoachServiceDaoImpl extends BaseDAO<CoachService> implements
 	 * @see fitfame.dao.ICoachServiceDao#insertCoachService(fitfame.po.CoachService)
 	 */
 	@Override
-	public int insertCoachService(CoachService service) {
+	public long insertCoachService(CoachService service) {
 		// TODO Auto-generated method stub
-		int result = 0;
+		long result = 0;
 		try{
-			this.getSqlMapClientTemplate().insert("CoachService.insertCoachService", service);
+			result = (Long)this.getSqlMapClientTemplate().insert("CoachService.insertCoachService", service);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(), e);
 			result = 1;

@@ -123,4 +123,17 @@ public class RelationSplanAndDescDaoImpl extends BaseDAO<RelationSplanAndDesc> i
 		return result;
 	}
 
+	@Override
+	public RelationSplanAndDesc getRelationSplanAndDescByDid(long did) {
+		RelationSplanAndDesc result = null;
+		try{
+			result = (RelationSplanAndDesc)this.getSqlMapClientTemplate().queryForObject("RelationSplanAndDesc.getRelationSplanAndDescByDid", did);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getRelationSplanAndDescByDid error spid="+did);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }

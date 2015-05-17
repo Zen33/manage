@@ -18,6 +18,11 @@
 		select * from relation_plan_and_splan where id = #value#
 	</select>
 	
+	<select id="getRelationPlanAndSplanBySpid" 
+	    resultClass="RelationPlanAndSplan">
+		select * from relation_plan_and_splan where spid = #value# limit 1
+	</select>
+	
 	<insert id="insertRelationPlanAndSplan" parameterClass="RelationPlanAndSplan">
 		insert into relation_plan_and_splan values (null, #pid#, #spid#, #rank#, 
 		#duration#)

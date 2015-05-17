@@ -104,7 +104,7 @@ public class CoachPlanDaoImpl extends BaseDAO<CoachPlan> implements
 		// TODO Auto-generated method stub
 		int result = 0;
 		try{
-			this.getSqlMapClientTemplate().delete("CoachPlan.updateCoachPlan", pid);
+			this.getSqlMapClientTemplate().delete("CoachPlan.deleteCoachPlan", pid);
 		} catch (DataAccessException e) {
 			logger.error(e.getMessage(), e);
 			result = 1;

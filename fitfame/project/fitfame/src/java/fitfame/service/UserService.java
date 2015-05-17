@@ -268,7 +268,11 @@ public class UserService {
 		json = UserBasicInfo(user);
 		json.accumulate("state", queryStateInfo(uid));
 		json.accumulate("token", TokenUtil.produceToken(uid));
-		
+		if(user.getCategory() == 1)
+		{
+			json.accumulate("coach_info", coachInfoDaoImpl.getCoachInfo(user.getUid()));
+			json.accumulate("coach_ad", coachAdInfoDaoImpl.getCoachAdInfoList(user.getUid()));	
+		}
 		return json;
 	}
 

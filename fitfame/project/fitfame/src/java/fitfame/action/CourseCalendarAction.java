@@ -296,12 +296,12 @@ public class CourseCalendarAction {
 			}
 			
 			for(int i=0; i<assign.length; i++){
-				if(!isValidateUid(assign[i]))
+				if(!assign[i].equals("") && !isValidateUid(assign[i]))
 					throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 
 			for(int i=0; i<unassign.length; i++){
-				if(!isValidateUid(unassign[i]))
+				if(!unassign[i].equals("") && !isValidateUid(unassign[i]))
 					throw new BaseException(ExceptionIdUtil.IllegalInput);
 			}
 			

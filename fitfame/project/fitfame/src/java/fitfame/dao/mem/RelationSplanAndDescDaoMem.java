@@ -60,4 +60,10 @@ public class RelationSplanAndDescDaoMem implements IRelationSplanAndDescDao {
 		return null;
 	}
 
+	@Override
+	public RelationSplanAndDesc getRelationSplanAndDescByDid(long did) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

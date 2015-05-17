@@ -11,6 +11,10 @@
 	<select id="getRelationSplanAndDesc" resultClass="RelationSplanAndDesc">
 		select * from relation_splan_and_desc where id = #value#
 	</select>
+	
+	<select id="getRelationSplanAndDescByDid" resultClass="RelationSplanAndDesc">
+		select * from relation_splan_and_desc where did = #value# limit 1
+	</select>
 
 	<insert id="insertRelationSplanAndDesc" parameterClass="RelationSplanAndDesc">
 		insert

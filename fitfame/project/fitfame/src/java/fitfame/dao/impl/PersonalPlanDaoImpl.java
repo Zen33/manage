@@ -142,4 +142,17 @@ public class PersonalPlanDaoImpl extends BaseDAO<PersonalPlan> implements
 		return result;
 	}
 
+	@Override
+	public PersonalPlan getPersonalPlanByPid(long pid) {
+		PersonalPlan result = null;
+		try{
+			result = (PersonalPlan) this.getSqlMapClientTemplate().queryForObject("PersonalPlan.getPersonalPlanByPid", pid);
+		} catch (DataAccessException e) {
+			logger.error(e.getMessage(), e);
+			LogUtil.WriteLog(ExceptionIdUtil.IllegalSqlOperation, "getPersonalPlanByPid error id:"+pid);
+			throw new BaseDaoException(ExceptionIdUtil.IllegalSqlOperation);
+		}
+		return result;
+	}
+
 }

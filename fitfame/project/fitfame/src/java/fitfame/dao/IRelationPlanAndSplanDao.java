@@ -22,4 +22,6 @@ public interface IRelationPlanAndSplanDao {
 	public int deleteRelationPlanAndSplan(long id);
 	
 	public RelationPlanAndSplan getRelationPlanAndSplanWithId(long rid);
+	
+	public RelationPlanAndSplan getRelationPlanAndSplanBySpid(long spid);
 }

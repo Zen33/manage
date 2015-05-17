@@ -8,6 +8,10 @@
 		select * from personal_plan where uid = #value#
 	</select>
 	
+	<select id="getPersonalPlanByPid" resultClass="PersonalPlan">
+		select * from personal_plan where pid = #value# limit 1
+	</select>
+	
 	<select id="getPersonalPlan" resultClass="PersonalPlan">
 		select * from personal_plan where id = #value#
 	</select>

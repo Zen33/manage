@@ -21,6 +21,8 @@ public interface IPersonalPlanDao {
 	
 	public PersonalPlan getDonePersonalPlan(String uid, long edate);
 	
+	public PersonalPlan getPersonalPlanByPid(long pid);
+	
 	public long insertPersonalPlan(PersonalPlan info);
 	
 	public int updatePersonalPlan(PersonalPlan info);

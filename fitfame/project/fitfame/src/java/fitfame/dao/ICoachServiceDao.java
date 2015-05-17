@@ -17,7 +17,7 @@ public interface ICoachServiceDao {
 	
 	public CoachService getCoachService(long sid);
 	
-	public int insertCoachService(CoachService service);
+	public long insertCoachService(CoachService service);
 	
 	public int updateCoachService(CoachService service);
 	

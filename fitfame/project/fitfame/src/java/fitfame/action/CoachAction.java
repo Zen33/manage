@@ -215,6 +215,7 @@ public class CoachAction {
 			@QueryParam("offline_times") int offline_times,
 			@QueryParam("online") int online,
 			@QueryParam("offline") int offline, 
+			@QueryParam("name") String name, 
 			@QueryParam("callback") String callback) {
 		JSONObject json = new JSONObject();
 		try {
@@ -225,7 +226,7 @@ public class CoachAction {
 				throw new BaseException(ExceptionIdUtil.TokenOverDue);
 			}
 			
-			json = coachService.updateCoachService(myid,sid, intro, cost, online_times, offline_times, online, offline);
+			json = coachService.updateCoachService(myid,sid, intro, cost, online_times, offline_times, online, offline, name);
 			json.accumulate("status", 200);
 		} catch (Exception e) {
 			json.put("status", 400);

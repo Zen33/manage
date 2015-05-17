@@ -118,13 +118,12 @@ public class PlanService {
 	public JSONObject QueryUserSubPlan(String myid, String uid) {
 		JSONObject json = new JSONObject();
 		PersonalPlan plan = personalPlanDaoImpl.getUndoPersonalPlan(uid);
-
+		JSONArray jArray = new JSONArray();
 		if (plan != null) {
 			List<SubPlanWithId> subplan = subPlanDaoImpl
 					.getSubPlanList(plan.getPid());
 			List<PersonalSubPlan> planproc = personalSubPlanDaoImpl
-					.getPersonalSubPlanList(plan.getId());
-			JSONArray jArray = new JSONArray();
+					.getPersonalSubPlanList(plan.getId());			
 			for(int i = 0; i < subplan.size(); i++)
 			{
 				JSONObject pJson = new JSONObject();
@@ -137,6 +136,10 @@ public class PlanService {
 				pJson.accumulate("done", planproc.get(i).getEdate() != 0? 1:0);
 				jArray.add(pJson);
 			}
+			json.accumulate("subplan", jArray);
+		} 
+		else
+		{
 			json.accumulate("subplan", jArray);
 		}
 
@@ -243,7 +246,7 @@ public class PlanService {
 
 		PersonalPlan pplan = personalPlanDaoImpl.getUndoPersonalPlan(uid);
 		if(pplan != null)
-		    personalPlanDaoImpl.deletePersonalPlan(pplan.getId());
+			RemoveUserPlan(uid, pplan.getId());
 
 		AddUserPlan(uid, pid);
 		return QueryUserSubPlan(cid,uid);
@@ -261,6 +264,13 @@ public class PlanService {
 			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, myid + ";" + pid);
 			throw new BaseServiceException(ExceptionIdUtil.NoPlan, myid);
 		}
+		List<SubPlanWithId> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
+		if(subplan == null || subplan.size() == 0)
+		{
+			LogUtil.WriteLog("计划中没有训练！", myid + ";" + pid);
+			throw new BaseServiceException("计划中没有训练！", myid);
+		}
+		
 		PersonalPlan up = new PersonalPlan();
 		up.setPid(pid);
 		up.setUid(myid);
@@ -268,7 +278,6 @@ public class PlanService {
 		up.setEdate(0);
 		long ppid = personalPlanDaoImpl.insertPersonalPlan(up);
 
-		List<SubPlanWithId> subplan = subPlanDaoImpl.getSubPlanList(plan.getPid());
 		for (SubPlan sp : subplan) {
 			PersonalSubPlan psp = new PersonalSubPlan();
 			psp.setDefaultValue();
@@ -388,6 +397,20 @@ public class PlanService {
 			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
 		}
 		
+		RelationSplanAndDesc rsd = relationSplanAndDescDaoImpl.getRelationSplanAndDescByDid(id);
+		if(rsd != null)
+		{
+			RelationPlanAndSplan rps = relationPlanAndSplanDaoImpl.getRelationPlanAndSplanBySpid(rsd.getSpid());
+			if(rps != null)
+			{
+				PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(rps.getPid());
+				if(pp != null)
+				{
+					LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + rps.getPid());
+					throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + rps.getPid());
+				}
+			}
+		}
 		subPlanDescDaoImpl.deleteSubPlanDesc(desc);
 		json = queryAllAvailablePlanDesc(myid);
 		return json;
@@ -480,6 +503,17 @@ public class PlanService {
 			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
 		}
 		
+		RelationPlanAndSplan rps = relationPlanAndSplanDaoImpl.getRelationPlanAndSplanBySpid(relation.getSpid());
+		if(rps != null)
+		{
+			PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(rps.getPid());
+			if(pp != null)
+			{
+				LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + rps.getPid());
+				throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + rps.getPid());
+			}
+		}
+		
 		relationSplanAndDescDaoImpl.deleteRelationSplanAndDesc(id);
 		relationSplanAndDescDaoImpl.updateRelationSplanAndDescRank(relation.getRank(), relation.getSpid());
 		json = querySubPlanDesc(relation.getSpid());
@@ -508,6 +542,18 @@ public class PlanService {
 			LogUtil.WriteLog(ExceptionIdUtil.Quan, myid);
 			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
 		}
+		
+		RelationPlanAndSplan rps = relationPlanAndSplanDaoImpl.getRelationPlanAndSplanBySpid(id);
+		if(rps != null)
+		{
+			PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(rps.getPid());
+			if(pp != null)
+			{
+				LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + rps.getPid());
+				throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + rps.getPid());
+			}
+		}
+		
 		subPlanDaoImpl.deleteSubPlan(id);
 		
 		json = queryAllAvailableSubPlan(myid);
@@ -557,11 +603,24 @@ public class PlanService {
 			throw new BaseServiceException(ExceptionIdUtil.Quan, pid + "");
 		}
 		
+		PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(pid);
+		if(pp != null)
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + pid);
+		}
+		
 		RelationPlanAndSplan info = new RelationPlanAndSplan();
 		info.setDuration(sub.getDuration());
 		info.setPid(pid);
 		info.setRank(rank);
 		info.setSpid(spid);
+		if(relationPlanAndSplanDaoImpl.getRelationPlanAndSplan(info) != null)
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.AlreadyPublish, pid + "");
+			throw new BaseServiceException(ExceptionIdUtil.AlreadyPublish, pid + "");
+		}
+		
 		relationPlanAndSplanDaoImpl.insertRelationPlanAndSplan(info);
 		json = querySubPlan(pid);
 		return json;
@@ -592,6 +651,12 @@ public class PlanService {
 			throw new BaseServiceException(ExceptionIdUtil.Quan, myid);
 		}
 		
+		PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(relation.getPid());
+		if(pp != null)
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + relation.getPid());
+			throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + relation.getPid());
+		}
 		
 		relationPlanAndSplanDaoImpl.deleteRelationPlanAndSplan(id);
 		json = querySubPlan(relation.getPid());
@@ -617,6 +682,13 @@ public class PlanService {
 		{
 			LogUtil.WriteLog(ExceptionIdUtil.NoPlan, ";" + id);
 			throw new BaseServiceException(ExceptionIdUtil.NoPlan, "" + id);
+		}
+		
+		CoachPlan cp = coachPlanDao.getCoachPlan(id);
+		if(cp != null)
+		{
+			LogUtil.WriteLog("不可删除，已经发布", ";" + id);
+			throw new BaseServiceException("不可删除，已经发布", "" + id);
 		}
 		
 		coachPlanTemplateDao.deleteCoachPlanTemplate(id);
@@ -680,6 +752,13 @@ public class PlanService {
 			throw new BaseServiceException(ExceptionIdUtil.NoPlan, "" + pid);
 		}
 
+		//判断是否已经被用户选中
+		PersonalPlan pp = personalPlanDaoImpl.getPersonalPlanByPid(pid);
+		if(pp != null)
+		{
+			LogUtil.WriteLog(ExceptionIdUtil.PlanUsed, ";" + pid);
+			throw new BaseServiceException(ExceptionIdUtil.PlanUsed, "" + pid);
+		}
 		coachPlanDao.deleteCoachPlan(pid);
 		return json.accumulate("plan",
 				coachPlanDao.getCoachPlanList(plan.getCid()));

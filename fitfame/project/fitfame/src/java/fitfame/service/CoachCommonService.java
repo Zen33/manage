@@ -210,13 +210,14 @@ public class CoachCommonService {
 		service.setOnline(online);
 		service.setOnline_times(online_times);
 		service.setInuse(0);
+		service.setMonth(6);
 		long res = coachServiceDaoImpl.insertCoachService(service);
 		return json.accumulate("sid", res);
 	}
 
 	public JSONObject updateCoachService(String myid, long sid, String intro,
 			int cost, int online_times, int offline_times, int online,
-			int offline) {
+			int offline, String name) {
 		JSONObject json = new JSONObject();
 		CoachService service = coachServiceDaoImpl.getCoachService(sid);
 		if(service == null || !service.getCid().equals(myid))
@@ -231,6 +232,7 @@ public class CoachCommonService {
 		service.setOffline_times(offline_times);
 		service.setOnline(online);
 		service.setOnline_times(online_times);
+		service.setName(name);
 		coachServiceDaoImpl.updateCoachService(service);
 		return json;
 	}

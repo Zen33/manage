@@ -71,4 +71,10 @@ public class PersonalPlanDaoMem implements IPersonalPlanDao {
 		return null;
 	}
 
+	@Override
+	public PersonalPlan getPersonalPlanByPid(long pid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

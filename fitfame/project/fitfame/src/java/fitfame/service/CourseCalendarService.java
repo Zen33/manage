@@ -76,7 +76,16 @@ public class CourseCalendarService {
 		    // 星期一至星期六
 		    offset = curweek - 2;
 		}
-		cal.setTime(DateUtil.getBeforeDate(offset + page * 28));
+		if(page > 0)
+		{
+			cal.setTime(DateUtil.getAfterDate(offset + page * 28));
+		}
+		else
+		{
+			page = page * -1;
+			cal.setTime(DateUtil.getBeforeDate(offset + page * 28));
+		}
+		
 		int beforeYear = cal.get(Calendar.YEAR);
 		int beforemonth=cal.get(Calendar.MONTH)+1;   
 		int beforeday =cal.get(Calendar.DAY_OF_MONTH);
@@ -143,7 +152,7 @@ public class CourseCalendarService {
 		}
 		
 		if (minutes == 0)
-			throw new BaseException(ExceptionIdUtil.ServiceNotExsits);
+			throw new BaseException("授课市场不可为0！");
 			
 		CourseCalendar preCalendar = courseCalendarDaoImpl.getPreviousCourseCalendar(cid, cdate);
 		if (preCalendar != null && preCalendar.getCdate()+preCalendar.getMinutes()>cdate)
@@ -254,12 +263,14 @@ public class CourseCalendarService {
 		
 		for(int i=0; i<unassign.length; i++){
 			String uid = unassign[i];
-			unassignCalendarMember(id, uid, calendar.getStype());
+			if(!uid.equals(""))
+				unassignCalendarMember(id, uid, calendar.getStype());
 		}
 		
 		for(int i=0; i<assign.length; i++){
 			String uid = assign[i];
-			assignCalendarMember(id, uid, calendar.getStype());
+			if(!uid.equals(""))
+				assignCalendarMember(id, uid, calendar.getStype());
 		}
 		
 		calendar = courseCalendarDaoImpl.getCourseCalendar(id);
