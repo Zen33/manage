@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CoachInfo">
+	<typeAlias alias="CoachInfo" type="fitfame.po.CoachInfo" />
+
+	<select id="getCoachInfoList" resultClass="CoachInfo"
+		parameterClass="java.util.Map">
+		select * from coach_info 
+		order by exp desc limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getCoachInfoList_count" resultClass="Integer"
+		parameterClass="java.util.Map">
+		select count(*) from coach_info 
+	</select>
+
+	<select id="getCoachInfo" resultClass="CoachInfo">
+		select * from coach_info where cid = #value#
+	</select>
+	
+	<insert id="insertCoachInfo" parameterClass="CoachInfo">
+		insert into coach_info values (#cid#, #intro#, #circle#, #fav#,
+		#exp#,#reply#)
+	</insert>
+
+	<delete id="deleteCoachInfo">
+		delete from coach_info where cid = #value#
+	</delete>
+	
+	<update id="updateCoachInfo" parameterClass="CoachInfo">
+	update coach_info
+	<dynamic prepend="SET ">
+			<isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
+			<isNotEqual property="circle" compareValue="-1" prepend=","><![CDATA[ circle=#circle# ]]></isNotEqual>
+			<isNotEqual property="fav" compareValue="-1" prepend=","><![CDATA[ fav=#fav# ]]></isNotEqual>
+			<isNotEqual property="exp" compareValue="-1" prepend=","><![CDATA[ exp=#exp# ]]></isNotEqual>
+			<isNotEqual property="reply" compareValue="-1" prepend=","><![CDATA[ reply=#reply# ]]></isNotEqual>
+    </dynamic>
+	<dynamic prepend="WHERE">
+		 cid = #cid#
+	</dynamic>
+	</update>
+</sqlMap>

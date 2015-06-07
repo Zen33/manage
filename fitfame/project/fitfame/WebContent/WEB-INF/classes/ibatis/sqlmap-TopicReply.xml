@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TopicReply">
+	<typeAlias alias="TopicReply" type="fitfame.po.TopicReply" />
+
+	<select id="getTopicReplyList" resultClass="TopicReply"
+		parameterClass="java.util.Map">
+		select * from topic_reply where totid = #totid#
+		order by
+		cdate desc limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getTopicReplyList_count" resultClass="Integer"
+		parameterClass="java.util.Map">
+		select count(*) from topic_reply where totid = #totid#
+	</select>
+
+	<select id="getUnreadTopicReply" resultClass="TopicReply"
+		parameterClass="java.util.Map">
+		select * from topic_reply where touid = #touid# and
+		ifread = 1
+		order by cdate desc limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getUnreadTopicReply_count" resultClass="Integer"
+		parameterClass="java.util.Map">
+		select count(*) from topic_reply where touid = #touid# and
+		ifread = 1
+	</select>
+
+	<insert id="insertTopicReply" parameterClass="TopicReply">
+		insert into
+		topic_reply values (null, #uid#, #totid#, #touid#, #content#, #ifread#,
+		#cdate#)
+	</insert>
+
+	<delete id="deleteTopicReply">
+		delete from topic_reply where id = #value#
+	</delete>
+
+	<delete id="deleteAllTopicReply">
+		delete from topic_reply where totid = #value#
+	</delete>
+
+	<update id="updateTopicReply" parameterClass="TopicReply">
+		update topic_reply
+		<dynamic prepend="SET ">
+			<isNotEqual property="ifread" compareValue="-1" prepend=","><![CDATA[ ifread=#ifread# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id#
+		</dynamic>
+	</update>
+</sqlMap>

@@ -882,12 +882,14 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						delete action.id;
 						action.token = token;
 						ActionService.postActionModel(action).then(function(data) {
-							return ActionService.getActionModels({token: token});
+							ActionService.getActionModels({token: token})
+							.then(function(data) {
+								$scope.gridOptions.data = data;
+							}, function(err) {
+								$scope.alert.msg = err;
+							});
 						}, function(err) {
 							$scope.alert.msg = err;
-						})
-						.then(function(data) {
-							$scope.gridOptions.data = data;
 						})
 					}
 				}, function () {

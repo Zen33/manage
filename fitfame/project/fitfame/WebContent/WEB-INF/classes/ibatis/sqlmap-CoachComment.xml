@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CoachComment">
+	<typeAlias alias="CoachComment" type="fitfame.po.CoachComment" />
+
+	<select id="getCoachCommentByCid" resultClass="CoachComment"
+		parameterClass="java.util.Map">
+		select * from coach_comment where cid = #cid#
+		order by cdate limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getCoachCommentByCid_count" resultClass="Integer"
+		parameterClass="java.util.Map">
+		select count(*) from coach_comment where cid = #cid#
+	</select>
+
+    <select id="getUnreadCoachCommentByCid" resultClass="CoachComment"
+		parameterClass="java.util.Map">
+		select * from coach_comment where cid = #cid# and ifread = #ifread#
+		order by cdate limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+    <select id="getUnreadCoachCommentByCid_count" resultClass="Integer"
+		parameterClass="java.util.Map">
+		select count(*) from coach_comment where cid = #cid# and ifread = #ifread#
+	</select>
+
+	<insert id="insertCoachComment" parameterClass="CoachComment">
+		insert into coach_comment values (null,#uid#, #cid#, #content#, #ifread#,
+		#cdate#)
+		<selectKey resultClass="long" type="post" keyProperty="id">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<delete id="deleteCoachComment">
+		delete from coach_comment where id = #value#
+	</delete>
+	
+	<update id="updateCoachComment" parameterClass="CoachComment">
+	update coach_comment
+	<dynamic prepend="SET ">
+			<isNotEmpty property="content" prepend=","><![CDATA[ content=#content# ]]></isNotEmpty>
+			<isNotEqual property="ifread" compareValue="-1" prepend=","><![CDATA[ ifread=#ifread# ]]></isNotEqual>
+    </dynamic>
+	<dynamic prepend="WHERE">
+		 id = #id#
+	</dynamic>
+	</update>
+</sqlMap>

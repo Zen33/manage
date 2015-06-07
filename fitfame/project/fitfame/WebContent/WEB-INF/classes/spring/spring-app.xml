@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-autowire="byName">
+		
+	<context:annotation-config />
+	<context:component-scan base-package="fitfame">
+	</context:component-scan>
+	
+	<import resource="classpath:spring/spring-dao.xml" />
+	<import resource="classpath:spring/spring-service.xml" />
+	<import resource="classpath:cache/spring-cache.xml" />
+	
+	<bean id="placeholderConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:config/config.properties</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSource_mysql"   
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" lazy-init="false">  
+		<property name="driverClassName" value="${mysql.db.driver}" />
+		<property name="url" value="${mysql.db.url}" />
+		<property name="username" value="${mysql.db.user}" />
+		<property name="password" value="${mysql.db.password}" />
+
+	    <property name="initialSize" value="30"/>  
+	    <property name="maxActive" value="1000"/>  
+	    <property name="maxWait" value="10000"/>  
+	    <property name="poolPreparedStatements" value="false"/>    
+	</bean>
+	
+	<bean id="sqlMapClient_fitfame" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:ibatis/sqlmap-config.xml" />
+		<property name="dataSource" ref="dataSource_mysql"/>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  		<property name="dataSource" ref="dataSource_mysql"/>
+ 	</bean>
+ 	
+  	<tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>

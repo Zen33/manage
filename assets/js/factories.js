@@ -468,7 +468,7 @@ MisApp.factory('ActionService', function ($http, $q, customtable) {
             //     token:
             // }
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/subplan/desc?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.jsonp(resource + 'plan/coach/plandesc?callback=JSON_CALLBACK', {params: params}) // your url
             .then(function(response) {
                 // if success
                 if (response.data.status === 200) {

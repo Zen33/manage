@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CoachAdInfo">
+	<typeAlias alias="CoachAdInfo" type="fitfame.po.CoachAdInfo" />
+
+	<select id="getCoachAdInfoList" resultClass="CoachAdInfo">
+		select * from coach_ad_info where cid = #value#
+	</select>
+	
+	<insert id="insertCoachAdInfo" parameterClass="CoachAdInfo">
+		insert into coach_ad_info values (#cid#, #url#)
+	</insert>
+
+	<delete id="deleteCoachAdInfo">
+		delete from coach_ad_info where cid = #value#
+	</delete>
+</sqlMap>

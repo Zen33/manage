@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CoachPlanTemplate">
+	<typeAlias alias="CoachPlanTemplate" type="fitfame.po.CoachPlanTemplate" />
+
+	<select id="getCoachPlanTemplateList" resultClass="CoachPlanTemplate">
+		select * from
+		coach_plan_template where cid = #value#
+	</select>
+
+	<select id="getCoachPlanTemplate" resultClass="CoachPlanTemplate">
+		select * from coach_plan_template
+		where pid = #value#
+	</select>
+
+	<insert id="insertCoachPlanTemplate" parameterClass="CoachPlanTemplate">
+		insert into coach_plan_template values (null, #cid#, #name#, #intro#, #icon#,
+		#duration#, #inuse#)
+		<selectKey resultClass="long" type="post" keyProperty="pid">
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+
+	<update id="deleteCoachPlanTemplate">
+		update coach_plan_template set inuse = 1 where pid = #value#
+	</update>
+
+	<update id="updateCoachPlanTemplate" parameterClass="CoachPlanTemplate">
+		update coach_plan_template
+		<dynamic prepend="SET ">
+			<isNotEmpty property="intro" prepend=","><![CDATA[ intro=#intro# ]]></isNotEmpty>
+			<isNotEmpty property="icon" prepend=","><![CDATA[ icon=#icon# ]]></isNotEmpty>
+			<isNotEqual property="duration" compareValue="-1" prepend=","><![CDATA[ duration=#duration# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			pid = #pid#
+		</dynamic>
+	</update>
+</sqlMap>

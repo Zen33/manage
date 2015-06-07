@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="TopicInfo">
+	<typeAlias alias="TopicInfo" type="fitfame.po.TopicInfo" />
+
+	<select id="getNewTopicInfo" resultClass="TopicInfo"
+		parameterClass="java.util.Map">
+		select * from topic_info
+		order by cdate desc limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getNewTopicInfo_count" resultClass="Integer" >
+    select count(*) from topic_info
+    </select>
+
+	<select id="getTopicInfoList" resultClass="TopicInfo"
+		parameterClass="java.util.Map">
+		select * from topic_info  where uid
+		= #uid# order by cdate desc limit #FromItemNo#, #ToItemNo#
+	</select>
+	
+	<select id="getTopicInfoList_count" resultClass="Integer"
+	     parameterClass="java.util.Map">
+    select count(*) from topic_info  where uid = #uid#
+    </select>
+    
+	<select id="getTopicInfo" resultClass="TopicInfo" >
+    select * from topic_info where id = #value#
+    </select>
+
+	<insert id="insertTopicInfo" parameterClass="TopicInfo">
+		insert into
+		topic_info values (null, #uid#, #content#, #pic1#, #pic2#, #pic3#,
+		#pic4#, #fav#,
+		#reply#, #city#, #cdate#)
+	</insert>
+
+	<delete id="deleteTopicInfo">
+		delete from topic_info where id = #value#
+	</delete>
+
+	<update id="updateTopicInfo" parameterClass="TopicInfo">
+		update topic_info
+		<dynamic prepend="SET ">
+			<isNotEqual property="fav" compareValue="-1" prepend=","><![CDATA[ fav=#fav# ]]></isNotEqual>
+			<isNotEqual property="reply" compareValue="-1" prepend=","><![CDATA[ reply=#reply# ]]></isNotEqual>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			id = #id#
+		</dynamic>
+	</update>
+</sqlMap>
