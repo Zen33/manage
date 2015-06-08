@@ -27,6 +27,23 @@ MisApp.factory('UserService', function ($http, $q, customtable) {
             });
             return deferred.promise;
 		},
+        getBills: function(params) {
+            var deferred = $q.defer();
+            $http.jsonp(resource + 'user/bill' + '?callback=JSON_CALLBACK', {params: params})
+            .then(function (resp) {
+                if (resp.data.status === 200) {
+                    deferred.resolve(customtable.getBodyFromResponse(resp.data).bills);
+                }
+                else {
+                    // invalid response
+                    deferred.reject(resp.data.message);
+                }
+            }, function(response) {
+                // something went wrong
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        },
         getUsers: function(params) {
             // params = {
             //     token: 
@@ -546,7 +563,7 @@ MisApp.factory('ActionService', function ($http, $q, customtable) {
             //     duration:
             // }
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/coach/plandesc/update?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.post(resource + 'plan/coach/plandesc/update', params) // your url
             .then(function(response) {
                 // if success
                 if (response.data.status === 200) {
@@ -578,7 +595,7 @@ MisApp.factory('ActionService', function ($http, $q, customtable) {
             //     duration:
             // }
             var defer = $q.defer();
-            $http.jsonp(resource + 'plan/coach/plandesc/add?callback=JSON_CALLBACK', {params: params}) // your url
+            $http.post(resource + 'plan/coach/plandesc/add', params) // your url
             .then(function(response) {
                 // if success
                 if (response.data.status === 200) {

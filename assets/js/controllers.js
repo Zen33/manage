@@ -108,17 +108,59 @@ MisApp.controller('MembersModalInstanceCtrl', function ($scope, $modalInstance, 
 	};
 });
 
-MisApp.controller('ProfileModalInstanceCtrl', function ($scope, $modalInstance, uesrinfo) {
+MisApp.controller('ProfileCtrl', function ($scope, $modal) {
+	$scope.userinfo = $scope.$parent.userinfo.user_info;
+	$scope.userinfo['intro'] = $scope.$parent.userinfo.coach_info.intro;
+	$scope.userinfo['exp'] = $scope.$parent.userinfo.coach_info.exp;
+	$scope.userinfo['ads'] = $scope.$parent.userinfo.coach_ad;
+	$scope.myInterval = 5000;
+	var slides = $scope.slides = [];
+	$scope.addSlide = function() {
+		slides.push({
+			image: $scope.userinfo.ads[slides.length].url,
+			text: ['More','Extra','Lots of','Surplus'][slides.length % 4] + ' ' +
+			['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
+			});
+	};
+	for (var i=0; i<$scope.$parent.userinfo.coach_ad.length; i++) {
+		$scope.addSlide();
+	}
+	$scope.editProfile = function() {
+		var modalInstance = $modal.open({
+			animation: true,
+			templateUrl: 'assets/templates/profilemodal.html',
+			controller: 'ProfileModalInstanceCtrl',
+			resolve: {
+				userinfo: function() {
+					return $scope.userinfo;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (updatedUser) {
+			
+		});
+	}
+});
+
+MisApp.controller('ProfileModalInstanceCtrl', function ($scope, $modalInstance, userinfo) {
 	$scope.userinfo = Object.create(userinfo);
 	$scope.alert = {
 		msg: ''
 	}
-	$scope.ad = {};
+	$scope.icon = {
+		url: userinfo.icon,
+		file: null,
+		postfix: null
+	};
+	$scope.ads = _.map(userinfo.ads, function(ad) {
+		return {
+			url: ad.url,
+			file: null,
+			postfix: null
+		};
+	});
 	var birthday = $scope.userinfo.birthday;
-	var icon = $scope.userinfo.icon;
-	$scope.uploadAds = function() {
-		console.log($scope.ad)
-	}
 	$scope.handleBirthday = function() {
 		$scope.alert = {
 			msg: ''
@@ -150,61 +192,56 @@ MisApp.controller('ProfileModalInstanceCtrl', function ($scope, $modalInstance, 
 	};
 });
 
-MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, action, editable) {
+MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, action, editable, $base64, title) {
 	$scope.action= action;
+	$scope.editable = editable;
+	$scope.title = title;
+	$scope.pic = {
+		url: $scope.action.pic,
+		file: null,
+		type: null,
+		postfix: null
+	}
+	$scope.media = {
+		url: $scope.action.url,
+		file: null,
+		type: $scope.action.category,
+		postfix: null
+	}
 	$scope.alert = {
 		msg: "",
 		type: 'danger'
 	}
-	function parseMedia (file) {
-		var type = file.type.match(/(\w*)\/(\w*)/);
-		var postfix = type[2];
-		type = type[1] === 'image' ? 0 : 1;
-		return {
-			file: file,
-			type: type,
-			postfix: postfix
-		}
-	};
 	$scope.ok = function () {
-		if (editable) {
-			if ($scope.action.pic) {
-				if (typeof $scope.action.pic === 'string') {
-					$scope.action.pic = null;
-					$scope.action.picType = null;
-				}
-				else {
-					var file = parseMedia($scope.action.pic);
-					$scope.action.pic = file.file;
-					$scope.action.picType = file.postfix;
+		if (!editable) {
+			var params = {
+				name: $scope.action.name,
+				intro: $scope.action.intro,
+				quantiry: $scope.action.quantiry,
+				units: $scope.action.units,
+				duration: $scope.action.duration
+			}
+			if ($scope.pic.url && $scope.media.url) {
+				for (var i in params) {
+					if (!params[i]) {
+						$scope.alert.msg = "不能为空";
+						return;
+					}
 				}
 			}
 			else {
-				$scope.alert.msg = "请上传一张此动作缩略图";
+				$scope.alert.msg = "不能为空";
 				return;
 			}
-			if ($scope.action.url) {
-				if (typeof $scope.action.url === 'string') {
-					$scope.action.media = null;
-					$scope.action.mediaType = null;
-					delete $scope.action.url;
-					$modalInstance.close($scope.action);
-				}
-				else {
-					var file = parseMedia($scope.action.url);
-					$scope.action.media = file.file;
-					$scope.action.mediaType = file.postfix;
-					$scope.action.category = file.type;
-					delete $scope.action.url;
-					$modalInstance.close($scope.action);
-				}
+			params.pic = $scope.pic.file;
+			params.picType = $scope.pic.postfix;
+			params.media = $scope.media.file;
+			params.mediaType = $scope.media.postfix;
+			params.category = $scope.media.category;
+			if ($scope.action.id !== undefined) {
+				params.id = $scope.action.id;
 			}
-			else {
-				$scope.action.media = null;
-				$scope.action.mediaType = null;
-				delete $scope.action.url;
-				$modalInstance.close($scope.action);
-			}
+			$modalInstance.close(params);
 		}
 		else {
 			$modalInstance.dismiss('cancel');

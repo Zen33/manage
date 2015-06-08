@@ -40,50 +40,6 @@ MisApp.directive('comfirm', function($state, UserService, customtable) {
 	}
 });
 
-MisApp.directive('profile', function($state) {
-	return {
-		templateUrl: 'assets/templates/profile.html',
-		restrict: 'E',
-		scope: {
-			userinfo: '='
-		},
-		controller: function($scope, $modal) {
-			$scope.userinfo = $scope.$parent.userinfo.user_info;
-			$scope.userinfo['intro'] = $scope.$parent.userinfo.coach_info.intro;
-			$scope.userinfo['exp'] = $scope.$parent.userinfo.coach_info.exp;
-			$scope.userinfo['ads'] = $scope.$parent.userinfo.coach_ad;
-			$scope.myInterval = 5000;
-			var slides = $scope.slides = [];
-			$scope.addSlide = function() {
-				slides.push({
-					image: $scope.userinfo.ads[slides.length].url,
-					text: ['More','Extra','Lots of','Surplus'][slides.length % 4] + ' ' +
-					['Cats', 'Kittys', 'Felines', 'Cutes'][slides.length % 4]
-					});
-			};
-			for (var i=0; i<$scope.$parent.userinfo.coach_ad.length; i++) {
-				$scope.addSlide();
-			}
-			$scope.editProfile = function() {
-				var modalInstance = $modal.open({
-					animation: true,
-					templateUrl: 'assets/templates/profilemodal.html',
-					controller: 'ProfileModalInstanceCtrl',
-					resolve: {
-						userinfo: function() {
-							return $scope.userinfo;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (updatedUser) {
-					
-				});
-			}
-		}
-	}
-});
-
 MisApp.directive('nav', function($state, PlanService, customtable, UserService, $q, ServiceService, TrainService, ActionService, CalendarService) {
 	return {
 		templateUrl: 'assets/templates/nav.html',
@@ -102,16 +58,50 @@ MisApp.directive('nav', function($state, PlanService, customtable, UserService, 
 	}
 });
 
-MisApp.directive('fileModel', ['$parse', function ($parse) {
+MisApp.directive('fileModel', ['$parse', '$base64', function ($parse, $base64) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
             var model = $parse(attrs.fileModel);
             var modelSetter = model.assign;
-            
+     		
+			function parseMedia (file) {
+				var type = file.type.match(/(\w*)\/(\w*)/);
+				var postfix = type[2];
+				type = type[1] === 'image' ? 0 : 1;
+				return {
+					file: $base64.encode(file),
+					type: type,
+					postfix: postfix
+				}
+			};
             element.bind('change', function(){
                 scope.$apply(function(){
-                    modelSetter(scope, element[0].files[0]);
+                	var reader  = new FileReader();
+				  	var file    = element[0].files[0];
+				  	var reader  = new FileReader();
+				  	var info = {
+				  		file: null,
+				  		url: null,
+				  		postfix: null,
+				  		type: null
+				  	}
+
+				  	reader.onloadend = function () {
+				    	var t = parseMedia(file);
+				    	info.file = t.file;
+				    	info.url = reader.result;
+				    	info.postfix = t.postfix;
+				    	info.type = t.type;
+				    	modelSetter(scope, info);
+				  	}
+
+				  	if (file) {
+				    	reader.readAsDataURL(file);
+				  	} else {
+				    	preview.src = "";
+				  	}
+                    
                 });
             });
         }

@@ -1,5 +1,5 @@
 var MisApp = angular.module('misapp', ['ui.router', 'ui.grid', 'ngTouch', 'ui.grid.edit'
-	, 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.grid.pagination', 'ui.bootstrap']);
+	, 'ui.grid.rowEdit', 'ui.grid.cellNav', 'ui.grid.pagination', 'ui.bootstrap', 'base64']);
 MisApp.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];

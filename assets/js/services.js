@@ -4,7 +4,6 @@ angular.module('misapp')
 		switch(dataType) {
 		case "projects": 
 			return [
-				{ field: 'icon', displayName: '计划标志', enableCellEdit: false, cellTemplate: '<img src="{{row.entity.icon}}" width="30px" height="30px"/>'},
 				{ field: 'pid', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '计划名称'},
 				{ field: 'intro', displayName: '计划介绍'},
@@ -34,31 +33,26 @@ angular.module('misapp')
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '训练名称'},
 				{ field: 'intro', displayName: '训练介绍'},
-				{ field: 'duration', displayName: '时长'},
+				{ field: 'duration', displayName: '时长', type: 'number'},
 				{name: 'training', displayName: '训练', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewTraining(row.entity)" >查看动作</button> '}
 			];
 		case "actions":
 			return [
-				{ field: 'pic', displayName: '缩略图', type: 'file', enableCellEdit: false, cellTemplate: '<label for="icon-upload"><img src="{{row.entity.pic}}" width="30px" height="30px"></label><input type="file" id="icon-upload" file-model="row.entity.pic" style="display:none"/>'},
+				{ field: 'pic', displayName: '缩略图', type: 'file', enableCellEdit: false, cellTemplate: '<label for="icon-upload"><img src="{{row.entity.pic.url ? row.entity.pic.url : row.entity.pic}}" id="icon" width="30px" height="30px"></label><input type="file" id="icon-upload" file-model="row.entity.pic" style="display:none"/>'},
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
 				{ field: 'name', displayName: '动作名称'},
 				{ field: 'intro', displayName: '动作介绍'},
 				{ field: 'duration', displayName: '时长'},
-				{ field: 'url', displayName: '示例', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewAction(row.entity)">查看示例</button>'},
+				// { field: 'url', displayName: '示例', cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewAction(row.entity)">查看示例</button>'},
 				{ field: 'quantity', displayName: '数量', type: 'number'},
-				{ field: 'units', displayName: '单位', type: 'string'},
-				{ field: 'weight', displayName: '体重', enableCellEdit: false},
+				{ field: 'units', displayName: '单位', type:'string'},
 				{ name: 'action', displayName: '查看动作', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.viewAction(row.entity)" >查看此动作</button> '},
 			];
 		case "home":
 			return [
 				{ field: 'id', displayName: 'id', enableCellEdit: false},
-				{ field: 'name', displayName: '训练名称'},
-				{ field: 'intro', displayName: '训练介绍'},
-				{ field: 'duration', displayName: '时长'},
-				{ field: 'url', displayName: '实例', type: 'file'},
-				{ field: 'quantity', displayName: '数量', type: 'number'},
-				{ field: 'units', displayName: '单位', type: 'string'}
+				{ field: 'date', displayName: '日期', enableCellEdit: false},
+				{ field: 'money', displayName: '薪水', enableCellEdit: false}
 			];
 		case "services":
 			return [

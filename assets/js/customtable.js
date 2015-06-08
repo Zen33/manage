@@ -66,7 +66,11 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    	scope.buttonText = "";
 		    	scope.back = false;
 		    	scope.gridOptions.columnDefs = customtable.defaultColumnDefs(scope.active);
-				scope.gridOptions.data = [];
+		    	UserService.getBills({token: token}).then(function(data) {
+		    		scope.gridOptions.data = data;
+		    	}, function(err) {
+		    		alert(err);
+		    	})
 		    }
 
 			scope.switchToPublicProject = function() {
@@ -79,6 +83,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				scope.buttonText = "添加公开计划";
 				scope.gridOptions.columnDefs = columnDefs;
 				scope.gridOptions.data = customdata[scope.radioModel];
+				scope.gridOptions.enableCellEdit = false;
 			};
 
 			scope.switchToProjectModel = function() {
@@ -202,6 +207,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 					scope.back = false;
 					scope.gridOptions.enableCellEdit = true;
 					scope.buttonText = "添加动作模板";
+					columnDefs.push({name: 'save', displayName: '保存', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.saveData(row.entity)" >保存</button> '});
 					columnDefs.push({name: 'delete', displayName: '删除', enableCellEdit: false, cellTemplate: '<button id="editBtn" type="button" class="btn-small" ng-click="grid.appScope.rmData(row.entity)" >删除</button> '});
 				}
 				else {
@@ -370,7 +376,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 		    			break;
 		    		case "添加动作模板":
 		    			var newAction = {
-							id: "",
 							name: "",	
 							intro: "",
 							pic: "",
@@ -548,6 +553,12 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				switch(scope.buttonText) {
 					case "添加模板计划":
 						if (rowEntity.pid === '') {
+							for (var i in rowEntity) {
+								if (!rowEntity[i] && i !== "pid" && i !== "undefined") {
+									scope.alert.msg = "不能为空";
+									return;
+								}
+							}
 							PlanService.postPlanModel({'name': rowEntity.name, 'intro': rowEntity.intro, 'duration': rowEntity.duration || 0, 'token': token})
 							.then(function(resp) {
 								return PlanService.getPlanModels({token: token});
@@ -587,6 +598,12 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						break;
 					case "添加训练模板":
 						if (!rowEntity.id) {
+							for (var i in rowEntity) {
+								if (!rowEntity[i] && i !== "id" && i !== "undefined") {
+									scope.alert.msg = "不能为空";
+									return;
+								}
+							}
 							TrainService.postTrainModel({'name': rowEntity.name, 'intro': rowEntity.intro, 'duration': rowEntity.duration || 0, 'token': token})
 							.then(function(resp) {
 								return TrainService.getTrainModels({token: token});
@@ -635,24 +652,49 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						}
 						break;
 					case "添加动作模板":
-						console.log("添加动作模板", rowEntity, scope.file)
-						if (scope.file) {
-							var type = scope.file.type.match(/(\w*)\/(\w*)/);
-
-						}
 						// var params = {
-						// 	name	
-						// 	intro
-						// 	pic: ''
-						// 	picType: 'jpg',
-						// 	media: ''
-						// 	mediaType: ''
-						// 	category  视频1 或 图片0 int
-						// 	quantiry 数量
-						// 	units 单位 次数/时长 传汉字即可
-						// 	duration 时长
-						// };
-						// ActionService.postActionModel()
+						// 	name: rowEntity.name,
+						// 	intro: rowEntity.intro,
+						// 	quantiry: rowEntity.quantiry,
+						// 	units: rowEntity.units,
+						// 	duration: rowEntity.duration
+						// }
+						// if (rowEntity.pic && rowEntity.url) {
+						// 	if (typeof rowEntity.pic === "string") {
+						// 		params.pic = null;
+						// 		params.picType = null;
+						// 	}
+						// 	else {
+						// 		params.pic = rowEntity.pic.file;
+						// 		params.picType = rowEntity.pic.postfix;
+						// 	}
+						// 	if (typeof rowEntity.url === "string") {
+						// 		params.media = null;
+						// 		params.mediaType = null;
+						// 	}
+						// 	else {
+						// 		params.media = rowEntity.url.file;
+						// 		params.mediaType = rowEntity.url.postfix;
+						// 		params.category = rowEntity.url.type;
+						// 	}
+						// 	for (var i in params) {
+						// 		if (!params[i]) {
+						// 			scope.alert.msg = "不能为空";
+						// 			return;
+						// 		}
+						// 	}
+						// }
+						// else {
+						// 	$scope.alert.msg = "不能为空";
+						// 	return;
+						// }
+						// params.id = rowEntity.id;
+						// ActionService.patchActionModel(params).then(function(data) {
+
+						// }, function(err) {
+						// 	alert(err);
+						// })
+						scope.viewAction(rowEntity);
 						break;
 					case "添加服务":
 						// var params = rowEntity;
@@ -857,11 +899,14 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 					resolve: {
 						editable: function() {
 							if ($scope.active === "actions") {
-								return true;
-							}
-							else {
 								return false;
 							}
+							else {
+								return true;
+							}
+						},
+						title: function() {
+							return rowEntity.id === undefined ? "添加动作模板" : "编辑动作";
 						},
 						action: function() {
 							return rowEntity;
@@ -870,7 +915,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				});
 
 				modalInstance.result.then(function (action) {
-					if (action.id) {
+					if (action.id !== undefined) {
 						action.token = token;
 						ActionService.patchActionModel(action).then(function(data) {
 
@@ -879,7 +924,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 						})
 					}
 					else {
-						delete action.id;
 						action.token = token;
 						ActionService.postActionModel(action).then(function(data) {
 							ActionService.getActionModels({token: token})
