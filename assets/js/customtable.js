@@ -753,7 +753,7 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 				scope.alert = {
 		    		msg: ""
 		    	};
-				scope.spid = customtable.getId(rowEntity);
+				scope.spid = rowEntity.id;
 				scope.switchToActions();
 			}
 
