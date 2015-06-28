@@ -174,9 +174,10 @@ MisApp.controller('ProfileModalInstanceCtrl', function ($scope, $modalInstance, 
 			msg: ''
 		}
 		var token = UserService.getToken();
-		$scope.userinfo.birthday = birthday;
-		var params = $scope.userinfo;
-		params.token = token;
+		var params = {
+			birthday: birthday,
+
+		}
 		UserService.patchCoach(params).then(function(data) {
 			var userinfo = data.user_info;
 			userinfo['intro'] = data.coach_info.intro;
@@ -192,7 +193,7 @@ MisApp.controller('ProfileModalInstanceCtrl', function ($scope, $modalInstance, 
 	};
 });
 
-MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, action, editable, $base64, title) {
+MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, action, editable, title) {
 	$scope.action= action;
 	$scope.editable = editable;
 	$scope.title = title;
@@ -211,7 +212,7 @@ MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, a
 	$scope.alert = {
 		msg: "",
 		type: 'danger'
-	}
+	};
 	$scope.ok = function () {
 		if (!editable) {
 			var params = {
@@ -237,10 +238,11 @@ MisApp.controller('UploadModalInstanceCtrl', function ($scope, $modalInstance, a
 			params.picType = $scope.pic.postfix;
 			params.media = $scope.media.file;
 			params.mediaType = $scope.media.postfix;
-			params.category = $scope.media.category;
+			params.category = $scope.media.type;
 			if ($scope.action.id !== undefined) {
 				params.id = $scope.action.id;
 			}
+			console.log("hint",params);
 			$modalInstance.close(params);
 		}
 		else {

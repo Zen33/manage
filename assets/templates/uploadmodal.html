@@ -6,7 +6,7 @@
         <alert ng-if="alert.msg" type="{{alert.type}}" close="alert.msg=''">{{alert.msg}}</alert>
         <div class="form-group">
             <label for="upload-icon"><img src="{{pic.url}}" height="100" width="200"/></label>
-            <input type="file" file-model="pic" id="upload-icon" style="display:none" ng-disabled="{{editable}}"/>
+            <input type="file" file-model="pic" ng-disabled="{{editable}}"/>
         </div>
         <div class="form-group">
             <label>动作名称</label>

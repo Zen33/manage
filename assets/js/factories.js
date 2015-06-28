@@ -634,6 +634,25 @@ MisApp.factory('ActionService', function ($http, $q, customtable) {
                 defer.reject(response.data);
             });
             return defer.promise;
+        },
+        deleteActionModel: function(params) {
+            var defer = $q.defer();
+            $http.jsonp(resource + 'plan/coach/plandesc/remove?callback=JSON_CALLBACK', {params: params}) // your url
+            .then(function(response) {
+                // if success
+                if (response.status === 200) {
+                    // return messages
+                    defer.resolve(response.data);
+                } else {
+                    // invalid response
+                    defer.reject(response.data);
+                }
+
+            }, function(response) {
+                // something went wrong
+                defer.reject(response.data);
+            });
+            return defer.promise;
         }
     }
 });

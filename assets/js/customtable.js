@@ -231,26 +231,6 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 			};
 
 			scope.switchToCalendar = function() {
-            	// customdata = {
-            	// 	course: [{
-            	// 		service: 
-            	// 		calendar: {
-            	// 			id:
-            	//			cid:
-            	// 			stype: 
-            	// 			cdate:
-            	// 			minutes: 
-            	// 			maxlimit: 
-            	// 			sign:
-            	// 			intro:
-            	// 		},
-            	// 		members: {
-            	// 			member:
-            	// 			candidate: 
-            	// 		}
-            	// 	}],
-            	// 	service: []
-            	// }
 				if (scope.customdata) {
 					scope.services = scope.customdata.service;
 					scope.gridOptions.data = scope.customdata.course;
@@ -543,6 +523,13 @@ MisApp.directive('customtable', function($modal, $compile, customtable, PlanServ
 							}
 						});
 						break;
+					case "添加动作模板":
+						ActionService.deleteActionModel({token: token, id:rowEntity.id}).then(function(data) {
+							var index = _.findIndex(scope.gridOptions.data, function(datum) {
+								return datum.id === rowEntity.id;
+							});
+							scope.gridOptions.data.splice(index, 1);
+						})
 				}
 			}
 

@@ -58,7 +58,7 @@ MisApp.directive('nav', function($state, PlanService, customtable, UserService, 
 	}
 });
 
-MisApp.directive('fileModel', ['$parse', '$base64', function ($parse, $base64) {
+MisApp.directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -70,36 +70,52 @@ MisApp.directive('fileModel', ['$parse', '$base64', function ($parse, $base64) {
 				var postfix = type[2];
 				type = type[1] === 'image' ? 0 : 1;
 				return {
-					file: $base64.encode(file),
 					type: type,
 					postfix: postfix
 				}
 			};
+
+			function toBase64 (buffer) {
+				var binary = '';
+			    var bytes = new Uint8Array( buffer );
+			    var len = bytes.byteLength;
+			    for (var i = 0; i < len; i++) {
+			        binary += String.fromCharCode( bytes[ i ] );
+			    }
+			    return window.btoa( binary );
+			};
+
+			function _readerOnLoad (reader, file, info) {
+
+				return function (e) {
+
+					var buffer = e.target.result;
+
+					info.file = toBase64(buffer);
+				};
+
+			};
             element.bind('change', function(){
                 scope.$apply(function(){
                 	var reader  = new FileReader();
+                	var freader = new FileReader();
 				  	var file    = element[0].files[0];
-				  	var reader  = new FileReader();
 				  	var info = {
 				  		file: null,
 				  		url: null,
 				  		postfix: null,
 				  		type: null
 				  	}
+				  	freader.readAsDataURL(file);
+				  	reader.readAsArrayBuffer(file);
+				  	reader.onload = _readerOnLoad(reader, file, info);
 
-				  	reader.onloadend = function () {
+				  	reader.onloadend = function (e) {
 				    	var t = parseMedia(file);
-				    	info.file = t.file;
-				    	info.url = reader.result;
+				    	info.url = freader.result;
 				    	info.postfix = t.postfix;
 				    	info.type = t.type;
 				    	modelSetter(scope, info);
-				  	}
-
-				  	if (file) {
-				    	reader.readAsDataURL(file);
-				  	} else {
-				    	preview.src = "";
 				  	}
                     
                 });
